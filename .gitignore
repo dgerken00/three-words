@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# macOS
+.DS_Store
+
+# logs / debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# local env
+.env
+.env.local
+
+# Claude Code local settings (personal, machine-specific)
+.claude/settings.local.json

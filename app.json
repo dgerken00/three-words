@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "three words",
+    "slug": "three-words",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#16141F",
+    "splash": {
+      "backgroundColor": "#16141F"
+    },
+    "ios": { "supportsTablet": false, "bundleIdentifier": "com.yourname.threewords" },
+    "android": { "package": "com.yourname.threewords" }
+  }
+}
