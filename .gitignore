@@ -29,3 +29,9 @@ yarn-error.*
 
 # Claude Code local settings (personal, machine-specific)
 .claude/settings.local.json
+
+# store submission secrets — never commit
+play-service-account.json
+*.p8
+ios/
+android/
