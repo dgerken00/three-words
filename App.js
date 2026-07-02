@@ -166,8 +166,9 @@ export default function App() {
     if (mode === 'signUp' && password.length < 8) return setError('Use at least 8 characters for your password.');
     setBusy(true);
     setError('');
-    const fn = mode === 'signUp' ? supabase.auth.signUp : supabase.auth.signInWithPassword;
-    const { data, error: err } = await fn({ email: mail, password });
+    const { data, error: err } = mode === 'signUp'
+      ? await supabase.auth.signUp({ email: mail, password })
+      : await supabase.auth.signInWithPassword({ email: mail, password });
     setBusy(false);
     if (err) return setError(err.message || 'Something went wrong. Try again.');
     if (mode === 'signUp' && !data.session) {
