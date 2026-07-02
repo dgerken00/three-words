@@ -14,6 +14,7 @@ const INVITE_BASE = 'https://dgerken00.github.io/three-words/invite/?c=';
 const inviteLink = (code) => `${INVITE_BASE}${code}`;
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
 const PRIVACY_URL = 'https://dgerken00.github.io/three-words/';
+const TERMS_URL = 'https://dgerken00.github.io/three-words/terms/';
 const SUPPORT_EMAIL = 'dgerken@gmail.com';                   // published contact for reports
 
 // ---------- helpers ----------
@@ -369,15 +370,29 @@ export default function App() {
                   disabled={busy}
                   onPress={submitAuth}
                 />
+                {mode === 'signUp' && (
+                  <Text style={{ color: '#8B8698', fontSize: 12, lineHeight: 18, textAlign: 'center', marginTop: 10 }}>
+                    By creating an account you agree to our{' '}
+                    <Text style={{ color: '#F5C95D' }} onPress={() => Linking.openURL(TERMS_URL)}>Terms</Text> and{' '}
+                    <Text style={{ color: '#F5C95D' }} onPress={() => Linking.openURL(PRIVACY_URL)}>Privacy Policy</Text>.{' '}
+                    three·words has zero tolerance for objectionable content or abusive users.
+                  </Text>
+                )}
                 <Btn
                   ghost
                   label={mode === 'signUp' ? 'I already have an account' : 'Create an account'}
                   onPress={() => { setError(''); setMode(mode === 'signUp' ? 'signIn' : 'signUp'); }}
                 />
               </View>
-              <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL)}>
-                <Text style={styles.legalLink}>Privacy policy</Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 4 }}>
+                <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL)}>
+                  <Text style={styles.legalLink}>Terms</Text>
+                </TouchableOpacity>
+                <Text style={[styles.legalLink, { marginHorizontal: 10 }]}>·</Text>
+                <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL)}>
+                  <Text style={styles.legalLink}>Privacy policy</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
 
