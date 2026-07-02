@@ -10,9 +10,8 @@ import { supabase, isConfigured } from './lib/supabase';
 // ---------- config ----------
 const LINK_BASE = 'threewords.app/i/';
 const inviteLink = (code) => `https://${LINK_BASE}${code}`;
-// TODO(store): host web/privacy.html and set PRIVACY_URL to its live address
-// (e.g. a free GitHub Pages URL). It must be reachable before store submission.
-const PRIVACY_URL = 'https://three-words-privacy.pages.dev'; // placeholder — update once hosted
+// Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
+const PRIVACY_URL = 'https://dgerken00.github.io/three-words/';
 const SUPPORT_EMAIL = 'dgerken@gmail.com';                   // published contact for reports
 
 // ---------- helpers ----------
