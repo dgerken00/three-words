@@ -14,7 +14,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#16141F"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.davidgerken.threewords",
@@ -36,8 +38,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": ""
+        "projectId": "b2f651a1-25d8-474d-a3ae-f4602c7a01d3"
       }
-    }
+    },
+    "owner": "dgerken"
   }
 }
