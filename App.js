@@ -1,21 +1,19 @@
-// three·words — Expo family-test build
+// three·words — store build (real auth + moderation)
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, ScrollView, Share,
+  View, Text, TextInput, TouchableOpacity, ScrollView, Share, Alert, Linking,
   StyleSheet, ActivityIndicator, Switch, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase, isConfigured } from './lib/supabase';
 
-// ---------- helpers ----------
-const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-const makeCode = () =>
-  Array.from({ length: 6 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
-
+// ---------- config ----------
 const LINK_BASE = 'threewords.app/i/';
 const inviteLink = (code) => `https://${LINK_BASE}${code}`;
+const PRIVACY_URL = 'https://threewords.app/privacy'; // must be live before store submission
+const SUPPORT_EMAIL = 'support@threewords.app';       // published contact for reports
 
+// ---------- helpers ----------
 const extractCode = (text) => {
   const t = (text || '').toUpperCase();
   const linkMatch = t.match(/\/I\/([A-Z2-9]{6})/);
@@ -82,7 +80,15 @@ function WordCloud({ counts }) {
 // ---------- app ----------
 export default function App() {
   const [screen, setScreen] = useState('loading');
-  const [me, setMe] = useState(null);
+  const [session, setSession] = useState(null);
+  const [me, setMe] = useState(null); // { id, name, invite_code }
+
+  // auth form
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState('signIn'); // 'signIn' | 'signUp'
+
+  // profile / flow
   const [nameInput, setNameInput] = useState('');
   const [codeInput, setCodeInput] = useState('');
   const [joinProfile, setJoinProfile] = useState(null);
@@ -95,42 +101,53 @@ export default function App() {
   const [live, setLive] = useState(false);
   const channelRef = useRef(null);
 
-  // boot: restore saved profile
-  useEffect(() => {
-    (async () => {
-      if (!isConfigured()) return setScreen('setup');
-      try {
-        const saved = await AsyncStorage.getItem('tw:me');
-        if (saved) {
-          setMe(JSON.parse(saved));
-          setScreen('dashboard');
-        } else {
-          setScreen('welcome');
-        }
-      } catch {
-        setScreen('welcome');
-      }
-    })();
+  // load the caller's profile row (null if not created yet)
+  const loadProfile = useCallback(async (uid) => {
+    const { data } = await supabase
+      .from('profiles').select('id, name, invite_code').eq('id', uid).maybeSingle();
+    return data || null;
   }, []);
 
-  const loadSubs = useCallback(async (code) => {
+  // route based on session + whether a profile exists
+  const routeForSession = useCallback(async (sess) => {
+    if (!sess?.user) { setMe(null); setScreen('auth'); return; }
+    const profile = await loadProfile(sess.user.id);
+    setMe(profile);
+    setScreen(profile ? 'dashboard' : 'needsProfile');
+  }, [loadProfile]);
+
+  // boot + subscribe to auth changes
+  useEffect(() => {
+    if (!isConfigured()) { setScreen('setup'); return; }
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      routeForSession(data.session);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
+      setSession(sess);
+      routeForSession(sess);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [routeForSession]);
+
+  const loadSubs = useCallback(async (uid) => {
     const { data, error: err } = await supabase
       .from('submissions')
-      .select('words, from_name, created_at')
-      .eq('code', code)
+      .select('id, words, display_name, author_id, created_at')
+      .eq('recipient_id', uid)
       .order('created_at', { ascending: false });
     if (!err && data) setSubs(data);
   }, []);
 
-  // dashboard: load + subscribe to live inserts
+  // dashboard: load + subscribe to live inserts addressed to me
   useEffect(() => {
-    if (screen !== 'dashboard' || !me?.code) return;
-    loadSubs(me.code);
+    if (screen !== 'dashboard' || !me?.id) return;
+    loadSubs(me.id);
     const channel = supabase
-      .channel(`subs-${me.code}`)
+      .channel(`subs-${me.id}`)
       .on('postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'submissions', filter: `code=eq.${me.code}` },
-        (payload) => setSubs((prev) => [payload.new, ...prev]))
+        { event: 'INSERT', schema: 'public', table: 'submissions', filter: `recipient_id=eq.${me.id}` },
+        (payload) => setSubs((prev) => [payload.new, ...prev.filter((s) => s.id !== payload.new.id)]))
       .subscribe((status) => setLive(status === 'SUBSCRIBED'));
     channelRef.current = channel;
     return () => { supabase.removeChannel(channel); setLive(false); };
@@ -142,17 +159,34 @@ export default function App() {
     return c;
   }, [subs]);
 
-  // ---------- actions ----------
+  // ---------- auth actions ----------
+  const submitAuth = async () => {
+    const mail = email.trim().toLowerCase();
+    if (!mail || !password) return setError('Enter your email and a password.');
+    if (mode === 'signUp' && password.length < 8) return setError('Use at least 8 characters for your password.');
+    setBusy(true);
+    setError('');
+    const fn = mode === 'signUp' ? supabase.auth.signUp : supabase.auth.signInWithPassword;
+    const { data, error: err } = await fn({ email: mail, password });
+    setBusy(false);
+    if (err) return setError(err.message || 'Something went wrong. Try again.');
+    if (mode === 'signUp' && !data.session) {
+      // Email confirmation is on: no session until they confirm.
+      setError('');
+      setMode('signIn');
+      Alert.alert('Check your email', 'Confirm your address, then sign in.');
+    }
+    // onAuthStateChange handles routing when a session arrives.
+  };
+
   const createProfile = async () => {
     const name = nameInput.trim();
     if (!name) return setError('Enter your name to get started.');
     setBusy(true);
-    const code = makeCode();
-    const { error: err } = await supabase.from('profiles').insert({ code, name });
+    const { data, error: err } = await supabase.rpc('create_my_profile', { p_name: name });
     setBusy(false);
-    if (err) return setError("Couldn't save your profile. Check your connection and try again.");
-    const profile = { name, code };
-    await AsyncStorage.setItem('tw:me', JSON.stringify(profile));
+    if (err) return setError("Couldn't set up your profile. Try again.");
+    const profile = Array.isArray(data) ? data[0] : data;
     setMe(profile);
     setError('');
     setScreen('dashboard');
@@ -162,10 +196,12 @@ export default function App() {
     const code = extractCode(codeInput);
     if (code.length !== 6) return setError('Paste an invite link or a 6-character code.');
     setBusy(true);
-    const { data, error: err } = await supabase.from('profiles').select('code, name').eq('code', code).single();
+    const { data, error: err } = await supabase.rpc('find_profile_by_code', { p_code: code });
     setBusy(false);
-    if (err || !data) return setError('No one found with that invite. Check it and try again.');
-    setJoinProfile(data);
+    const found = Array.isArray(data) ? data[0] : data;
+    if (err || !found) return setError('No one found with that invite. Check it and try again.');
+    if (found.id === me?.id) return setError("That's your own invite — share it with others instead.");
+    setJoinProfile(found);
     setError('');
     setScreen('submit');
   };
@@ -178,11 +214,15 @@ export default function App() {
     if (new Set(cleaned).size < 3) return setError('Three different words, please.');
     if (cleaned.some(isProfane)) return setError("Let's keep it kind — try different words.");
     setBusy(true);
-    const { error: err } = await supabase.from('submissions').insert({
-      code: joinProfile.code,
-      words: cleaned,
-      from_name: anonymous ? null : fromName.trim() || null,
-    });
+    const { error: err } = await supabase.from('submissions').upsert(
+      {
+        recipient_id: joinProfile.id,
+        author_id: me.id,
+        words: cleaned,
+        display_name: anonymous ? null : fromName.trim() || null,
+      },
+      { onConflict: 'author_id,recipient_id' },
+    );
     setBusy(false);
     if (err) return setError("Couldn't send your words. Try again.");
     setError('');
@@ -192,9 +232,67 @@ export default function App() {
   const shareInvite = async () => {
     try {
       await Share.share({
-        message: `Describe me in three words 👀\n${inviteLink(me.code)}\n\n(For our test: open the three·words app in Expo Go and paste the code ${me.code})`,
+        message: `Describe me in three words 👀\nOpen three·words and enter my invite code: ${me.invite_code}\n${inviteLink(me.invite_code)}`,
       });
     } catch {}
+  };
+
+  // ---------- moderation ----------
+  const moderateRow = (s) => {
+    Alert.alert('This entry', 'What would you like to do?', [
+      {
+        text: 'Report',
+        style: 'destructive',
+        onPress: async () => {
+          await supabase.from('reports').insert({ submission_id: s.id, reporter_id: me.id, reason: 'reported from app' });
+          await supabase.from('submissions').delete().eq('id', s.id);
+          setSubs((prev) => prev.filter((x) => x.id !== s.id));
+          Alert.alert('Reported', `Thanks — we review reports within 24 hours. Reach us at ${SUPPORT_EMAIL}.`);
+        },
+      },
+      {
+        text: 'Block sender',
+        style: 'destructive',
+        onPress: async () => {
+          await supabase.from('blocks').insert({ blocker_id: me.id, blocked_id: s.author_id });
+          await supabase.from('submissions').delete().eq('recipient_id', me.id).eq('author_id', s.author_id);
+          setSubs((prev) => prev.filter((x) => x.author_id !== s.author_id));
+          Alert.alert('Blocked', 'They can no longer add words about you.');
+        },
+      },
+      { text: 'Remove', onPress: async () => {
+          await supabase.from('submissions').delete().eq('id', s.id);
+          setSubs((prev) => prev.filter((x) => x.id !== s.id));
+        } },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
+  };
+
+  // ---------- account ----------
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setSubs([]); setMe(null); setEmail(''); setPassword('');
+  };
+
+  const deleteAccount = () => {
+    Alert.alert(
+      'Delete account',
+      'This permanently deletes your profile and every word sent to or from you. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            setBusy(true);
+            const { error: err } = await supabase.rpc('delete_my_account');
+            setBusy(false);
+            if (err) return Alert.alert('Could not delete', 'Please try again in a moment.');
+            await signOut();
+          },
+        },
+      ],
+    );
   };
 
   const resetToHome = () => {
@@ -204,7 +302,7 @@ export default function App() {
     setCodeInput('');
     setJoinProfile(null);
     setError('');
-    setScreen(me ? 'dashboard' : 'welcome');
+    setScreen(me ? 'dashboard' : 'auth');
   };
 
   // ---------- render ----------
@@ -230,23 +328,57 @@ export default function App() {
             </View>
           )}
 
-          {/* ---- WELCOME ---- */}
-          {screen === 'welcome' && (
+          {/* ---- AUTH ---- */}
+          {screen === 'auth' && (
             <View>
               <Text style={styles.hero}>
                 How do your friends <Text style={{ fontStyle: 'italic', color: '#F5C95D' }}>really</Text> see you?
               </Text>
-              <Text style={[styles.muted, { textAlign: 'center', marginBottom: 30 }]}>
-                Invite the people who know you. Each one sends three words that describe you — named or
-                anonymous. Watch your word cloud take shape.
+              <Text style={[styles.muted, { textAlign: 'center', marginBottom: 24 }]}>
+                {mode === 'signUp'
+                  ? 'Create an account to start your word cloud.'
+                  : 'Sign in to see your words and describe others.'}
               </Text>
-              <Btn label="Start my word cloud" onPress={() => { setError(''); setScreen('create'); }} />
-              <Btn ghost label="I have an invite" onPress={() => { setError(''); setScreen('join'); }} />
+              <View style={styles.card}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor="#6B6580"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  autoComplete="email"
+                  value={email}
+                  onChangeText={setEmail}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor="#6B6580"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                {!!error && <Text style={styles.error}>{error}</Text>}
+                <Btn
+                  label={busy ? 'Please wait…' : mode === 'signUp' ? 'Create account' : 'Sign in'}
+                  disabled={busy}
+                  onPress={submitAuth}
+                />
+                <Btn
+                  ghost
+                  label={mode === 'signUp' ? 'I already have an account' : 'Create an account'}
+                  onPress={() => { setError(''); setMode(mode === 'signUp' ? 'signIn' : 'signUp'); }}
+                />
+              </View>
+              <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL)}>
+                <Text style={styles.legalLink}>Privacy policy</Text>
+              </TouchableOpacity>
             </View>
           )}
 
-          {/* ---- CREATE ---- */}
-          {screen === 'create' && (
+          {/* ---- NEEDS PROFILE ---- */}
+          {screen === 'needsProfile' && (
             <View style={styles.card}>
               <Text style={styles.h2}>What's your name?</Text>
               <Text style={styles.muted}>Friends will see it when they describe you.</Text>
@@ -255,12 +387,12 @@ export default function App() {
                 placeholder="Your first name"
                 placeholderTextColor="#6B6580"
                 value={nameInput}
-                maxLength={30}
+                maxLength={40}
                 onChangeText={setNameInput}
               />
               {!!error && <Text style={styles.error}>{error}</Text>}
-              <Btn label={busy ? 'Creating…' : 'Create my invite link'} disabled={busy} onPress={createProfile} />
-              <Btn ghost label="Back" onPress={resetToHome} />
+              <Btn label={busy ? 'Creating…' : 'Create my word cloud'} disabled={busy} onPress={createProfile} />
+              <Btn ghost label="Sign out" onPress={signOut} />
             </View>
           )}
 
@@ -329,8 +461,7 @@ export default function App() {
                 Your three words just joined {joinProfile?.name}'s cloud.
               </Text>
               <View style={{ alignSelf: 'stretch', marginTop: 16 }}>
-                {!me && <Btn label="Now start your own" onPress={() => { setError(''); setScreen('create'); }} />}
-                <Btn ghost={!me} label={me ? 'Back to my cloud' : 'Done'} onPress={resetToHome} />
+                <Btn label="Back to my cloud" onPress={resetToHome} />
               </View>
             </View>
           )}
@@ -355,9 +486,9 @@ export default function App() {
               <View style={styles.card}>
                 <Text style={styles.label}>YOUR INVITE</Text>
                 <Text style={{ fontFamily: SERIF, fontSize: 19, color: '#F5C95D', marginBottom: 12 }}>
-                  {LINK_BASE}{me.code}
+                  {LINK_BASE}{me.invite_code}
                 </Text>
-                <Btn label="Share invite link" onPress={shareInvite} />
+                <Btn label="Share invite" onPress={shareInvite} />
                 <Text style={[styles.muted, { fontSize: 13, marginTop: 4 }]}>
                   Share it only with people you trust — only they can add words.
                 </Text>
@@ -367,22 +498,49 @@ export default function App() {
                 <View style={[styles.card, { marginTop: 12 }]}>
                   <Text style={styles.label}>RECENT</Text>
                   {subs.slice(0, 8).map((s, i) => (
-                    <View key={i} style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}>
-                      <Text style={{ color: s.from_name ? '#F2EEE8' : '#8B8698', fontStyle: s.from_name ? 'normal' : 'italic', fontSize: 14 }}>
-                        {s.from_name || 'anonymous'}
-                      </Text>
-                      <Text style={{ color: '#A9A3B8', fontSize: 14 }}>{(s.words || []).join(' · ')}</Text>
+                    <View key={s.id || i} style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ color: s.display_name ? '#F2EEE8' : '#8B8698', fontStyle: s.display_name ? 'normal' : 'italic', fontSize: 14 }}>
+                          {s.display_name || 'anonymous'}
+                        </Text>
+                        <Text style={{ color: '#A9A3B8', fontSize: 14 }}>{(s.words || []).join(' · ')}</Text>
+                      </View>
+                      <TouchableOpacity onPress={() => moderateRow(s)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                        <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>⋯</Text>
+                      </TouchableOpacity>
                     </View>
                   ))}
                 </View>
               )}
 
-              <Btn ghost label="Refresh" onPress={() => loadSubs(me.code)} style={{ marginTop: 16 }} />
-              <TouchableOpacity onPress={() => { setError(''); setScreen('join'); }}>
-                <Text style={{ color: '#6B6580', fontSize: 13, textAlign: 'center', marginTop: 12 }}>
-                  Describe someone else instead
-                </Text>
+              <Btn ghost label="Describe someone" onPress={() => { setError(''); setScreen('join'); }} style={{ marginTop: 16 }} />
+              <View style={styles.footerRow}>
+                <TouchableOpacity onPress={() => loadSubs(me.id)}><Text style={styles.footerLink}>Refresh</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => setScreen('account')}><Text style={styles.footerLink}>Account</Text></TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {/* ---- ACCOUNT ---- */}
+          {screen === 'account' && (
+            <View style={styles.card}>
+              <Text style={styles.h2}>Account</Text>
+              <Text style={styles.muted}>{session?.user?.email}</Text>
+
+              <Btn ghost label="Privacy policy" onPress={() => Linking.openURL(PRIVACY_URL)} />
+              <Btn ghost label="Contact support" onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}`)} />
+              <Btn ghost label="Sign out" onPress={signOut} />
+
+              <View style={{ height: 1, backgroundColor: '#2A2639', marginVertical: 16 }} />
+              <Text style={[styles.label, { color: '#E88C9C' }]}>DANGER ZONE</Text>
+              <TouchableOpacity style={styles.deleteBtn} onPress={deleteAccount} disabled={busy}>
+                <Text style={styles.deleteBtnText}>{busy ? 'Deleting…' : 'Delete my account'}</Text>
               </TouchableOpacity>
+              <Text style={[styles.muted, { fontSize: 12, marginTop: 8 }]}>
+                Permanently deletes your profile and all words to or from you.
+              </Text>
+
+              <Btn label="Back" onPress={() => setScreen('dashboard')} style={{ marginTop: 16 }} />
             </View>
           )}
         </ScrollView>
@@ -434,5 +592,10 @@ const styles = StyleSheet.create({
     paddingVertical: 26, paddingHorizontal: 8,
   },
   emptyCloud: { fontFamily: SERIF, fontStyle: 'italic', fontSize: 21, color: '#4E4963', textAlign: 'center', paddingVertical: 44 },
-  recentRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 9 },
+  recentRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 9 },
+  footerRow: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginTop: 14 },
+  footerLink: { color: '#6B6580', fontSize: 13, textAlign: 'center' },
+  legalLink: { color: '#6B6580', fontSize: 13, textAlign: 'center', marginTop: 18, textDecorationLine: 'underline' },
+  deleteBtn: { borderWidth: 1, borderColor: '#E88C9C', borderRadius: 14, paddingVertical: 14, alignItems: 'center', marginTop: 6 },
+  deleteBtnText: { color: '#E88C9C', fontWeight: '600', fontSize: 15 },
 });
