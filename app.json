@@ -20,14 +20,12 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.davidgerken.threewords",
-      "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.davidgerken.threewords",
-      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#16141F"
