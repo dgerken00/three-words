@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>You're invited — three·words</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; background:#16141F; color:#C9C4D6;
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    display:flex; min-height:100vh; align-items:center; justify-content:center; }
+  main { max-width:440px; width:100%; padding:40px 24px; text-align:center; }
+  .mark { color:#F5C95D; font-size:40px; }
+  h1 { color:#F2EEE8; font-weight:400; font-size:26px; margin:6px 0 4px; }
+  p { color:#A9A3B8; margin:8px 0; }
+  .code { font-family:Georgia,serif; font-size:44px; letter-spacing:8px; color:#F5C95D;
+    background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:18px 10px; margin:22px 0 8px; }
+  .steps { text-align:left; background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:16px 20px; margin:20px 0; }
+  .steps li { margin:8px 0; color:#D6D1E0; }
+  a.btn { display:block; text-decoration:none; margin:10px 0; padding:14px;
+    border-radius:14px; font-weight:600; }
+  a.ios { background:#F5C95D; color:#16141F; }
+  a.android { border:1px solid #3D3852; color:#F2EEE8; }
+  .muted { font-size:13px; color:#6B6580; }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark">✳</div>
+  <h1>You're invited to three·words</h1>
+  <p>Someone wants to know how you'd describe them — in exactly three words.</p>
+
+  <p class="muted" style="margin-top:22px;">Their invite code</p>
+  <div class="code" id="code">······</div>
+
+  <div class="steps">
+    <strong style="color:#F2EEE8;">How to join</strong>
+    <ol class="steps" style="border:0;background:none;padding:0 0 0 18px;margin:8px 0 0;">
+      <li>Install the three·words app below.</li>
+      <li>Open it and sign up (email + password).</li>
+      <li>Tap <em>“I have an invite”</em> and enter the code above.</li>
+    </ol>
+  </div>
+
+  <a class="btn ios" href="https://testflight.apple.com/join/c6dsXDYk">Install on iPhone (TestFlight)</a>
+  <a class="btn android" href="https://expo.dev/artifacts/eas/qbiicMbrCoy8g31PjIH2cOdzAA5wWfkqCZgSDcwXuLY.apk">Install on Android (.apk)</a>
+
+  <p class="muted">iPhone installs through Apple's TestFlight app. Android downloads the app file directly — tap it to install.</p>
+</main>
+<script>
+  const c = new URLSearchParams(location.search).get('c');
+  if (c) document.getElementById('code').textContent = c.toUpperCase().slice(0,6);
+</script>
+</body>
+</html>
