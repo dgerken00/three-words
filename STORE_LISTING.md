@@ -54,5 +54,5 @@ Primary: Social Networking (iOS) / Social (Android)
 > This app contains user-generated content (three-word descriptions). Moderation:
 > an automatic profanity filter blocks objectionable words at submission time;
 > recipients can report content and block senders in-app; reported content is
-> removed immediately and reviewed within 24 hours at support@threewords.app.
+> removed immediately and reviewed within 24 hours at dgerken@gmail.com.
 > Test account: <create one and provide email + password here>.

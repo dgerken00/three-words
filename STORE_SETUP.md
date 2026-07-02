@@ -55,10 +55,11 @@ eas init                      # links this repo to an EAS project; fills app.jso
 - [ ] **Bundle IDs** — currently `com.davidgerken.threewords` in `app.json`
       (iOS `bundleIdentifier` + Android `package`). These are **permanent** once
       published. Change now if you want a different reverse-domain id.
-- [ ] **Privacy policy live** — host `PRIVACY.md` at `https://threewords.app/privacy`
-      (or update `PRIVACY_URL` in `App.js` to wherever you host it). Both stores
-      require a reachable URL.
-- [ ] **Support email** — `SUPPORT_EMAIL` in `App.js` is `support@threewords.app`.
+- [ ] **Privacy policy live** — deploy `web/privacy.html` to any free static host
+      (GitHub Pages, Cloudflare Pages, or Netlify Drop), then set `PRIVACY_URL` in
+      `App.js` to that live address. Both stores require a reachable URL. The
+      current value is a placeholder.
+- [ ] **Support email** — `SUPPORT_EMAIL` in `App.js` is `dgerken@gmail.com`.
       Make sure that inbox exists and is monitored (needed for the UGC review).
 - [ ] **eas.json submit block** — replace the `REPLACE_WITH_*` Apple values and add
       your Google Play service-account JSON (see step 7).
@@ -118,7 +119,7 @@ controls — make sure you can point the reviewer to each:
 - [x] **Filter objectionable content** — automatic profanity filter at submission (`App.js`).
 - [x] **Report mechanism** — the ⋯ menu on any received words → Report.
 - [x] **Block abusive users** — the ⋯ menu → Block sender.
-- [x] **Published contact** — support@threewords.app, shown in Account and this policy.
+- [x] **Published contact** — dgerken@gmail.com, shown in Account and this policy.
 - [x] **Account deletion** — Account → Delete my account (Apple requires this).
 - [ ] **Provide a test account** in App Review notes (email + password) so the
       reviewer can sign in. Paste the "notes for reviewer" text from `STORE_LISTING.md`.

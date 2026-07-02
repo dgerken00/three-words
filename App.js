@@ -10,8 +10,10 @@ import { supabase, isConfigured } from './lib/supabase';
 // ---------- config ----------
 const LINK_BASE = 'threewords.app/i/';
 const inviteLink = (code) => `https://${LINK_BASE}${code}`;
-const PRIVACY_URL = 'https://threewords.app/privacy'; // must be live before store submission
-const SUPPORT_EMAIL = 'support@threewords.app';       // published contact for reports
+// TODO(store): host web/privacy.html and set PRIVACY_URL to its live address
+// (e.g. a free GitHub Pages URL). It must be reachable before store submission.
+const PRIVACY_URL = 'https://three-words-privacy.pages.dev'; // placeholder — update once hosted
+const SUPPORT_EMAIL = 'dgerken@gmail.com';                   // published contact for reports
 
 // ---------- helpers ----------
 const extractCode = (text) => {
