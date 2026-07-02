@@ -55,7 +55,7 @@ eas init                      # links this repo to an EAS project; fills app.jso
 - [ ] **Bundle IDs** — currently `com.davidgerken.threewords` in `app.json`
       (iOS `bundleIdentifier` + Android `package`). These are **permanent** once
       published. Change now if you want a different reverse-domain id.
-- [ ] **Privacy policy live** — deploy `web/privacy.html` to any free static host
+- [ ] **Privacy policy live** — deploy `docs/index.html` to any free static host
       (GitHub Pages, Cloudflare Pages, or Netlify Drop), then set `PRIVACY_URL` in
       `App.js` to that live address. Both stores require a reachable URL. The
       current value is a placeholder.
