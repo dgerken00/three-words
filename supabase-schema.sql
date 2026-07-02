@@ -93,18 +93,15 @@ create policy "delete own profile" on profiles for delete using (id = auth.uid()
 --    INSERT ... ON CONFLICT DO UPDATE and therefore needs an UPDATE policy too
 --  • you can delete words addressed to you (remove something unwanted)
 create policy "read submissions to me" on submissions for select using (
-  recipient_id = auth.uid() or author_id = auth.uid()
+  (recipient_id = auth.uid() and not is_blocked(auth.uid(), author_id))
+  or author_id = auth.uid()
 );
 create policy "insert my submissions" on submissions for insert with check (
-  author_id = auth.uid()
+  author_id = auth.uid() and not is_blocked(recipient_id, author_id)
 );
 create policy "update my submissions" on submissions for update
   using (author_id = auth.uid()) with check (author_id = auth.uid());
 create policy "delete submissions to me" on submissions for delete using (recipient_id = auth.uid());
--- Optional hardening (not required for the app to work): also block re-sends from
--- blocked users by adding "and not is_blocked(recipient_id, author_id)" to the
--- insert check, and "and not is_blocked(auth.uid(), author_id)" to the recipient
--- branch of the read policy. is_blocked() above is defined and ready for this.
 
 -- reports: you can file a report; only backend (service role) reads them.
 create policy "file my reports" on reports for insert with check (reporter_id = auth.uid());
