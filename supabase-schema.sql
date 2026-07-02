@@ -68,6 +68,15 @@ alter table submissions enable row level security;
 alter table reports     enable row level security;
 alter table blocks      enable row level security;
 
+-- Helper: does p_blocker block p_blocked? SECURITY DEFINER so it can see the
+-- relevant block rows regardless of who is asking (RLS on `blocks` only lets a
+-- user see their OWN blocks, so an inline subquery can't check someone else's).
+create or replace function is_blocked(p_blocker uuid, p_blocked uuid)
+returns boolean language sql security definer set search_path = public stable as $$
+  select exists (select 1 from blocks where blocker_id = p_blocker and blocked_id = p_blocked);
+$$;
+grant execute on function is_blocked(uuid, uuid) to authenticated;
+
 -- profiles: you can only see/change your OWN row. Looking up someone else's
 -- profile (to describe them) goes through find_profile_by_code() below, which
 -- returns only id + name — so the table is never publicly dumpable.
@@ -84,9 +93,9 @@ create policy "read submissions to me" on submissions for select using (
   recipient_id = auth.uid()
   and author_id not in (select blocked_id from blocks where blocker_id = auth.uid())
 );
-create policy "insert my submissions" on submissions for insert with check (
+create policy "insert my submissions" on submissions for insert to authenticated with check (
   author_id = auth.uid()
-  and author_id not in (select blocked_id from blocks where blocker_id = recipient_id)
+  and not is_blocked(recipient_id, author_id)
 );
 create policy "delete submissions to me" on submissions for delete using (recipient_id = auth.uid());
 
