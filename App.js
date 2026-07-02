@@ -8,8 +8,10 @@ import { StatusBar } from 'expo-status-bar';
 import { supabase, isConfigured } from './lib/supabase';
 
 // ---------- config ----------
-const LINK_BASE = 'threewords.app/i/';
-const inviteLink = (code) => `https://${LINK_BASE}${code}`;
+// Invite links resolve to a landing page (docs/invite/) that shows the code and
+// how to install the app. Recipients still enter the 6-char code in-app.
+const INVITE_BASE = 'https://dgerken00.github.io/three-words/invite/?c=';
+const inviteLink = (code) => `${INVITE_BASE}${code}`;
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
 const PRIVACY_URL = 'https://dgerken00.github.io/three-words/';
 const SUPPORT_EMAIL = 'dgerken@gmail.com';                   // published contact for reports
@@ -17,7 +19,7 @@ const SUPPORT_EMAIL = 'dgerken@gmail.com';                   // published contac
 // ---------- helpers ----------
 const extractCode = (text) => {
   const t = (text || '').toUpperCase();
-  const linkMatch = t.match(/\/I\/([A-Z2-9]{6})/);
+  const linkMatch = t.match(/[?&]C=([A-Z2-9]{6})/) || t.match(/\/I\/([A-Z2-9]{6})/);
   if (linkMatch) return linkMatch[1];
   const codeMatch = t.match(/\b[A-HJ-NP-Z2-9]{6}\b/);
   return codeMatch ? codeMatch[0] : t.replace(/[^A-Z2-9]/g, '').slice(0, 6);
@@ -487,8 +489,8 @@ export default function App() {
 
               <View style={styles.card}>
                 <Text style={styles.label}>YOUR INVITE</Text>
-                <Text style={{ fontFamily: SERIF, fontSize: 19, color: '#F5C95D', marginBottom: 12 }}>
-                  {LINK_BASE}{me.invite_code}
+                <Text style={{ fontFamily: SERIF, fontSize: 28, letterSpacing: 3, color: '#F5C95D', marginBottom: 12 }}>
+                  {me.invite_code}
                 </Text>
                 <Btn label="Share invite" onPress={shareInvite} />
                 <Text style={[styles.muted, { fontSize: 13, marginTop: 4 }]}>
