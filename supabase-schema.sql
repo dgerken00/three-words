@@ -23,16 +23,18 @@ create table profiles (
   id          uuid primary key references auth.users(id) on delete cascade,
   name        text not null check (char_length(name) between 1 and 40),
   invite_code text unique not null,
+  push_token  text,          -- Expo push token; null until the user grants permission
   created_at  timestamptz default now()
 );
 
 -- Three words from one user (author) about another (recipient).
--- display_name null = shown as "anonymous" to the recipient, but author_id is
--- always recorded so reporting and blocking can work.
+-- display_name null = shown as "anonymous" to the recipient. author_id is
+-- recorded for in-app sends (so reporting/blocking work) and null for
+-- no-install web submissions from the invite landing page.
 create table submissions (
   id            uuid primary key default gen_random_uuid(),
   recipient_id  uuid not null references profiles(id) on delete cascade,
-  author_id     uuid not null references profiles(id) on delete cascade,
+  author_id     uuid references profiles(id) on delete cascade,
   words         text[] not null check (array_length(words, 1) = 3),
   display_name  text,
   created_at    timestamptz default now(),
@@ -163,7 +165,66 @@ $$;
 
 grant execute on function create_my_profile(text)   to authenticated;
 grant execute on function find_profile_by_code(text) to authenticated;
+grant execute on function find_profile_by_code(text) to anon; -- invite landing page shows "Describe {name}"
 grant execute on function delete_my_account()        to authenticated;
+
+-- Anonymous, rate-limited, filtered submission endpoint for the invite page
+-- (no-install web describing). Full validation because callers are untrusted.
+create or replace function submit_words_web(p_code text, p_words text[], p_display_name text default null)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  rid uuid;
+  w text;
+  clean text[] := '{}';
+begin
+  select id into rid from profiles where invite_code = upper(trim(p_code));
+  if rid is null then raise exception 'invalid_code'; end if;
+  if array_length(p_words, 1) is distinct from 3 then raise exception 'need_three_words'; end if;
+  foreach w in array p_words loop
+    w := lower(regexp_replace(trim(w), '[^a-zA-Z''-]', '', 'g'));
+    if length(w) < 1 or length(w) > 20 then raise exception 'bad_word_length'; end if;
+    if w ~ '(fuck|nigg|cunt|faggot|bitch|whore|slut|retard)' then raise exception 'blocked_word'; end if;
+    clean := clean || w;
+  end loop;
+  if (select count(distinct x) from unnest(clean) x) < 3 then raise exception 'need_three_different_words'; end if;
+  if (select count(*) from submissions
+      where recipient_id = rid and author_id is null
+        and created_at > now() - interval '1 hour') >= 20 then
+    raise exception 'rate_limited';
+  end if;
+  insert into submissions (recipient_id, author_id, words, display_name)
+  values (rid, null, clean, nullif(trim(coalesce(p_display_name, '')), ''));
+end; $$;
+grant execute on function submit_words_web(text, text[], text) to anon;
+
+-- ─────────────────────────────────────────────────────────────
+-- 3b. Push notifications: ping the recipient when words arrive
+-- ─────────────────────────────────────────────────────────────
+create extension if not exists pg_net;
+
+create or replace function notify_recipient()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare tok text;
+begin
+  select push_token into tok from profiles where id = new.recipient_id;
+  if tok is not null and tok like 'ExponentPushToken%' then
+    perform net.http_post(
+      url := 'https://exp.host/--/api/v2/push/send',
+      headers := '{"Content-Type": "application/json"}'::jsonb,
+      body := jsonb_build_object(
+        'to', tok, 'title', 'three·words',
+        'body', 'Someone just described you 👀', 'sound', 'default'
+      )
+    );
+  end if;
+  return new;
+exception when others then
+  return new; -- a push failure must never block the submission
+end; $$;
+
+drop trigger if exists submissions_notify on submissions;
+create trigger submissions_notify after insert on submissions
+for each row execute function notify_recipient();
 
 -- ─────────────────────────────────────────────────────────────
 -- 4. Realtime: new submissions appear on the recipient's dashboard live

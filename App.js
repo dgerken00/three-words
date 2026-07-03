@@ -5,7 +5,22 @@ import {
   StyleSheet, ActivityIndicator, Switch, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import ViewShot from 'react-native-view-shot';
+import * as Sharing from 'expo-sharing';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import { supabase, isConfigured } from './lib/supabase';
+
+// Show notifications as banners while the app is open.
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 // ---------- config ----------
 // Invite links resolve to a landing page (docs/invite/) that shows the code and
@@ -104,6 +119,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState(false);
   const channelRef = useRef(null);
+  const cloudShotRef = useRef(null);
 
   // load the caller's profile row (null if not created yet)
   const loadProfile = useCallback(async (uid) => {
@@ -162,6 +178,30 @@ export default function App() {
     subs.forEach((s) => (s.words || []).forEach((w) => (c[w] = (c[w] || 0) + 1)));
     return c;
   }, [subs]);
+
+  // register for push once signed in with a profile ("someone described you")
+  useEffect(() => {
+    if (!me?.id) return;
+    (async () => {
+      try {
+        if (!Device.isDevice) return; // simulators can't receive push
+        if (Platform.OS === 'android') {
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.DEFAULT,
+          });
+        }
+        let { status } = await Notifications.getPermissionsAsync();
+        if (status !== 'granted') {
+          ({ status } = await Notifications.requestPermissionsAsync());
+        }
+        if (status !== 'granted') return; // fine — the app works without push
+        const projectId = Constants?.expoConfig?.extra?.eas?.projectId;
+        const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId });
+        if (token) await supabase.from('profiles').update({ push_token: token }).eq('id', me.id);
+      } catch {} // push is a nice-to-have; never let it break the app
+    })();
+  }, [me?.id]);
 
   // ---------- auth actions ----------
   const submitAuth = async () => {
@@ -237,14 +277,26 @@ export default function App() {
   const shareInvite = async () => {
     try {
       await Share.share({
-        message: `Describe me in three words 👀\nOpen three·words and enter my invite code: ${me.invite_code}\n${inviteLink(me.invite_code)}`,
+        message: `Describe me in three words 👀\n${inviteLink(me.invite_code)}\n(or enter my code ${me.invite_code} in the three·words app)`,
       });
+    } catch {}
+  };
+
+  const shareCloud = async () => {
+    try {
+      const uri = await cloudShotRef.current?.capture();
+      if (!uri) return;
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: 'Share my word cloud' });
+      } else {
+        await Share.share({ url: uri, message: inviteLink(me.invite_code) });
+      }
     } catch {}
   };
 
   // ---------- moderation ----------
   const moderateRow = (s) => {
-    Alert.alert('This entry', 'What would you like to do?', [
+    const actions = [
       {
         text: 'Report',
         style: 'destructive',
@@ -255,7 +307,10 @@ export default function App() {
           Alert.alert('Reported', `Thanks — we review reports within 24 hours. Reach us at ${SUPPORT_EMAIL}.`);
         },
       },
-      {
+    ];
+    // Web (no-install) entries have no account to block; report/remove still work.
+    if (s.author_id) {
+      actions.push({
         text: 'Block sender',
         style: 'destructive',
         onPress: async () => {
@@ -264,13 +319,16 @@ export default function App() {
           setSubs((prev) => prev.filter((x) => x.author_id !== s.author_id));
           Alert.alert('Blocked', 'They can no longer add words about you.');
         },
-      },
+      });
+    }
+    actions.push(
       { text: 'Remove', onPress: async () => {
           await supabase.from('submissions').delete().eq('id', s.id);
           setSubs((prev) => prev.filter((x) => x.id !== s.id));
         } },
       { text: 'Cancel', style: 'cancel' },
-    ]);
+    );
+    Alert.alert('This entry', 'What would you like to do?', actions);
   };
 
   // ---------- account ----------
@@ -488,28 +546,40 @@ export default function App() {
           {/* ---- DASHBOARD ---- */}
           {screen === 'dashboard' && me && (
             <View>
-              <Text style={styles.h1}>{me.name}'s cloud</Text>
-              <Text style={[styles.muted, { textAlign: 'center' }]}>
-                {subs.length === 0
-                  ? 'No words yet — send your first invite.'
-                  : `${subs.length} ${subs.length === 1 ? 'person has' : 'people have'} described you`}
-                {live ? '  ·  live' : ''}
-              </Text>
+              <ViewShot ref={cloudShotRef} options={{ format: 'png', quality: 1, result: 'tmpfile' }}>
+                <View style={{ backgroundColor: '#16141F', paddingVertical: 10, paddingHorizontal: 4 }}>
+                  <Text style={styles.h1}>{me.name}'s cloud</Text>
+                  <Text style={[styles.muted, { textAlign: 'center' }]}>
+                    {subs.length === 0
+                      ? 'No words yet — send your first invite.'
+                      : `${subs.length} ${subs.length === 1 ? 'person has' : 'people have'} described you`}
+                    {live ? '  ·  live' : ''}
+                  </Text>
 
-              {subs.length > 0 ? (
-                <WordCloud counts={counts} />
-              ) : (
-                <Text style={styles.emptyCloud}>your words will appear here</Text>
-              )}
+                  {subs.length > 0 ? (
+                    <WordCloud counts={counts} />
+                  ) : (
+                    <Text style={styles.emptyCloud}>your words will appear here</Text>
+                  )}
+
+                  {subs.length > 0 && (
+                    <Text style={{ color: '#6B6580', fontSize: 12, textAlign: 'center', marginTop: 2 }}>
+                      three·words  ·  describe me: {INVITE_BASE.replace('https://', '')}{me.invite_code}
+                    </Text>
+                  )}
+                </View>
+              </ViewShot>
+
+              {subs.length > 0 && <Btn label="Share my cloud" onPress={shareCloud} style={{ marginTop: 10 }} />}
 
               <View style={styles.card}>
                 <Text style={styles.label}>YOUR INVITE</Text>
                 <Text style={{ fontFamily: SERIF, fontSize: 28, letterSpacing: 3, color: '#F5C95D', marginBottom: 12 }}>
                   {me.invite_code}
                 </Text>
-                <Btn label="Share invite" onPress={shareInvite} />
+                <Btn ghost label="Share invite" onPress={shareInvite} />
                 <Text style={[styles.muted, { fontSize: 13, marginTop: 4 }]}>
-                  Share it only with people you trust — only they can add words.
+                  Anyone with your code can add words — share it with people you trust.
                 </Text>
               </View>
 

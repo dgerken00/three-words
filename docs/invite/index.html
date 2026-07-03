@@ -12,44 +12,107 @@
   main { max-width:440px; width:100%; padding:40px 24px; text-align:center; }
   .mark { color:#F5C95D; font-size:40px; }
   h1 { color:#F2EEE8; font-weight:400; font-size:26px; margin:6px 0 4px; }
+  h1 em { color:#F5C95D; font-style:normal; }
   p { color:#A9A3B8; margin:8px 0; }
-  .code { font-family:Georgia,serif; font-size:44px; letter-spacing:8px; color:#F5C95D;
-    background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:18px 10px; margin:22px 0 8px; }
-  .steps { text-align:left; background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:16px 20px; margin:20px 0; }
-  .steps li { margin:8px 0; color:#D6D1E0; }
-  a.btn { display:block; text-decoration:none; margin:10px 0; padding:14px;
-    border-radius:14px; font-weight:600; }
+  .card { background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:18px 20px; margin:18px 0; text-align:left; }
+  input { width:100%; box-sizing:border-box; background:#1B1827; border:1px solid #3D3852; color:#F2EEE8;
+    border-radius:12px; padding:13px 16px; font-size:16px; margin-bottom:10px; }
+  input::placeholder { color:#6B6580; }
+  button { width:100%; background:#F5C95D; color:#16141F; font-weight:700; font-size:16px;
+    border:0; border-radius:14px; padding:15px; cursor:pointer; margin-top:4px; }
+  button:disabled { opacity:.6; }
+  .err { color:#E88C9C; font-size:13px; margin:4px 0; }
+  a.btn { display:block; text-decoration:none; margin:10px 0; padding:14px; border-radius:14px; font-weight:600; }
   a.ios { background:#F5C95D; color:#16141F; }
   a.android { border:1px solid #3D3852; color:#F2EEE8; }
   .muted { font-size:13px; color:#6B6580; }
+  .code { font-family:Georgia,serif; font-size:26px; letter-spacing:5px; color:#F5C95D; }
+  #done { display:none; }
 </style>
 </head>
 <body>
 <main>
   <div class="mark">✳</div>
-  <h1>You're invited to three·words</h1>
-  <p>Someone wants to know how you'd describe them — in exactly three words.</p>
 
-  <p class="muted" style="margin-top:22px;">Their invite code</p>
-  <div class="code" id="code">······</div>
-
-  <div class="steps">
-    <strong style="color:#F2EEE8;">How to join</strong>
-    <ol class="steps" style="border:0;background:none;padding:0 0 0 18px;margin:8px 0 0;">
-      <li>Install the three·words app below.</li>
-      <li>Open it and sign up (email + password).</li>
-      <li>Tap <em>“I have an invite”</em> and enter the code above.</li>
-    </ol>
+  <div id="ask">
+    <h1>Describe <em id="who">them</em> in three words</h1>
+    <p id="sub">Be honest — that's the point. No app or account needed.</p>
+    <div class="card">
+      <input id="w1" placeholder="e.g. loyal" maxlength="20" autocapitalize="none" />
+      <input id="w2" placeholder="e.g. curious" maxlength="20" autocapitalize="none" />
+      <input id="w3" placeholder="e.g. stubborn" maxlength="20" autocapitalize="none" />
+      <input id="from" placeholder="Your name (optional — blank = anonymous)" maxlength="30" />
+      <div class="err" id="err"></div>
+      <button id="send">Send three words</button>
+    </div>
+    <p class="muted">Words are filtered for kindness and can be reported or removed by the recipient.</p>
   </div>
 
-  <a class="btn ios" href="https://testflight.apple.com/join/c6dsXDYk">Install on iPhone (TestFlight)</a>
-  <a class="btn android" href="https://expo.dev/artifacts/eas/qbiicMbrCoy8g31PjIH2cOdzAA5wWfkqCZgSDcwXuLY.apk">Install on Android (.apk)</a>
+  <div id="done">
+    <h1>Words sent ✳</h1>
+    <p id="donemsg">Your three words just joined their cloud.</p>
+    <div class="card" style="text-align:center;">
+      <p style="color:#F2EEE8; margin-top:0;">Now find out how people see <em style="color:#F5C95D; font-style:normal;">you</em>.</p>
+      <a class="btn ios" href="https://testflight.apple.com/join/c6dsXDYk">Get three·words on iPhone</a>
+      <a class="btn android" href="https://expo.dev/artifacts/eas/qbiicMbrCoy8g31PjIH2cOdzAA5wWfkqCZgSDcwXuLY.apk">Get it on Android (.apk)</a>
+    </div>
+  </div>
 
-  <p class="muted">iPhone installs through Apple's TestFlight app. Android downloads the app file directly — tap it to install.</p>
+  <p class="muted" style="margin-top:24px;">Invite code: <span class="code" id="code">······</span></p>
 </main>
 <script>
-  const c = new URLSearchParams(location.search).get('c');
-  if (c) document.getElementById('code').textContent = c.toUpperCase().slice(0,6);
+  const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
+  const HEADERS = { apikey: ANON_KEY, authorization: 'Bearer ' + ANON_KEY, 'content-type': 'application/json' };
+  const code = (new URLSearchParams(location.search).get('c') || '').toUpperCase().slice(0, 6);
+  document.getElementById('code').textContent = code || '······';
+
+  let recipient = null;
+  const BLOCKED = /(fuck|nigg|cunt|faggot|bitch|whore|slut|retard|shit|asshole|dickhead)/i;
+
+  async function rpc(fn, args) {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: 'POST', headers: HEADERS, body: JSON.stringify(args) });
+    const t = await r.text();
+    let j = null; try { j = t ? JSON.parse(t) : null; } catch {}
+    return { ok: r.ok, body: j };
+  }
+
+  (async () => {
+    if (!code) { document.getElementById('sub').textContent = 'Ask them for their invite link or 6-character code.'; return; }
+    const { body } = await rpc('find_profile_by_code', { p_code: code });
+    recipient = Array.isArray(body) ? body[0] : null;
+    if (recipient) {
+      document.getElementById('who').textContent = recipient.name;
+      document.getElementById('donemsg').textContent = `Your three words just joined ${recipient.name}'s cloud.`;
+    }
+  })();
+
+  document.getElementById('send').addEventListener('click', async () => {
+    const err = document.getElementById('err');
+    const words = ['w1','w2','w3'].map(id => document.getElementById(id).value.trim().toLowerCase());
+    err.textContent = '';
+    if (!code) { err.textContent = 'This link is missing its invite code — ask them to re-share it.'; return; }
+    if (words.some(w => !w)) { err.textContent = 'All three words are needed.'; return; }
+    if (words.some(w => w.includes(' '))) { err.textContent = 'One word each — no spaces.'; return; }
+    if (new Set(words).size < 3) { err.textContent = 'Three different words, please.'; return; }
+    if (words.some(w => BLOCKED.test(w))) { err.textContent = "Let's keep it kind — try different words."; return; }
+    const btn = document.getElementById('send');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    const name = document.getElementById('from').value.trim();
+    const { ok, body } = await rpc('submit_words_web', { p_code: code, p_words: words, p_display_name: name || null });
+    btn.disabled = false; btn.textContent = 'Send three words';
+    if (!ok) {
+      const msg = (body && body.message) || '';
+      err.textContent =
+        msg.includes('rate_limited') ? 'This cloud is getting a lot of words right now — try again in a bit.' :
+        msg.includes('blocked_word') ? "Let's keep it kind — try different words." :
+        msg.includes('invalid_code') ? 'This invite code is no longer valid.' :
+        "Couldn't send your words. Check the link and try again.";
+      return;
+    }
+    document.getElementById('ask').style.display = 'none';
+    document.getElementById('done').style.display = 'block';
+  });
 </script>
 </body>
 </html>

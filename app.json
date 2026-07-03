@@ -17,6 +17,7 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": ["expo-notifications"],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.davidgerken.threewords",
