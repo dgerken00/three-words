@@ -226,6 +226,32 @@ drop trigger if exists submissions_notify on submissions;
 create trigger submissions_notify after insert on submissions
 for each row execute function notify_recipient();
 
+-- Ping the admin's phone whenever a content report is filed (moderation SLA).
+-- Keys off the admin profile's invite code; update if the admin account changes.
+create or replace function notify_admin_on_report()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare tok text;
+begin
+  select push_token into tok from profiles where invite_code = 'HH36M3'; -- admin: Dave G
+  if tok is not null and tok like 'ExponentPushToken%' then
+    perform net.http_post(
+      url := 'https://exp.host/--/api/v2/push/send',
+      headers := '{"Content-Type": "application/json"}'::jsonb,
+      body := jsonb_build_object(
+        'to', tok, 'title', 'three·words moderation',
+        'body', 'A report was filed — review it in Supabase.', 'sound', 'default'
+      )
+    );
+  end if;
+  return new;
+exception when others then
+  return new;
+end; $$;
+
+drop trigger if exists reports_notify_admin on reports;
+create trigger reports_notify_admin after insert on reports
+for each row execute function notify_admin_on_report();
+
 -- ─────────────────────────────────────────────────────────────
 -- 4. Realtime: new submissions appear on the recipient's dashboard live
 -- (RLS still applies — users only receive events for rows they may read)
