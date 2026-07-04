@@ -40,7 +40,7 @@ Primary: Social Networking (iOS) / Social (Android)
 
 ## Support + marketing URLs
 - Support URL: https://threewordsapp.com (live)
-- Privacy policy URL: https://threewordsapp.com (live — see PRIVACY.md)
+- Privacy policy URL: https://threewordsapp.com/privacy/ (live — see PRIVACY.md)
 - Marketing URL (optional): https://threewordsapp.com
 
 ## Screenshots needed
@@ -94,8 +94,8 @@ No location, contacts, health, financials, browsing, or advertising data collect
 - Availability: your choice (all territories is fine).
 
 ## URLs for the listing
-- Support URL: `https://threewordsapp.com/` (or a dedicated support page)
-- Privacy Policy URL: `https://threewordsapp.com/`
+- Support URL: `https://threewordsapp.com/` (landing page)
+- Privacy Policy URL: `https://threewordsapp.com/privacy/`
 - (App Store Connect also has an optional EULA field — you can paste your Terms URL:
   `https://threewordsapp.com/terms/`)
 

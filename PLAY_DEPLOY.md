@@ -9,7 +9,7 @@ Assets ready in this repo:
 - App icon 512×512 → `store-assets/play-icon-512.png`
 - Feature graphic 1024×500 → `store-assets/play-feature-1024x500.png`
 - Listing copy → `STORE_LISTING.md` (short + full description)
-- Privacy policy URL → https://threewordsapp.com/
+- Privacy policy URL → https://threewordsapp.com/privacy/
 - Production `.aab` → built by EAS (`eas build -p android --profile production`)
 
 ## 1. Create the app (Play Console)
@@ -20,7 +20,7 @@ Assets ready in this repo:
 
 ## 2. Finish the "Set up your app" checklist (Dashboard)
 Work down the Dashboard checklist — every item must be done before any release:
-- **Privacy policy** → `https://threewordsapp.com/`
+- **Privacy policy** → `https://threewordsapp.com/privacy/`
 - **App access** → "All functionality is available without special access" is
   WRONG for us (login required). Choose **"All or some functionality is
   restricted"** and add credentials: `dgerken+appreview@gmail.com` / `ReviewMe2026!`

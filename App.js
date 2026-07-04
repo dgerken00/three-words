@@ -28,7 +28,7 @@ Notifications.setNotificationHandler({
 const INVITE_BASE = 'https://threewordsapp.com/invite/?c=';
 const inviteLink = (code) => `${INVITE_BASE}${code}`;
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
-const PRIVACY_URL = 'https://threewordsapp.com/';
+const PRIVACY_URL = 'https://threewordsapp.com/privacy/';
 const TERMS_URL = 'https://threewordsapp.com/terms/';
 const SUPPORT_EMAIL = 'admin@threewordsapp.com';                   // published contact for reports
 
