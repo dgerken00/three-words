@@ -59,7 +59,7 @@ eas init                      # links this repo to an EAS project; fills app.jso
       (GitHub Pages, Cloudflare Pages, or Netlify Drop), then set `PRIVACY_URL` in
       `App.js` to that live address. Both stores require a reachable URL. The
       current value is a placeholder.
-- [ ] **Support email** — `SUPPORT_EMAIL` in `App.js` is `dgerken@gmail.com`.
+- [ ] **Support email** — `SUPPORT_EMAIL` in `App.js` is `admin@threewordsapp.com`.
       Make sure that inbox exists and is monitored (needed for the UGC review).
 - [ ] **eas.json submit block** — replace the `REPLACE_WITH_*` Apple values and add
       your Google Play service-account JSON (see step 7).
@@ -119,7 +119,7 @@ controls — make sure you can point the reviewer to each:
 - [x] **Filter objectionable content** — automatic profanity filter at submission (`App.js`).
 - [x] **Report mechanism** — the ⋯ menu on any received words → Report.
 - [x] **Block abusive users** — the ⋯ menu → Block sender.
-- [x] **Published contact** — dgerken@gmail.com, shown in Account and this policy.
+- [x] **Published contact** — admin@threewordsapp.com, shown in Account and this policy.
 - [x] **Account deletion** — Account → Delete my account (Apple requires this).
 - [ ] **Provide a test account** in App Review notes (email + password) so the
       reviewer can sign in. Paste the "notes for reviewer" text from `STORE_LISTING.md`.

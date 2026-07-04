@@ -4,7 +4,7 @@ _Last updated: 1 July 2026_
 
 three·words ("the app", "we", "us") lets people describe each other in three
 words. This policy explains what we collect, why, and your choices. Questions:
-**dgerken@gmail.com**.
+**admin@threewordsapp.com**.
 
 ## What we collect
 
@@ -45,7 +45,7 @@ work; it is never shown to the recipient.
   This permanently removes your profile and all words to and from you.
 - **Block** any sender to stop them contacting you and hide their words.
 - **Report** any words for review; we respond to reports within 24 hours.
-- **Access or correction** — email dgerken@gmail.com.
+- **Access or correction** — email admin@threewordsapp.com.
 
 ## Children
 
@@ -58,4 +58,4 @@ We may update this policy; material changes will be noted here with a new date.
 
 ## Contact
 
-dgerken@gmail.com
+admin@threewordsapp.com

@@ -30,7 +30,7 @@ const inviteLink = (code) => `${INVITE_BASE}${code}`;
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
 const PRIVACY_URL = 'https://dgerken00.github.io/three-words/';
 const TERMS_URL = 'https://dgerken00.github.io/three-words/terms/';
-const SUPPORT_EMAIL = 'dgerken@gmail.com';                   // published contact for reports
+const SUPPORT_EMAIL = 'admin@threewordsapp.com';                   // published contact for reports
 
 // ---------- helpers ----------
 const extractCode = (text) => {
