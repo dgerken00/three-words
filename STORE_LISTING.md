@@ -39,9 +39,9 @@ Primary: Social Networking (iOS) / Social (Android)
   block). Under-rating a UGC app is a common rejection reason.
 
 ## Support + marketing URLs
-- Support URL: https://threewords.app/support (must be live)
-- Privacy policy URL: https://threewords.app/privacy (must be live — see PRIVACY.md)
-- Marketing URL (optional): https://threewords.app
+- Support URL: https://threewordsapp.com (live)
+- Privacy policy URL: https://threewordsapp.com (live — see PRIVACY.md)
+- Marketing URL (optional): https://threewordsapp.com
 
 ## Screenshots needed
 - **iOS**: 6.7" (1290×2796) and 6.5" (1242×2688) — 3–5 each.
@@ -57,7 +57,7 @@ Primary: Social Networking (iOS) / Social (Android)
 > removed immediately and reviewed within 24 hours at admin@threewordsapp.com.
 > Test account: dgerken+appreview@gmail.com / ReviewMe2026! (has a populated cloud).
 > Users agree to Terms with a zero-tolerance clause at sign-up
-> (https://dgerken00.github.io/three-words/terms/).
+> (https://threewordsapp.com/terms/).
 
 ---
 
@@ -94,10 +94,10 @@ No location, contacts, health, financials, browsing, or advertising data collect
 - Availability: your choice (all territories is fine).
 
 ## URLs for the listing
-- Support URL: `https://dgerken00.github.io/three-words/` (or a dedicated support page)
-- Privacy Policy URL: `https://dgerken00.github.io/three-words/`
+- Support URL: `https://threewordsapp.com/` (or a dedicated support page)
+- Privacy Policy URL: `https://threewordsapp.com/`
 - (App Store Connect also has an optional EULA field — you can paste your Terms URL:
-  `https://dgerken00.github.io/three-words/terms/`)
+  `https://threewordsapp.com/terms/`)
 
 ## Likely rejection risks to pre-empt
 - **Guideline 1.2 (UGC):** covered — filter + report + block + 24h contact + Terms

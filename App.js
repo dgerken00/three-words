@@ -25,11 +25,11 @@ Notifications.setNotificationHandler({
 // ---------- config ----------
 // Invite links resolve to a landing page (docs/invite/) that shows the code and
 // how to install the app. Recipients still enter the 6-char code in-app.
-const INVITE_BASE = 'https://dgerken00.github.io/three-words/invite/?c=';
+const INVITE_BASE = 'https://threewordsapp.com/invite/?c=';
 const inviteLink = (code) => `${INVITE_BASE}${code}`;
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
-const PRIVACY_URL = 'https://dgerken00.github.io/three-words/';
-const TERMS_URL = 'https://dgerken00.github.io/three-words/terms/';
+const PRIVACY_URL = 'https://threewordsapp.com/';
+const TERMS_URL = 'https://threewordsapp.com/terms/';
 const SUPPORT_EMAIL = 'admin@threewordsapp.com';                   // published contact for reports
 
 // ---------- helpers ----------
@@ -480,7 +480,7 @@ export default function App() {
               <Text style={styles.muted}>An invite link or a 6-character code.</Text>
               <TextInput
                 style={[styles.input, { textAlign: 'center' }]}
-                placeholder="threewords.app/i/ABC123 or ABC123"
+                placeholder="a shared link or code like ABC123"
                 placeholderTextColor="#6B6580"
                 autoCapitalize="characters"
                 value={codeInput}
