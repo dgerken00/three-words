@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "830521317423",
+    "project_id": "three-words-a0117",
+    "storage_bucket": "three-words-a0117.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830521317423:android:64442ddb565f5b015d0eda",
+        "android_client_info": {
+          "package_name": "com.davidgerken.threewords"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL1TYX1fcTcjR5vwXO2JJ6KWE7wSAjEDY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
