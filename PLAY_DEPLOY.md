@@ -71,9 +71,11 @@ First upload must be manual (step 3). For future releases:
   `./play-service-account.json` (gitignored).
 - Then: `eas submit -p android --profile production` uploads new builds directly.
 
-## Android push notifications (deferred)
-Android push requires Firebase Cloud Messaging (FCM) credentials wired into EAS.
-Until then Android users get everything except the "someone described you" push
-(the app degrades gracefully). To add: create a Firebase project for
-`com.davidgerken.threewords`, then `eas credentials -p android` → upload the FCM
-V1 service account key.
+## Android push notifications (configured 2026-07-04)
+Firebase project `three-words-a0117` provides FCM; `google-services.json` is
+committed and wired via `expo.android.googleServicesFile`, and builds from this
+date onward are push-capable. Server-side delivery requires the **FCM V1 service
+account key** uploaded at expo.dev → three-words → Credentials → Android (a
+Workspace org policy blocks key generation by default — override
+"Disable service account key creation" for the project, generate, upload,
+optionally re-enable the policy; existing keys keep working).
