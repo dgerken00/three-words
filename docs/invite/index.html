@@ -107,7 +107,10 @@
         msg.includes('rate_limited') ? 'This cloud is getting a lot of words right now — try again in a bit.' :
         msg.includes('blocked_word') ? "Let's keep it kind — try different words." :
         msg.includes('invalid_code') ? 'This invite code is no longer valid.' :
-        "Couldn't send your words. Check the link and try again.";
+        msg.includes('need_three_different_words') ? 'Those words are too similar once simplified (letters only, no numbers/symbols) — try three that are more different.' :
+        msg.includes('bad_word_length') ? 'Each word should be a single word, 1–20 letters.' :
+        msg.includes('need_three_words') ? 'All three words are needed.' :
+        "Couldn't send your words. Try again in a moment.";
       return;
     }
     document.getElementById('ask').style.display = 'none';
