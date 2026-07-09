@@ -6,8 +6,8 @@
 |------|--------|--------|
 | 2026-07-09 | Closed track approved by Google (same-day), live in 177 countries | ✅ |
 | 2026-07-09 | Reddit post to r/AndroidClosedTesting | ❌ removed — account too new (AutoModerator gate) |
-| 2026-07-09 | Swap-offer comments on other devs' posts in r/AndroidClosedTesting | 🟡 posted, awaiting DMs/replies |
-| 2026-07-09 | Modmail to r/AndroidClosedTesting asking for manual post approval | ⬜ to send (template in chat) |
+| 2026-07-09 | Swap-offer comments on other devs' posts in r/AndroidClosedTesting | 🟡 posted, confirmed publicly visible (incognito check), awaiting DMs/replies |
+| 2026-07-09 | Modmail to r/AndroidClosedTesting asking for manual post approval | 🟡 sent, awaiting mod response |
 | 2026-07-09 | Testers Community signup + post | ⬜ to do |
 | | Re-post to r/AndroidClosedTesting once account clears the gate | ⬜ later |
 
