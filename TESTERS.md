@@ -10,7 +10,7 @@
 | 2026-07-09 | Modmail to r/AndroidClosedTesting asking for manual post approval | 🟡 sent, awaiting mod response |
 | 2026-07-09 | SwapTest (swaptest.net) account created; app listing being submitted | 🟡 matching typically 24–72h |
 | 2026-07-09 | Play Console track switched from email list → Google Group swaptest-testers@googlegroups.com; sent for review | 🟡 pending review (last one cleared same-day) |
-| 2026-07-09 | David joining swaptest-testers@googlegroups.com as dgerken@gmail.com | 🟡 hit permission error — retry with correct account selected |
+| 2026-07-09 | David joined swaptest-testers@googlegroups.com as dgerken@gmail.com | ✅ confirmed via "My groups" (conversations view is locked for members — normal, irrelevant) |
 | 2026-07-09 | Testers Community (testerscommunity.com) — backup if SwapTest slow | ⬜ hold |
 | | Re-post to r/AndroidClosedTesting once account clears the gate | ⬜ later |
 
