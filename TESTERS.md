@@ -8,7 +8,8 @@
 | 2026-07-09 | Reddit post to r/AndroidClosedTesting | ❌ removed — account too new (AutoModerator gate) |
 | 2026-07-09 | Swap-offer comments on other devs' posts in r/AndroidClosedTesting | 🟡 posted, confirmed publicly visible (incognito check), awaiting DMs/replies |
 | 2026-07-09 | Modmail to r/AndroidClosedTesting asking for manual post approval | 🟡 sent, awaiting mod response |
-| 2026-07-09 | Testers Community signup + post | ⬜ to do |
+| 2026-07-09 | SwapTest (swaptest.net) account created; app listing being submitted | 🟡 matching typically 24–72h |
+| 2026-07-09 | Testers Community (testerscommunity.com) — backup if SwapTest slow | ⬜ hold |
 | | Re-post to r/AndroidClosedTesting once account clears the gate | ⬜ later |
 
 **Current opted-in count: 1 / 12** (baseline: own account)
