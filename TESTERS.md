@@ -9,7 +9,8 @@
 | 2026-07-09 | Swap-offer comments on other devs' posts in r/AndroidClosedTesting | 🟡 posted, confirmed publicly visible (incognito check), awaiting DMs/replies |
 | 2026-07-09 | Modmail to r/AndroidClosedTesting asking for manual post approval | 🟡 sent, awaiting mod response |
 | 2026-07-09 | SwapTest (swaptest.net) account created; app listing being submitted | 🟡 matching typically 24–72h |
-| 2026-07-09 | Play Console track switched from email list → Google Group swaptest-testers@googlegroups.com; sent for review | 🟡 pending review (last one cleared same-day) |
+| 2026-07-09 | Play Console track switched from email list → Google Group swaptest-testers@googlegroups.com; sent for review | ✅ approved + published Jul 10 |
+| 2026-07-10 | three·words listed on SwapTest (via website in incognito — an extension blocks their Google OAuth popup in normal Chrome) | ✅ in matching queue (typ. 24–72h) |
 | 2026-07-09 | David joined swaptest-testers@googlegroups.com as dgerken@gmail.com | ✅ confirmed via "My groups" (conversations view is locked for members — normal, irrelevant) |
 | 2026-07-09 | Testers Community (testerscommunity.com) — backup if SwapTest slow | ⬜ hold |
 | | Re-post to r/AndroidClosedTesting once account clears the gate | ⬜ later |
