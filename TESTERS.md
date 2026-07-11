@@ -21,6 +21,7 @@
 |------|-------|------|
 | 2026-07-10 | 1/12 | own opt-in only |
 | 2026-07-11 | 10/12 | SwapTest wave |
+| 2026-07-11 | **12/12 ✅** | requirement checked off — **14-DAY CLOCK STARTED 2026-07-11** |
 
 Google requires **12+ testers opted in continuously for 14 days** before we can
 apply for production access. Recruit to 15–16 for dropout buffer.
@@ -52,8 +53,9 @@ apply for production access. Recruit to 15–16 for dropout buffer.
 
 ## Clock
 
-- [ ] 12+ opted in simultaneously — **date reached:** ____
-- [ ] Day 14: ____ → apply for production access (banner on Play Console dashboard)
+- [x] 12+ opted in simultaneously — **date reached: 2026-07-11**
+- [ ] Day 14: **~2026-07-25** → "Apply for production" button activates on the dashboard
+- Daily job until then: keep proofs/approvals current in SwapTest so no partner opts out (below 12 = clock reset)
 
 ## Reciprocity rules of thumb
 
