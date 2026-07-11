@@ -15,7 +15,7 @@
 | 2026-07-09 | Testers Community (testerscommunity.com) — backup if SwapTest slow | ⬜ hold |
 | | Re-post to r/AndroidClosedTesting once account clears the gate | ⬜ later |
 
-**Current opted-in count: 1 / 12** (baseline: own account)
+**Current opted-in count: 1 / 12** — dashboard literal count as of 2026-07-10 (David opted into the CLOSED track via web on 2026-07-10; note the internal-track opt-in did NOT carry over, and the dashboard briefly showed 0 before this. SwapTest matches: none yet, within their 24–72h window.)
 
 Google requires **12+ testers opted in continuously for 14 days** before we can
 apply for production access. Recruit to 15–16 for dropout buffer.
