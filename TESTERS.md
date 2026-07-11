@@ -15,7 +15,12 @@
 | 2026-07-09 | Testers Community (testerscommunity.com) — backup if SwapTest slow | ⬜ hold |
 | | Re-post to r/AndroidClosedTesting once account clears the gate | ⬜ later |
 
-**Current opted-in count: 1 / 12** — dashboard literal count as of 2026-07-10 (David opted into the CLOSED track via web on 2026-07-10; note the internal-track opt-in did NOT carry over, and the dashboard briefly showed 0 before this. SwapTest matches: none yet, within their 24–72h window.)
+**Current opted-in count: 10 / 12** — Play dashboard as of 2026-07-11. SwapTest slots 12/12 claimed; 9 converted to Play opt-ins so far + David. First reciprocal swap active: "OutLoud - Caller Voice" (Day 1 of 14, proof upload pending on David's side). 2 more opt-ins → 14-day clock starts.
+
+| Date | Count | Note |
+|------|-------|------|
+| 2026-07-10 | 1/12 | own opt-in only |
+| 2026-07-11 | 10/12 | SwapTest wave |
 
 Google requires **12+ testers opted in continuously for 14 days** before we can
 apply for production access. Recruit to 15–16 for dropout buffer.
