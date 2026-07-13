@@ -57,6 +57,14 @@ apply for production access. Recruit to 15–16 for dropout buffer.
 - [ ] Day 14: **~2026-07-25** → "Apply for production" button activates on the dashboard
 - Daily job until then: keep proofs/approvals current in SwapTest so no partner opts out (below 12 = clock reset)
 
+## Welcome words sent to testers
+
+Kind 3-word sets sent via web endpoint, signed "Dave (three·words dev)" — gives testers the full loop (push + cloud).
+
+| Date | Invite code | Profile name | Words sent |
+|------|-------------|--------------|------------|
+| 2026-07-12 | NSGDXM | Asdf | curious · thorough · helpful |
+
 ## Reciprocity rules of thumb
 
 - Join their test the same day you promise it; keep their app 14 days.
