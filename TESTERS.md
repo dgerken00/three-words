@@ -64,6 +64,7 @@ Kind 3-word sets sent via web endpoint, signed "Dave (three·words dev)" — giv
 | Date | Invite code | Profile name | Words sent |
 |------|-------------|--------------|------------|
 | 2026-07-12 | NSGDXM | Asdf | curious · thorough · helpful |
+| 2026-07-12 | 4Z2JA9 | Pedro | generous · sharp · dependable |
 
 ## Reciprocity rules of thumb
 
