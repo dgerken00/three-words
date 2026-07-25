@@ -54,8 +54,9 @@ apply for production access. Recruit to 15–16 for dropout buffer.
 ## Clock
 
 - [x] 12+ opted in simultaneously — **date reached: 2026-07-11**
-- [ ] Day 14: **~2026-07-25** → "Apply for production" button activates on the dashboard
-- Daily job until then: keep proofs/approvals current in SwapTest so no partner opts out (below 12 = clock reset)
+- [x] Day 14 reached; **PRODUCTION ACCESS APPLICATION SUBMITTED 2026-07-25, 6:54 AM** (decision usually ≤7 days)
+- Until approval AND production launch: keep 12+ opted in and keep servicing SwapTest swaps — don't dismantle the closed test early
+- On approval: promote release to Production → swap site Android buttons to Play Store link → retire GitHub APK
 
 ## Welcome words sent to testers
 
