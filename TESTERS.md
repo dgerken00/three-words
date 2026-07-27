@@ -57,6 +57,8 @@ apply for production access. Recruit to 15–16 for dropout buffer.
 - [x] Day 14 reached; **PRODUCTION ACCESS APPLICATION SUBMITTED 2026-07-25, 6:54 AM** (decision usually ≤7 days)
 - [x] **PRODUCTION ACCESS GRANTED** (confirmed 2026-07-28)
 - [x] **PRODUCTION RELEASE 3 (1.0.0) SUBMITTED FOR REVIEW 2026-07-28** — 177 countries, full rollout, managed publishing OFF (goes live automatically when review clears)
+- [x] 🚀 **LIVE ON GOOGLE PLAY 2026-07-28** (same-day review) — mission accomplished; site buttons now point at the Play listing
+- Wind-down: finish active SwapTest cycles honorably, then stop; closed test can remain configured (harmless)
 - Until approval AND production launch: keep 12+ opted in and keep servicing SwapTest swaps — don't dismantle the closed test early
 - On approval: promote release to Production → swap site Android buttons to Play Store link → retire GitHub APK
 
