@@ -21,6 +21,12 @@
   .card { background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:20px 22px; margin:26px 0; }
   .cta { display:block; max-width:380px; margin:14px auto 6px; padding:15px; border-radius:14px;
     background:#F5C95D; color:#16141F; text-align:center; text-decoration:none; font-weight:600; }
+  .cloud { display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+    gap:6px 14px; max-width:520px; margin:10px auto 6px; padding:24px 12px;
+    font-family:Georgia,serif; }
+  .cloud span { display:inline-block; }
+  .cloud .n { font-size:12px; color:#8B8698; vertical-align:super; margin-left:1px; font-family:-apple-system,sans-serif; }
+  .caption { text-align:center; font-family:Georgia,serif; font-style:italic; color:#4E4963; font-size:15px; margin:0 0 8px; }
   .muted { color:#8B8698; font-size:14px; }
   footer { margin-top:48px; padding-top:20px; border-top:1px solid #2A2639; color:#7C7690; font-size:14px; text-align:center; }
   footer a { margin:0 8px; }
@@ -68,6 +74,18 @@
   <p>One person's three words is a compliment. Twenty people's words, gathered together, is a
   portrait — and the repeats (the words three or four people chose independently) are the
   truest thing anyone will ever tell them about themselves.</p>
+
+  <div class="cloud" aria-label="Example word cloud">
+    <span style="font-size:38px;color:#F5C95D;font-weight:600;">loyal<span class="n">5</span></span>
+    <span style="font-size:21px;color:#8FB8C9;transform:rotate(-2deg);">perceptive</span>
+    <span style="font-size:30px;color:#E88C9C;font-weight:600;transform:rotate(1.5deg);">funny<span class="n">3</span></span>
+    <span style="font-size:19px;color:#A8D8B0;">grounded</span>
+    <span style="font-size:25px;color:#C9A6E8;transform:rotate(-1deg);">brave<span class="n">2</span></span>
+    <span style="font-size:20px;color:#F5C95D;transform:rotate(2deg);">radiant</span>
+    <span style="font-size:23px;color:#A8D8B0;transform:rotate(-2deg);">honest<span class="n">2</span></span>
+    <span style="font-size:18px;color:#8FB8C9;">curious</span>
+  </div>
+  <p class="caption">— one friend's cloud, twelve people in</p>
   <div class="card" style="text-align:center;">
     <p style="color:#F2EEE8; margin-top:0;">three·words collects three honest words from
     everyone you invite — named or anonymous — and builds them into a live word cloud.

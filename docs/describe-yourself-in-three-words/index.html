@@ -21,6 +21,12 @@
   .words { font-family:Georgia,serif; color:#F2EEE8; line-height:2; }
   .cta { display:block; max-width:380px; margin:14px auto 6px; padding:15px; border-radius:14px;
     background:#F5C95D; color:#16141F; text-align:center; text-decoration:none; font-weight:600; }
+  .cloud { display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+    gap:6px 14px; max-width:520px; margin:10px auto 6px; padding:24px 12px;
+    font-family:Georgia,serif; }
+  .cloud span { display:inline-block; }
+  .cloud .n { font-size:12px; color:#8B8698; vertical-align:super; margin-left:1px; font-family:-apple-system,sans-serif; }
+  .caption { text-align:center; font-family:Georgia,serif; font-style:italic; color:#4E4963; font-size:15px; margin:0 0 8px; }
   .muted { color:#8B8698; font-size:14px; }
   footer { margin-top:48px; padding-top:20px; border-top:1px solid #2A2639; color:#7C7690; font-size:14px; text-align:center; }
   footer a { margin:0 8px; }
@@ -71,6 +77,18 @@
   <h2>What would other people say?</h2>
   <p>The most credible answer to "describe yourself in three words" is the one that matches
   what the people who know you would say — and there's exactly one way to find out: ask them.</p>
+
+  <div class="cloud" aria-label="Example word cloud">
+    <span style="font-size:36px;color:#F5C95D;font-weight:600;">thorough<span class="n">4</span></span>
+    <span style="font-size:20px;color:#8FB8C9;transform:rotate(-2deg);">calm</span>
+    <span style="font-size:29px;color:#E88C9C;font-weight:600;transform:rotate(1.5deg);">curious<span class="n">3</span></span>
+    <span style="font-size:19px;color:#A8D8B0;">direct</span>
+    <span style="font-size:24px;color:#C9A6E8;transform:rotate(-1deg);">dependable<span class="n">2</span></span>
+    <span style="font-size:20px;color:#F5C95D;transform:rotate(2deg);">wry</span>
+    <span style="font-size:22px;color:#A8D8B0;transform:rotate(-2deg);">inventive<span class="n">2</span></span>
+    <span style="font-size:18px;color:#8FB8C9;">patient</span>
+  </div>
+  <p class="caption">— what ten colleagues and friends actually said</p>
   <div class="card" style="text-align:center;">
     <p style="color:#F2EEE8; margin-top:0;">three·words sends your people a link. Each writes
     three honest words about you — named or anonymous — and the answers build into a live word
