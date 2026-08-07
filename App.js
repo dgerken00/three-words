@@ -27,6 +27,8 @@ Notifications.setNotificationHandler({
 // how to install the app. Recipients still enter the 6-char code in-app.
 const INVITE_BASE = 'https://threewordsapp.com/invite/?c=';
 const inviteLink = (code) => `${INVITE_BASE}${code}`;
+// faded example shown in the empty state so new users see the payoff before it's real
+const SAMPLE_CLOUD = { kind: 3, funny: 2, loyal: 2, curious: 1, honest: 1, warm: 1 };
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
 const PRIVACY_URL = 'https://threewordsapp.com/privacy/';
 const TERMS_URL = 'https://threewordsapp.com/terms/';
@@ -551,7 +553,7 @@ export default function App() {
                   <Text style={styles.h1}>{me.name}'s cloud</Text>
                   <Text style={[styles.muted, { textAlign: 'center' }]}>
                     {subs.length === 0
-                      ? 'No words yet — send your first invite.'
+                      ? 'Your cloud is empty until someone describes you.'
                       : `${subs.length} ${subs.length === 1 ? 'person has' : 'people have'} described you`}
                     {live ? '  ·  live' : ''}
                   </Text>
@@ -559,7 +561,10 @@ export default function App() {
                   {subs.length > 0 ? (
                     <WordCloud counts={counts} />
                   ) : (
-                    <Text style={styles.emptyCloud}>your words will appear here</Text>
+                    <View style={{ opacity: 0.4 }} pointerEvents="none">
+                      <WordCloud counts={SAMPLE_CLOUD} />
+                      <Text style={styles.sampleCaption}>— how it looks once a few people answer</Text>
+                    </View>
                   )}
 
                   {subs.length > 0 && (
@@ -571,6 +576,16 @@ export default function App() {
               </ViewShot>
 
               {subs.length > 0 && <Btn label="Share my cloud" onPress={shareCloud} style={{ marginTop: 10 }} />}
+
+              {subs.length === 0 && (
+                <View style={{ marginTop: 10 }}>
+                  <Btn label="Share your invite link" onPress={shareInvite} />
+                  <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 8 }]}>
+                    Three people is enough for a real cloud — and they don't need the app.
+                    Your link works in any browser.
+                  </Text>
+                </View>
+              )}
 
               <View style={styles.card}>
                 <Text style={styles.label}>YOUR INVITE</Text>
@@ -681,6 +696,7 @@ const styles = StyleSheet.create({
     paddingVertical: 26, paddingHorizontal: 8,
   },
   emptyCloud: { fontFamily: SERIF, fontStyle: 'italic', fontSize: 21, color: '#4E4963', textAlign: 'center', paddingVertical: 44 },
+  sampleCaption: { fontFamily: SERIF, fontStyle: 'italic', fontSize: 13, color: '#8B8698', textAlign: 'center', marginBottom: 8 },
   recentRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 9 },
   footerRow: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginTop: 14 },
   footerLink: { color: '#6B6580', fontSize: 13, textAlign: 'center' },
