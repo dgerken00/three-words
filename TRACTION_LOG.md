@@ -27,14 +27,26 @@ STATUS: RUNNING
 ## Metrics history (auto-appended each tick)
 | Date | Signups (total) | Signups (7d) | Words (total) | Words (7d) | Push-enabled | Notes |
 |------|-----------------|--------------|---------------|------------|--------------|-------|
+| 2026-08-24 | 21 | 0 | 23 | 0 | 10 | First automated RPC pull. 6 in-app senders. Total (21) is higher than the 2026-08-08 baseline note (9) — may be real growth, may be a different counting basis (RPC likely counts all signups ever, baseline may have counted a subset). Treat this row as the real baseline; trend starts next tick. Both 7-day counters are 0 — nothing moved this week. |
 
 ## Action log (auto-appended)
 | Date | Action | Result |
 |------|--------|--------|
 | 2026-08-08 | Loop initialized | Baseline recorded |
+| 2026-08-24 | Monday SEO page: published /words-to-describe-a-teacher/ | New page live (back-to-school timing); added to sitemap.xml; contextual inbound link added from /words-to-describe-someone/. HTML + sitemap validated. |
 
 ## DRAFT QUEUE (for David — post yourself, as yourself, then move to Done)
-_(empty)_
+
+**No post drafts this week** (drafts are scouted on Fridays).
+
+**Note for David — install numbers are stale.** The last store figures in this log are from
+2026-08-06 (~20 Play / 6 iOS). Half the goal is "100 cumulative installs" and I can't read the
+consoles, so that half is currently unmeasured. Next time you're in Play Console / App Store
+Connect, add a row to the "Last-known store numbers" table above.
+
+**Note for David — signup count discrepancy.** The database says 21 total signups; the 2026-08-08
+baseline in this log said 9. Worth a glance to confirm which is right — it changes how far along
+we actually are toward the ≥40 signups half of the goal.
 
 ### Done
 _(none yet)_
