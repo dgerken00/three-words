@@ -9,6 +9,8 @@ import ViewShot from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
 import Constants from 'expo-constants';
 import { supabase, isConfigured } from './lib/supabase';
 
@@ -120,8 +122,51 @@ export default function App() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState(false);
+  const [appleAvailable, setAppleAvailable] = useState(false);
   const channelRef = useRef(null);
   const cloudShotRef = useRef(null);
+
+  // Sign in with Apple is iOS-only; check device support once.
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      AppleAuthentication.isAvailableAsync().then(setAppleAvailable).catch(() => {});
+    }
+  }, []);
+
+  const appleSignIn = async () => {
+    setError('');
+    setBusy(true);
+    try {
+      // Supabase requires a nonce: raw goes to Supabase, SHA-256 of it goes to Apple.
+      const rawNonce = Array.from(await Crypto.getRandomBytesAsync(32))
+        .map((b) => b.toString(16).padStart(2, '0')).join('');
+      const hashedNonce = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256, rawNonce
+      );
+      const cred = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+        nonce: hashedNonce,
+      });
+      if (!cred.identityToken) throw new Error('missing-token');
+      // Apple only provides the name on first authorization; prefill the profile screen.
+      if (cred.fullName?.givenName) setNameInput(cred.fullName.givenName);
+      const { error: err } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: cred.identityToken,
+        nonce: rawNonce,
+      });
+      if (err) setError(err.message);
+    } catch (e) {
+      if (e?.code !== 'ERR_REQUEST_CANCELED') {
+        setError("Apple sign-in didn't complete — you can also use email below.");
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
 
   // load the caller's profile row (null if not created yet)
   const loadProfile = useCallback(async (uid) => {
@@ -399,12 +444,30 @@ export default function App() {
               <Text style={styles.hero}>
                 How do your friends <Text style={{ fontStyle: 'italic', color: '#F5C95D' }}>really</Text> see you?
               </Text>
-              <Text style={[styles.muted, { textAlign: 'center', marginBottom: 24 }]}>
+              <View style={{ opacity: 0.45 }} pointerEvents="none">
+                <WordCloud counts={SAMPLE_CLOUD} />
+                <Text style={styles.sampleCaption}>an example — yours gets built by your people</Text>
+              </View>
+              <Text style={[styles.muted, { textAlign: 'center', marginBottom: 18 }]}>
                 {mode === 'signUp'
-                  ? 'Create an account to start your word cloud.'
+                  ? 'They send three honest words each. You get the cloud.'
                   : 'Sign in to see your words and describe others.'}
               </Text>
               <View style={styles.card}>
+                {appleAvailable && (
+                  <>
+                    <AppleAuthentication.AppleAuthenticationButton
+                      buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+                      buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE}
+                      cornerRadius={14}
+                      style={{ height: 48, marginBottom: 12 }}
+                      onPress={appleSignIn}
+                    />
+                    <Text style={{ color: '#6B6580', fontSize: 12, textAlign: 'center', marginBottom: 12 }}>
+                      or with email
+                    </Text>
+                  </>
+                )}
                 <TextInput
                   style={styles.input}
                   placeholder="Email"

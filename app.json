@@ -3,7 +3,7 @@
     "name": "three words",
     "slug": "three-words",
     "scheme": "threewords",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#16141F",
@@ -17,10 +17,11 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "plugins": ["expo-notifications"],
+    "plugins": ["expo-notifications", "expo-apple-authentication"],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.davidgerken.threewords",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
