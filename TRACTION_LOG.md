@@ -56,6 +56,16 @@ Connect, add a row to the "Last-known store numbers" table above.
 21 = all signups ever (what get_growth_stats returns); 9 = signups since 2026-07-11 only (a
 filtered query run during the closed test). Use **21 as the real total**; goal is ≥40.
 
+**KEY FINDING 2026-08-28 — iOS acquisition is ~100% App Store Search.** ASC → Analytics →
+Acquisition → Sources (May 30–Aug 27, product page views by source): App Store Search accounts for
+nearly every product page view, and its frequency clearly increases after the Aug 7 ASO update
+(near-daily small spikes through August vs. sparse in June/July). **Web Referrer is zero** — the
+threewordsapp.com content pages have sent nobody to the App Store yet, consistent with them not
+being ranked yet. Implication for loop strategy: ASO is the proven channel and SEO is still
+pre-revenue; consider rebalancing effort toward store-listing work (screenshots, keyword coverage)
+rather than SEO pages alone. Second implication: the sharpest leak is now install→signup
+(installs trickling in, 0 signups in 7 days), i.e. the sign-up screen, not discovery.
+
 **RESOLVED 2026-08-28 — store numbers refreshed** (see table above). Key finding: Play impressions
 are up 660% over 28 days (365) — the Aug 7 ASO update is getting the listing SHOWN far more — but
 that produced only 1 acquisition. The bottleneck is now listing→install conversion and, beneath
