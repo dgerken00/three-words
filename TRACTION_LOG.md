@@ -33,6 +33,7 @@ STATUS: RUNNING
 | 2026-08-25 | 21 | 0 | 23 | 0 | 10 | Flat again — identical to both 08-24 rows, in-app senders still 6. Third consecutive reading with no movement; the teacher page published 08-24 has not produced measurable signups yet (too early — new pages typically take weeks to get indexed and ranked). Tuesday = metrics only. |
 | 2026-08-27 | 21 | 0 | 23 | 0 | 10 | Fourth consecutive flat reading — every figure identical to the three rows above, in-app senders still 6. No milestone, no spike, no organic activity. Run started late on Wed 2026-08-26 and the clock rolled past midnight mid-run, so it is logged under 08-27 but carries out the Wednesday optimization action (none had been done this week). No tick was logged for 08-26. |
 | 2026-09-01 | 22 | 1 | 24 | 1 | 10 | **FIRST MOVEMENT.** Signups 21→22, words 23→24, in-app senders 6→7, and both 7-day counters are non-zero for the first time since this log began. Timing lines up with v1.2.0 (the welcome-screen + Sign in with Apple conversion fix) reaching users after the 08-28 submission. Caveat, stated plainly: **n=1.** One signup is not yet evidence the fix worked — it could be David, a family member, or coincidence. What would make it real is a second and third over the coming week. Not a goal milestone (thresholds are 10/20/30/40; the total passed 20 before this log's first row). |
+| 2026-09-11 | 23 | 1 | 24 | 0 | 11 | Second signup since v1.2.0 (22→23), push-enabled 10→11, in-app senders still 7. No words sent in the last 7 days — the new user signed up but hasn't collected words yet. No ticks ran 09-02 → 09-10 (nine-day gap in this log). No milestone (next is 25). Pace since 09-01: +1 signup in 10 days. |
 
 ## Action log (auto-appended)
 | Date | Action | Result |
@@ -46,10 +47,31 @@ STATUS: RUNNING
 | 2026-08-28 | Loop rebalanced toward ASO (David-approved) | Rotation now Mon=ASO (screenshots/keyword research, repo-only), Wed=SEO, Fri=scout+digest. Rationale: iOS acquisition ~100% App Store Search and rising; web referrals zero. |
 | 2026-08-27 | Fixed misleading example-cloud captions (3 pages) | Standing rule 3 says example clouds must always be labeled as examples. Three captions read as real user data instead: /words-to-describe-someone/ ("one friend's cloud, twelve people in"), /describe-yourself-in-three-words/ ("what ten colleagues and friends actually said"), and /tribute/ ("Grandma Rose's cloud, after seventeen family members answered"). All three now say plainly that the cloud is an example. All four site clouds are now correctly labeled. |
 | 2026-09-01 | Metrics re-check only (no action taken) | This run had already spent its one action on the Wednesday SEO pass above, so no second action was taken. **The Monday 09-01 ASO slot is still open for the next tick** — under the 08-28 rebalance that means screenshots / keyword research, repo-only. |
+| 2026-09-11 | Friday scout + weekly digest | Scouted one opportunity: **National Grandparents Day is Sunday 2026-09-13** (first Sunday after Labor Day) — a direct fit for /tribute/. Ready-to-post draft queued below (David posts as himself, with disclosure). Digest sent. Noted that no runs happened 09-02 → 09-10, so the Mon 09-07 ASO and Wed 09-09 SEO slots were missed; ASO work has not started since the 08-28 rebalance. |
 
 ## DRAFT QUEUE (for David — post yourself, as yourself, then move to Done)
 
-**No post drafts this week** (drafts are scouted on Fridays).
+**DRAFT 2026-09-11 — Grandparents Day (Sunday Sept 13). Time-sensitive: post by Saturday or skip.**
+Where: your own Facebook / Instagram / family group chats — anywhere you'd normally post as yourself.
+Not for Reddit or forums (those need a real thread asking for this, and none was found worth it).
+Every claim below matches /tribute/ (free, answer from a link with no app or account, ~ten-minute setup).
+
+> *Longer version (Facebook / Instagram):*
+> Grandparents Day is this Sunday. If your family is spread out, here's a small idea: I built a
+> free app called three·words, and one thing it's good for is a group tribute. You set up a cloud
+> in Grandma's or Grandpa's name, drop the link in the family group chat, and everyone describes
+> them in three words — no app or account needed to answer, it takes thirty seconds. The words
+> build into a word cloud you can show them on Sunday. Setup takes about ten minutes:
+> threewordsapp.com/tribute/
+> (Full disclosure: it's my app. If your family tries it, I'd genuinely love to know how it goes.)
+
+> *Short version (family group text):*
+> Grandparents Day is Sunday — I'm making a three-word cloud for [Grandma]. Tap this and
+> describe her in three words, takes 30 seconds, no app needed: [your invite link]
+
+Note: the short version works best if you actually run one for your own family — it's then just
+you using your app, and the finished cloud is something you can share afterwards (with the
+family's OK).
 
 **Note for David — install numbers are stale.** The last store figures in this log are from
 2026-08-06 (~20 Play / 6 iOS). Half the goal is "100 cumulative installs" and I can't read the
