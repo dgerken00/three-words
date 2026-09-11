@@ -17,6 +17,7 @@ STATUS: RUNNING
 2. All community/outreach content is DRAFTED ONLY (in DRAFT_QUEUE section below) for David to post himself, as himself, with disclosure.
 3. Website content must be factual; example word clouds are always labeled as examples.
 4. No spending of any kind. No changes to app code (App.js etc.) — docs/ website content only.
+6. **No personal-network tactics (David, 2026-09-11).** Drafts never ask David to post to his own social feeds, family/friend group chats, or people he knows, and never make him the subject. Outreach targets only strangers already searching for this — public threads, directories, occasion communities.
 5. Every change is committed to git with a clear message.
 
 ## Last-known store numbers (manually updated)
@@ -51,27 +52,13 @@ STATUS: RUNNING
 
 ## DRAFT QUEUE (for David — post yourself, as yourself, then move to Done)
 
-**DRAFT 2026-09-11 — Grandparents Day (Sunday Sept 13). Time-sensitive: post by Saturday or skip.**
-Where: your own Facebook / Instagram / family group chats — anywhere you'd normally post as yourself.
-Not for Reddit or forums (those need a real thread asking for this, and none was found worth it).
-Every claim below matches /tribute/ (free, answer from a link with no app or account, ~ten-minute setup).
+**WITHDRAWN 2026-09-11 — Grandparents Day draft.** Both versions targeted David's own
+social feeds and family group chat, which violates the new standing rule 6. No replacement:
+no public thread asking for a Grandparents Day tribute idea was found this week. The occasion
+itself is still a good SEO target — a Wednesday page ("three words to describe Grandma /
+Grandparents Day tribute") for *next* year's search traffic is the constraint-compatible version.
 
-> *Longer version (Facebook / Instagram):*
-> Grandparents Day is this Sunday. If your family is spread out, here's a small idea: I built a
-> free app called three·words, and one thing it's good for is a group tribute. You set up a cloud
-> in Grandma's or Grandpa's name, drop the link in the family group chat, and everyone describes
-> them in three words — no app or account needed to answer, it takes thirty seconds. The words
-> build into a word cloud you can show them on Sunday. Setup takes about ten minutes:
-> threewordsapp.com/tribute/
-> (Full disclosure: it's my app. If your family tries it, I'd genuinely love to know how it goes.)
-
-> *Short version (family group text):*
-> Grandparents Day is Sunday — I'm making a three-word cloud for [Grandma]. Tap this and
-> describe her in three words, takes 30 seconds, no app needed: [your invite link]
-
-Note: the short version works best if you actually run one for your own family — it's then just
-you using your app, and the finished cloud is something you can share afterwards (with the
-family's OK).
+**No post drafts this week.**
 
 **Note for David — install numbers are stale.** The last store figures in this log are from
 2026-08-06 (~20 Play / 6 iOS). Half the goal is "100 cumulative installs" and I can't read the
