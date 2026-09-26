@@ -36,8 +36,8 @@ STATUS: RUNNING
 | 2026-09-01 | 22 | 1 | 24 | 1 | 10 | **FIRST MOVEMENT.** Signups 21→22, words 23→24, in-app senders 6→7, and both 7-day counters are non-zero for the first time since this log began. Timing lines up with v1.2.0 (the welcome-screen + Sign in with Apple conversion fix) reaching users after the 08-28 submission. Caveat, stated plainly: **n=1.** One signup is not yet evidence the fix worked — it could be David, a family member, or coincidence. What would make it real is a second and third over the coming week. Not a goal milestone (thresholds are 10/20/30/40; the total passed 20 before this log's first row). |
 | 2026-09-11 | 23 | 1 | 24 | 0 | 11 | Second signup since v1.2.0 (22→23), push-enabled 10→11, in-app senders still 7. No words sent in the last 7 days — the new user signed up but hasn't collected words yet. No ticks ran 09-02 → 09-10 (nine-day gap in this log). No milestone (next is 25). Pace since 09-01: +1 signup in 10 days. |
 | 2026-09-20 | 23 | 0 | 24 | 0 | 11 | Flat — every total identical to 09-11 (signups 23, words 24, push 11, in-app senders 7). The only change is signups_7d 1→0, which is just the 09-11 signup aging out of the 7-day window, not a loss. So: no new signups and no new words in the last nine days. No milestone (next is 25), no spike, nothing unusual. Sunday = metrics only. Note: no ticks ran 09-12 → 09-19, so the Mon 09-14 ASO, Wed 09-16 SEO and Fri 09-18 scout/digest slots were all missed; ASO work still has not started since the 08-28 rebalance. |
-
 | 2026-09-22 | 23 | 0 | 24 | 0 | 11 | Flat — every figure identical to the 09-11 and 09-20 rows (signups 23, words 24, push 11, in-app senders 7, both 7-day counters 0). No new signups and no new words in eleven days. No milestone (next is 25), no spike, nothing unusual. Tuesday = metrics only. Housekeeping note: this run started while the clock still read Sun 09-20 and rolled over to Tue 09-22 mid-run, so stats were pulled twice (identical both times) and the row is filed under 09-22. **The Monday 09-21 ASO slot was missed** — no tick ran for it. That makes four consecutive missed action slots (09-14 ASO, 09-16 SEO, 09-18 scout/digest, 09-21 ASO); ASO work still has not started since the 08-28 rebalance. |
+| 2026-09-26 | 23 | 0 | 24 | 0 | 11 | Flat — fourth identical reading in a row (signups 23, words 24, push 11, in-app senders 7, both 7-day counters 0). **Fifteen days with no new signup and no new word** (last movement 09-11). No milestone (next is 25), no spike, no drop. Friday scout + digest day; the run started Fri 09-25 and rolled past midnight mid-run, so it is filed under 09-26. Also missed since the last tick: **Wed 09-23 SEO** — that makes five consecutive missed action slots (09-14 ASO, 09-16 SEO, 09-18 scout/digest, 09-21 ASO, 09-23 SEO). Important caveat on reading these flat numbers: v1.2.0 (the conversion fix) has now been live on both stores for ~4 weeks and has produced 0 signups in that time, but **we cannot tell whether the fix failed or simply had no installs to convert**, because store numbers have not been refreshed since 2026-08-06. |
 
 ## Action log (auto-appended)
 | Date | Action | Result |
@@ -54,6 +54,7 @@ STATUS: RUNNING
 | 2026-09-20 | Metrics tick only (Sunday) | No numbers moved since 09-11. Nothing published — Sunday is a metrics-only day. Flagged in the metrics row that the 09-14 / 09-16 / 09-18 action slots were missed because no ticks ran that week. |
 | 2026-09-22 | Metrics tick only (Tuesday) | No numbers moved since 09-11. Nothing published — Tuesday is a metrics-only day. Flagged that the Monday 09-21 ASO slot was also missed, making four consecutive missed action slots. |
 | 2026-09-11 | Friday scout + weekly digest | Scouted one opportunity: **National Grandparents Day is Sunday 2026-09-13** (first Sunday after Labor Day) — a direct fit for /tribute/. Ready-to-post draft queued below (David posts as himself, with disclosure). Digest sent. Noted that no runs happened 09-02 → 09-10, so the Mon 09-07 ASO and Wed 09-09 SEO slots were missed; ASO work has not started since the 08-28 rebalance. |
+| 2026-09-26 | Friday scout + weekly digest | Scouted one opportunity and it is a good one: **Apple's App Store featuring nomination form** (ASC → Featuring → Nominations), free, and it aims straight at the only channel with evidence behind it (iOS acquisition is ~100% App Store Search). Complete ready-to-paste draft queued below, all three text fields already trimmed to Apple's limits (name 47/60, description 922/1000, helpful details 498/500). David submits it himself in ASC — this loop never touches the console. No forum/Reddit draft this week: searched for live threads asking for an app like this and found none genuine, so nothing was drafted rather than forcing it. Digest sent. |
 
 ## DRAFT QUEUE (for David — post yourself, as yourself, then move to Done)
 
@@ -63,12 +64,89 @@ no public thread asking for a Grandparents Day tribute idea was found this week.
 itself is still a good SEO target — a Wednesday page ("three words to describe Grandma /
 Grandparents Day tribute") for *next* year's search traffic is the constraint-compatible version.
 
-**No post drafts this week.**
+**No post drafts this week.** I looked for a live public thread where someone is actually
+asking for an app like this, and for an occasion community worth joining — nothing genuine
+turned up, so I'm not drafting filler. See the nomination draft below instead; it's a better
+use of the same 15 minutes.
 
-**Note for David — install numbers are stale.** The last store figures in this log are from
-2026-08-06 (~20 Play / 6 iOS). Half the goal is "100 cumulative installs" and I can't read the
-consoles, so that half is currently unmeasured. Next time you're in Play Console / App Store
-Connect, add a row to the "Last-known store numbers" table above.
+---
+
+### ✳️ NEW DRAFT 2026-09-26 — App Store featuring nomination (you submit this, in ASC)
+
+**Why this one.** The one thing we know for certain is that iOS installs come almost entirely
+from App Store Search, and that Play impressions jumped 660% without producing installs. A
+featuring nomination is the only free lever that pushes on the channel that's actually working.
+Apple added this form so small developers can pitch editors directly. It costs nothing and takes
+about 15 minutes.
+
+**Honest odds:** low. Apple features a tiny fraction of nominations, and ours is a late pitch
+(v1.2.0 has been live ~4 weeks; Apple prefers to hear about things 3+ months ahead). But the
+downside is 15 minutes and the upside is a category of traffic we cannot buy. Worth the stamp.
+
+**Where:** App Store Connect → **Featuring** → **Nominations** → **＋** (needs Account Holder,
+Admin, App Manager or Marketing role — you're the Account Holder, so you're fine).
+
+**Fill it in exactly like this:**
+
+- **Related Apps:** `6786531783`
+- **Nomination Type:** `App Enhancements`
+  *(This is the honest choice. "App Launch" is past, and "New Content" would mean promising
+  seasonal in-app content we don't have. App Enhancements = v1.2.0's welcome screen + Sign in
+  with Apple, which is real and shipped.)*
+- **Platforms:** `iOS (iPhone)`
+- **Publish Date (Start):** leave blank (v1.2.0 is already live)
+- **Relevant Countries or Regions:** `USA`
+- **Do you plan to launch in certain markets first?** `No`
+- **Do you intend to submit a new In-App Event?** `No`
+- **Does this app or game include a pre-order?** `No`
+- **Supplemental Materials:** `https://threewordsapp.com`
+
+- **Nomination Name** (47/60 chars):
+
+```
+three·words 1.2 — a kinder first thirty seconds
+```
+
+- **Nomination Description** (922/1000 chars):
+
+```
+three·words is a small, quiet app with one idea: invite the people who know you, and each of them sends three words that describe you. The words gather into a living word cloud — signed or anonymous, their choice.
+
+Version 1.2 rebuilt the first thing a new person sees. Before, the app asked you to make an account before it showed you anything at all. Now the welcome screen shows an example cloud and explains the payoff first, and iPhone gets one-tap Sign in with Apple — so the distance from "just installed" to "my cloud exists" is a few seconds.
+
+The part people react to: the people describing you don't need the app. You send a link, they answer in a browser, and the words land on your phone live.
+
+No feed, no followers, no ads, no algorithm. A profanity filter plus in-app report and block keep it kind, and deleting your account deletes every word with it.
+
+I built it on my own — I'm not a developer by trade.
+```
+
+- **Helpful Details** (498/500 chars):
+
+```
+Three things of possible interest: (1) The people describing you never install anything — the invite is a link that opens in any browser, so a cloud can fill with words from people who have never heard of it. (2) It is deliberately not a social network: no feed, no follower count, no public profile. The only thing there is to see is how people chose to describe you. (3) Moderation is at submission (filter) and by the recipient (report, block); accounts and all their words are deletable in-app.
+```
+
+**Two notes.** Every sentence above is checkable against the app as it ships — please don't let
+me talk you into adding a claim we can't back. And if you're planning *any* update in
+October–December, tell me: re-nominating against a real future release date is a meaningfully
+stronger pitch than this one, and we'd file it 3+ weeks ahead.
+
+Apple replies only if interested, by email to the address on the nomination. Move this to Done
+once submitted.
+
+---
+
+**Note for David — install numbers are stale, and this is now the blocking problem (updated
+2026-09-26).** The last store figures in this log are from 2026-08-06 (~20 Play / 6 iOS) — seven
+weeks ago. iOS has never been read at all. Half the goal ("100 cumulative installs") is therefore
+unmeasured, but the bigger cost is this: v1.2.0 shipped the conversion fix four weeks ago and
+signups have not moved since 09-11, and **I cannot tell you whether that means the fix didn't work
+or that nobody installed the app for it to work on.** Those two answers point at completely
+different next actions — one says redesign the signup screen again, the other says the listing
+isn't earning installs. Five minutes in Play Console (Grow users → installs, 28d) and ASC
+(Analytics → app units) settles it. Please add a row to "Last-known store numbers" above next time
+you're in there; it's the highest-value five minutes available to this project right now.
 
 **RESOLVED 2026-08-28 — signup count discrepancy.** Both numbers were right, different windows:
 21 = all signups ever (what get_growth_stats returns); 9 = signups since 2026-07-11 only (a
