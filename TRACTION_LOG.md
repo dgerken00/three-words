@@ -95,25 +95,50 @@ non-destructive and idempotent. Until this runs, the page shows "This cloud isn'
 usually within a couple of minutes), add three words, watch them appear. A second browser (or
 private window) counts as a second person.
 
-**STEP 3 — post it, as yourself, with disclosure.** Rules I could not verify (Reddit blocks my
-fetches) — read each sub's sidebar first; several ban links or self-promotion outright. Best fits,
-in order:
-- **r/SampleSize** — tag `[Casual]`; it exists for exactly this kind of poll.
-- **r/InternetIsBeautiful** — single-purpose live sites; OC is allowed if disclosed (check the
-  self-promo limit).
-- **r/SideProject** — friendly to "I built this."
+**STEP 3 — post it, as yourself, with disclosure.** (Revised 2026-09-26 after checking rules
+via web search; Reddit itself blocks my fetches, so still glance at each sidebar before posting.)
 
-Draft (adjust to the sub's title format):
+- ❌ **r/SampleSize — ruled out.** Its rules require the survey link to be on a trusted survey
+  host (Google Forms, SurveyMonkey, Qualtrics…). A link to our own page gets removed.
+- ✅ **r/SideProject — post here first.** Built for "I made this"; links are fine if you give
+  context and ask for specific feedback; bare "check it out" posts get removed.
+- ⚠️ **r/InternetIsBeautiful — biggest reach, conditional.** Strict 90/10 rule: if most of your
+  recent Reddit activity is promoting things you made, the post is removed. Only post here if your
+  account history is mostly ordinary participation. It also bans "products with a sign-up" — our
+  page has none, so say so in the comment.
+- Site-wide: no more than ~1 in 10 of your posts/comments should link to your own stuff, so
+  space these out (different days) and don't repost.
 
-> **Title:** [Casual] Describe 2026 so far in three words — a live word cloud of everyone's answers
+**Draft A — r/SideProject** (text post):
+
+> **Title:** I built a live "describe 2026 so far in three words" cloud — no signup, three words.
+> Does the format work?
 >
-> Three words, anonymous, one set per person, and it lands in a live cloud with everyone else's:
 > https://threewordsapp.com/describe/2026/
 >
-> Disclosure: I built this. It's a public experiment off a small app I made (three·words — you
-> invite the people who know you and they each describe you in three words). No account, no
-> tracking beyond a random token so you can only answer once. Curious what the year looks like
-> when a few hundred strangers sum it up.
+> What it is: you type three words for how 2026 has felt so far, anonymously, and they land in a
+> live cloud with everyone else's. One set per person (you can change yours, not add more).
+>
+> Why: I make a small app called three·words — you invite the people who know you and each sends
+> three words that describe you. Almost nobody discovers it, so I'm trying a public version
+> pointed at a subject strangers already have opinions about, with the app mentioned underneath.
+> This page *is* the experiment.
+>
+> Tech, since people ask: static site on GitHub Pages, Supabase Postgres with everything behind
+> RPCs (no client can read rows), vanilla JS polling every few seconds. No framework.
+>
+> Feedback I'd actually like: after you've added your words, does the "now find out how *your*
+> people describe you" line make sense, or does it feel like a bait-and-switch? And would you
+> share the cloud with anyone?
+
+**Draft B — r/InternetIsBeautiful** (link post to the page, then this as your first comment):
+
+> **Title:** A live word cloud of how strangers describe 2026 so far — add your three words [OC]
+>
+> **Comment:** I made this. No sign-up, no account — the only thing stored beyond your three
+> words is a browser token so each person gets one set (editable). It's a public spin-off of a
+> small app I built where the people who know you describe you in three words; the app is
+> mentioned at the bottom of the page and that's the only ask.
 
 **What to watch — the number this exists to move.** Not answers; *store taps*. Pull it any time:
 
