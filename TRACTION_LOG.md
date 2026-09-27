@@ -98,8 +98,10 @@ private window) counts as a second person.
 **STEP 3 — post it, as yourself, with disclosure.** (Revised 2026-09-26 after checking rules
 via web search; Reddit itself blocks my fetches, so still glance at each sidebar before posting.)
 
-- ❌ **r/SampleSize — ruled out.** Its rules require the survey link to be on a trusted survey
-  host (Google Forms, SurveyMonkey, Qualtrics…). A link to our own page gets removed.
+- ⏸ **r/SampleSize — hold, not first.** A 2020 write-up of its rules says links must be on a
+  trusted survey host, but in practice own-domain `[Casual] … (US, everyone)` posts do stay up
+  there, so that rule is outdated or unenforced. Not first in line; David's call whether to use it.
+- **Account:** three·words posts go out from a Reddit account used only for three·words.
 - ✅ **r/SideProject — post here first.** Built for "I made this"; links are fine if you give
   context and ask for specific feedback; bare "check it out" posts get removed.
 - ⚠️ **r/InternetIsBeautiful — biggest reach, conditional.** Strict 90/10 rule: if most of your
