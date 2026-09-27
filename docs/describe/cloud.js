@@ -78,7 +78,24 @@
 
   let shown = new Set();      // words currently in the cloud, to animate newcomers
   let lastTotal = -1;
+  let lastData = null;        // kept so the cloud can re-fit when the window is resized
   let topicTitle = '';
+
+  // Type scale that follows both the stage width and how full the cloud is: a handful of
+  // answers render large and confident, hundreds settle into a few giants over a haze.
+  function sizer(n, max) {
+    const box = el.cloud.parentElement;
+    const W = Math.max(240, ((box && box.clientWidth) || 480) - 40);
+    const biggest = Math.max(34, Math.min(120, W / 7.5));
+    const crowd = Math.sqrt(Math.max(n, 6) / 6);           // 1 for ≤6 words, grows as the cloud fills
+    const floor = Math.max(15, (biggest * 0.7) / crowd);
+    return (x) => {
+      // with no repeats yet every word is equal; keep them mid-scale, easing down as words pile up
+      const t = max === 1 ? 0.5 / crowd : (x.c - 1) / (max - 1);
+      const fit = W / (0.6 * x.w.length);                   // a long word can't spill past the edge
+      return { t, size: Math.round(Math.min(floor + t * (biggest - floor), fit)) };
+    };
+  }
 
   function setTitle(t) {
     topicTitle = t;
@@ -88,6 +105,7 @@
   }
 
   function render(data) {
+    lastData = data;
     const words = Array.isArray(data.words) ? data.words : [];
     const total = Number(data.total) || 0;
     if (el.total) el.total.textContent = total.toLocaleString();
@@ -100,11 +118,9 @@
     const placed = words.slice().sort((a, b) => hash(a.w) - hash(b.w));
     const next = new Set(placed.map((x) => x.w));
     const firstPaint = shown.size === 0;
-    // biggest word scales with the box so a long word can't spill past the edge on a phone
-    const biggest = Math.max(30, Math.min(48, (el.cloud.clientWidth || 480) / 8));
+    const sizeOf = sizer(placed.length, max);
     el.cloud.innerHTML = placed.map((x) => {
-      const t = max === 1 ? 0.5 : (x.c - 1) / (max - 1);
-      const size = Math.round(17 + t * (biggest - 17));
+      const { t, size } = sizeOf(x);
       const color = PALETTE[hash(x.w) % PALETTE.length];
       const tilt = ((hash(x.w) % 7) - 3) * 1.2;
       const fresh = !firstPaint && !shown.has(x.w) ? ' fresh' : '';
@@ -134,7 +150,8 @@
     if (el.closed) el.closed.style.display = 'none';
     const haveMine = !!store.get(mineKey);
     if (el.mine) el.mine.style.display = haveMine ? 'block' : 'none';
-    if (el.ask) el.ask.style.display = haveMine ? 'none' : 'block';
+    // '' rather than 'block': the stylesheet decides whether the ask is a card or a one-row grid
+    if (el.ask) el.ask.style.display = haveMine ? 'none' : '';
   }
 
   let pollTimer = null, failures = 0;
@@ -158,6 +175,11 @@
     pollTimer = setTimeout(async () => { await refresh(); schedule(); }, delay);
   }
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { refresh(); } schedule(); });
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { if (lastData) render(lastData); }, 150);
+  });
 
   // ---------- my words ----------
   function showMine(words) {
@@ -170,7 +192,7 @@
   if (mineRaw) { try { const m = JSON.parse(mineRaw); if (Array.isArray(m) && m.length === 3) showMine(m); } catch {} }
 
   if (el.change) el.change.addEventListener('click', () => {
-    el.mine.style.display = 'none'; el.ask.style.display = 'block';
+    el.mine.style.display = 'none'; el.ask.style.display = '';
     try { const m = JSON.parse(store.get(mineKey)); ['w1', 'w2', 'w3'].forEach((id, i) => { $(id).value = m[i] || ''; }); } catch {}
     $('w1').focus();
   });
