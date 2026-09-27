@@ -20,6 +20,12 @@ STATUS: RUNNING
 6. **No personal-network tactics (David, 2026-09-11).** Drafts never ask David to post to his own social feeds, family/friend group chats, or people he knows, and never make him the subject. Outreach targets only strangers already searching for this — public threads, directories, occasion communities.
 5. Every change is committed to git with a clear message.
 
+**Standing instruction for ticks (added 2026-09-26):** in Step 1, also call the `get_topic_stats`
+RPC (same URL/key pattern as get_growth_stats) and put per-topic `answers_total` and
+`clicks_ios + clicks_android` in the metrics row's Notes column. Store taps from the public
+clouds are the one funnel number this project can read without the consoles. If the RPC 404s,
+David hasn't run `add-topic-clouds.sql` yet — say so in the Notes and move on.
+
 ## Last-known store numbers (manually updated)
 | Date | Play installs | iOS installs | Source |
 |------|--------------|--------------|--------|
@@ -54,6 +60,7 @@ STATUS: RUNNING
 | 2026-09-20 | Metrics tick only (Sunday) | No numbers moved since 09-11. Nothing published — Sunday is a metrics-only day. Flagged in the metrics row that the 09-14 / 09-16 / 09-18 action slots were missed because no ticks ran that week. |
 | 2026-09-22 | Metrics tick only (Tuesday) | No numbers moved since 09-11. Nothing published — Tuesday is a metrics-only day. Flagged that the Monday 09-21 ASO slot was also missed, making four consecutive missed action slots. |
 | 2026-09-11 | Friday scout + weekly digest | Scouted one opportunity: **National Grandparents Day is Sunday 2026-09-13** (first Sunday after Labor Day) — a direct fit for /tribute/. Ready-to-post draft queued below (David posts as himself, with disclosure). Digest sent. Noted that no runs happened 09-02 → 09-10, so the Mon 09-07 ASO and Wed 09-09 SEO slots were missed; ASO work has not started since the 08-28 rebalance. |
+| 2026-09-26 | Built public live clouds (David-directed, outside the loop's rotation) | David asked for a stranger-facing "describe X in three words" live cloud to promote the app; picked "2026 so far" as the launch subject. Shipped: `add-topic-clouds.sql` (own tables + RPCs, RLS with no client policies, salted IP-hash rate limiting, same slur list as the app, per-topic `hidden_words` for post-hoc moderation, store-tap counters), `/describe/2026/` page, `/describe/` hub that renders any topic from `?t=slug`, homepage footer link, sitemap, and an honest privacy-policy section. App code untouched. **Blocked on David running the SQL** — draft queue has the steps, the post draft, and the stats command. |
 | 2026-09-26 | Friday scout + weekly digest | Scouted one opportunity and it is a good one: **Apple's App Store featuring nomination form** (ASC → Featuring → Nominations), free, and it aims straight at the only channel with evidence behind it (iOS acquisition is ~100% App Store Search). Complete ready-to-paste draft queued below, all three text fields already trimmed to Apple's limits (name 47/60, description 922/1000, helpful details 498/500). David submits it himself in ASC — this loop never touches the console. No forum/Reddit draft this week: searched for live threads asking for an app like this and found none genuine, so nothing was drafted rather than forcing it. Digest sent. |
 
 ## DRAFT QUEUE (for David — post yourself, as yourself, then move to Done)
@@ -68,6 +75,58 @@ Grandparents Day tribute") for *next* year's search traffic is the constraint-co
 asking for an app like this, and for an occasion community worth joining — nothing genuine
 turned up, so I'm not drafting filler. See the nomination draft below instead; it's a better
 use of the same 15 minutes.
+
+---
+
+### ✳️ NEW 2026-09-26 — Public live cloud: "Describe 2026 so far in three words" (David-directed build)
+
+**What it is.** A website-only feature: a public page where strangers add three anonymous words
+about a shared subject and watch the cloud grow live, with a CTA underneath — *"That's how
+strangers describe 2026 so far. Now find out how the people who know you describe you."* David
+chose "2026 so far" as the launch subject (over Reddit / a public figure) — warm, everyone has an
+opinion, nobody gets defamed. It lives entirely in docs/ + its own database tables; the app,
+profiles and submissions are untouched, so nothing about the store listings changes.
+
+**STEP 1 — David must run the SQL (I can't; the anon key can't create tables).**
+Supabase → SQL Editor → New query → paste the whole of `add-topic-clouds.sql` → Run. It is
+non-destructive and idempotent. Until this runs, the page shows "This cloud isn't open yet."
+
+**STEP 2 — check it.** Open https://threewordsapp.com/describe/2026/ (live once the push deploys,
+usually within a couple of minutes), add three words, watch them appear. A second browser (or
+private window) counts as a second person.
+
+**STEP 3 — post it, as yourself, with disclosure.** Rules I could not verify (Reddit blocks my
+fetches) — read each sub's sidebar first; several ban links or self-promotion outright. Best fits,
+in order:
+- **r/SampleSize** — tag `[Casual]`; it exists for exactly this kind of poll.
+- **r/InternetIsBeautiful** — single-purpose live sites; OC is allowed if disclosed (check the
+  self-promo limit).
+- **r/SideProject** — friendly to "I built this."
+
+Draft (adjust to the sub's title format):
+
+> **Title:** [Casual] Describe 2026 so far in three words — a live word cloud of everyone's answers
+>
+> Three words, anonymous, one set per person, and it lands in a live cloud with everyone else's:
+> https://threewordsapp.com/describe/2026/
+>
+> Disclosure: I built this. It's a public experiment off a small app I made (three·words — you
+> invite the people who know you and they each describe you in three words). No account, no
+> tracking beyond a random token so you can only answer once. Curious what the year looks like
+> when a few hundred strangers sum it up.
+
+**What to watch — the number this exists to move.** Not answers; *store taps*. Pull it any time:
+
+```
+curl -s -X POST "https://iyphfzubdebuenbiplzy.supabase.co/rest/v1/rpc/get_topic_stats" -H "apikey: <anon key>" -H "Authorization: Bearer <anon key>" -H "Content-Type: application/json" -d '{}'
+```
+
+If 500 people answer and 5 tap a store button, the format works as a poll but not as a funnel —
+and that's worth knowing before spending another subject on it.
+
+**Moderation.** Slurs are rejected before saving (same list as the app). To hide a word after the
+fact, close the topic, or open a new one, see the cheat-sheet at the top of `add-topic-clouds.sql`.
+New topics need only one SQL insert — `/describe/?t=<slug>` renders them without a new page.
 
 ---
 
