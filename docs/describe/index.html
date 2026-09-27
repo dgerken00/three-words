@@ -41,19 +41,24 @@
   #mine b { color:#F5C95D; font-family:Georgia,serif; font-weight:400; font-size:20px; }
   #closed { display:none; color:#A9A3B8; font-style:italic; margin:0 0 14px; }
 
-  .cloudwrap { margin:26px 0 30px; }
-  .stat { color:#8B8698; font-size:14px; margin:0 0 4px; }
+  .cloudwrap { margin:26px auto 30px; max-width:540px; }
+  /* the cloud sits on its own darker canvas so it reads as the centrepiece and grows with the words */
+  .cloudbox { background:#110F17; border:1px solid #322E44; border-radius:20px; padding:14px 14px 12px;
+    min-height:220px; display:flex; flex-direction:column; box-shadow:inset 0 1px 0 #1E1B2A; overflow:hidden; }
+  .stat { color:#8B8698; font-size:13px; margin:0; padding:0 4px 10px; border-bottom:1px solid #1E1B2A;
+    display:flex; justify-content:space-between; align-items:center; }
   .stat b { color:#F2EEE8; font-weight:600; }
   .live { color:#A8D8B0; font-size:12px; letter-spacing:.5px; transition:color .3s; }
   .live.ping { color:#F5C95D; }
-  .cloud { display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
-    gap:6px 14px; margin:0 auto 6px; padding:22px 8px; min-height:80px; font-family:Georgia,serif; }
+  .cloud { flex:1; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; align-items:center;
+    gap:8px 16px; margin:0; padding:22px 6px; min-height:140px; font-family:Georgia,serif; }
   .cloud .w { display:inline-block; line-height:1.15; }
   .cloud .w.fresh { animation:pop .7s ease-out; }
   @keyframes pop { from { opacity:0; transform:scale(.6); } to { opacity:1; } }
   .cloud .n { font-size:12px; color:#8B8698; vertical-align:super; margin-left:1px; font-family:-apple-system,sans-serif; }
-  .whisper { font-family:Georgia,serif; font-style:italic; color:#4E4963; font-size:16px; margin:0 0 10px; }
-  .mostsaid { color:#A9A3B8; font-size:14px; margin:0 0 10px; }
+  .whisper { font-family:Georgia,serif; font-style:italic; color:#4E4963; font-size:16px; margin:0; padding:0 0 22px; }
+  .mostsaid { color:#A9A3B8; font-size:13px; margin:0; padding:10px 4px 0; border-top:1px solid #1E1B2A; }
+  .mostsaid:empty { display:none; }
 
   .cta { text-align:center; padding:22px 20px; margin-top:8px; }
   .ctah { font-family:Georgia,serif; font-size:22px; color:#F2EEE8; margin:0 0 4px; line-height:1.3; }
@@ -111,10 +116,12 @@
     <p id="closed"></p>
 
     <section class="cloudwrap">
-      <p class="stat"><b id="total">…</b> <span id="totallabel">people have answered</span> &nbsp;·&nbsp; <span class="live" id="live">● live</span></p>
-      <div class="cloud" id="cloud" aria-live="polite" aria-label="Live word cloud"></div>
-      <p class="whisper" id="empty">Nobody's answered yet. Be the first.</p>
-      <p class="mostsaid" id="most"></p>
+      <div class="cloudbox">
+        <p class="stat"><span><b id="total">…</b> <span id="totallabel">people have answered</span></span> <span class="live" id="live">● live</span></p>
+        <div class="cloud" id="cloud" aria-live="polite" aria-label="Live word cloud"></div>
+        <p class="whisper" id="empty">Nobody's answered yet. Be the first.</p>
+        <p class="mostsaid" id="most"></p>
+      </div>
       <button class="ghost small" id="share">Share this cloud</button>
     </section>
 

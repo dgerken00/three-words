@@ -100,9 +100,11 @@
     const placed = words.slice().sort((a, b) => hash(a.w) - hash(b.w));
     const next = new Set(placed.map((x) => x.w));
     const firstPaint = shown.size === 0;
+    // biggest word scales with the box so a long word can't spill past the edge on a phone
+    const biggest = Math.max(30, Math.min(48, (el.cloud.clientWidth || 480) / 8));
     el.cloud.innerHTML = placed.map((x) => {
       const t = max === 1 ? 0.5 : (x.c - 1) / (max - 1);
-      const size = Math.round(17 + t * 31);
+      const size = Math.round(17 + t * (biggest - 17));
       const color = PALETTE[hash(x.w) % PALETTE.length];
       const tilt = ((hash(x.w) % 7) - 3) * 1.2;
       const fresh = !firstPaint && !shown.has(x.w) ? ' fresh' : '';
