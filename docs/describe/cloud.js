@@ -119,9 +119,14 @@
     const next = new Set(placed.map((x) => x.w));
     const firstPaint = shown.size === 0;
     const sizeOf = sizer(placed.length, max);
+    let lastColor = -1;
     el.cloud.innerHTML = placed.map((x) => {
       const { t, size } = sizeOf(x);
-      const color = PALETTE[hash(x.w) % PALETTE.length];
+      // A word's colour comes from its hash, nudged along the palette so neighbours never match.
+      let ci = hash(x.w) % PALETTE.length;
+      if (ci === lastColor) ci = (ci + 1 + (hash(x.w) % (PALETTE.length - 1))) % PALETTE.length;
+      lastColor = ci;
+      const color = PALETTE[ci];
       const tilt = ((hash(x.w) % 7) - 3) * 1.2;
       const fresh = !firstPaint && !shown.has(x.w) ? ' fresh' : '';
       return `<span class="w${fresh}" style="font-size:${size}px;color:${color};font-weight:${t > 0.55 ? 600 : 400};transform:rotate(${tilt}deg)">${esc(x.w)}${x.c > 1 ? `<span class="n">${x.c}</span>` : ''}</span>`;
