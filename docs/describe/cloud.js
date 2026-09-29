@@ -53,6 +53,14 @@
   // ---------- topic page ----------
   const PALETTE = ['#F5C95D', '#E88C9C', '#8FB8C9', '#C9A6E8', '#A8D8B0'];
   const hash = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+  // Order needs a better-mixed hash than colour does: the one above grows with word length,
+  // which lined the cloud up shortest-word-first.
+  const mix = (s) => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+    return h >>> 0;
+  };
   const BLOCKED = /(fuck|nigg|cunt|faggot|bitch|whore|slut|retard|shit|asshole|dickhead)/i;
 
   // A random per-browser token: sha256'd server-side, it's what makes "one set of
@@ -115,7 +123,7 @@
 
     // Place words in a stable pseudo-random order (not biggest-first) so it reads as a cloud, not a ranking.
     const max = words.reduce((m, x) => Math.max(m, x.c), 1);
-    const placed = words.slice().sort((a, b) => hash(a.w) - hash(b.w));
+    const placed = words.slice().sort((a, b) => mix(a.w) - mix(b.w));
     const next = new Set(placed.map((x) => x.w));
     const firstPaint = shown.size === 0;
     const sizeOf = sizer(placed.length, max);
@@ -193,6 +201,21 @@
     el.mine.style.display = 'block';
     if (el.ask) el.ask.style.display = 'none';
   }
+  // Once someone has answered, offer the personal version while their words are landing.
+  if (el.mine) {
+    const ua = navigator.userAgent || '';
+    const ios = /iPhone|iPad|iPod/.test(ua), android = /Android/.test(ua);
+    const nudge = document.createElement('p');
+    nudge.className = 'nudge';
+    nudge.innerHTML = 'Now the personal version: how would the people who know <em>you</em> describe you? '
+      + (ios ? '<a data-track="ios" href="https://apps.apple.com/app/id6786531783">Get your own cloud →</a>'
+        : android ? '<a data-track="android" href="https://play.google.com/store/apps/details?id=com.davidgerken.threewords">Get your own cloud →</a>'
+        : '<a href="#get" id="nudgejump">Get your own cloud →</a>');
+    el.mine.appendChild(nudge);
+    const jump = $('nudgejump'), cta = document.querySelector('.card.cta');
+    if (jump && cta) jump.addEventListener('click', (e) => { e.preventDefault(); cta.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+  }
+
   const mineRaw = store.get(mineKey);
   if (mineRaw) { try { const m = JSON.parse(mineRaw); if (Array.isArray(m) && m.length === 3) showMine(m); } catch {} }
 

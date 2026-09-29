@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!-- Link-preview image for a /describe/ cloud, drawn from the live answers.
+     Render at 1200x630 with headless Chrome; see tools/make-cloud-image.sh. Topic comes from ?t=… -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing:border-box; }
+  html, body { margin:0; width:1200px; height:630px; overflow:hidden; background:#16141F; color:#C9C4D6;
+    font:17px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  .top { display:flex; justify-content:space-between; align-items:baseline; padding:30px 44px 0; }
+  h1 { font-family:Georgia,serif; font-weight:300; font-size:40px; color:#F2EEE8; margin:0; }
+  h1 em { color:#F5C95D; font-style:italic; }
+  .brand { font-family:Georgia,serif; font-size:22px; color:#8B8698; white-space:nowrap; }
+  .brand b { color:#F5C95D; font-weight:400; }
+  .box { position:absolute; left:32px; right:32px; top:100px; bottom:66px; background:#110F17; border:1px solid #322E44;
+    border-radius:24px; display:flex; overflow:hidden; }
+  #cloud { flex:1; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; align-items:center;
+    gap:4px 20px; padding:10px 20px; font-family:Georgia,serif; }
+  #cloud span { display:inline-block; line-height:1.1; }
+  .foot { position:absolute; left:44px; right:44px; bottom:20px; display:flex; justify-content:space-between;
+    font-size:19px; color:#8B8698; }
+  .foot b { color:#F2EEE8; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="top"><h1 id="h1"></h1><div class="brand">✳ three<b>·</b>words</div></div>
+<div class="box"><div id="cloud"></div></div>
+<div class="foot"><span id="count"></span><span id="where"></span></div>
+<script>
+(async () => {
+  const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
+  const slug = (new URLSearchParams(location.search).get('t') || '2026').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_topic_cloud`, {
+    method: 'POST', body: JSON.stringify({ p_slug: slug }),
+    headers: { apikey: ANON_KEY, authorization: 'Bearer ' + ANON_KEY, 'content-type': 'application/json' },
+  });
+  const data = await r.json();
+
+  // Same colour, order and tilt rules as docs/describe/cloud.js, so the picture matches the page.
+  const PALETTE = ['#F5C95D', '#E88C9C', '#8FB8C9', '#C9A6E8', '#A8D8B0'];
+  const hash = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+  const mix = (s) => {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16;
+    return h >>> 0;
+  };
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const words = data.words || [];
+  const max = words.reduce((m, x) => Math.max(m, x.c), 1);
+  const placed = words.slice().sort((a, b) => mix(a.w) - mix(b.w));
+  const cloud = document.getElementById('cloud');
+  const draw = (biggest, floor) => {
+    let last = -1;
+    cloud.innerHTML = placed.map((x) => {
+      const t = max === 1 ? 0.4 : (x.c - 1) / (max - 1);
+      const size = Math.round(floor + t * (biggest - floor));
+      let ci = hash(x.w) % PALETTE.length;
+      if (ci === last) ci = (ci + 1 + (hash(x.w) % (PALETTE.length - 1))) % PALETTE.length;
+      last = ci;
+      const tilt = ((hash(x.w) % 7) - 3) * 1.2;
+      return `<span style="font-size:${size}px;color:${PALETTE[ci]};font-weight:${t > 0.55 ? 600 : 400};transform:rotate(${tilt}deg)">${esc(x.w)}</span>`;
+    }).join('');
+  };
+  // Start large and step down until every word fits inside the box.
+  // Step down from large until every word fits inside the box.
+  let floor = 44;
+  for (;;) {
+    draw(Math.min(112, floor * 3), floor);
+    if (cloud.scrollHeight <= cloud.clientHeight || floor <= 14) break;
+    floor -= 0.5;
+  }
+
+  const total = Number(data.total) || 0;
+  document.getElementById('h1').innerHTML = `Describe <em>${esc(data.title || slug)}</em> in three words`;
+  document.getElementById('count').innerHTML =
+    `<b>${total.toLocaleString()}</b> ${total === 1 ? 'answer' : 'answers'} as of ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  document.getElementById('where').textContent = 'Add yours: threewordsapp.com/describe/' + slug;
+  document.title = 'ready';
+})();
+</script>
+</body>
+</html>

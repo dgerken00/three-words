@@ -22,6 +22,13 @@ h1 em, .tname { white-space:nowrap; }
   font-family:-apple-system,sans-serif; font-weight:400; }
 .whisper { margin:auto; padding:22px; }
 
+/* The offer shown with "your words", once someone has answered. */
+#mine .nudge { margin:14px 0 0; padding-top:12px; border-top:1px solid #322E44; color:#C9C4D6; font-size:15px;
+  line-height:1.5; text-wrap:balance; }
+#mine .nudge em { color:#F5C95D; font-style:italic; }
+#mine .nudge a { color:#F5C95D; font-weight:600; text-decoration:none; white-space:nowrap; }
+#mine .nudge a:hover { text-decoration:underline; }
+
 /* On a wide screen the ask is one slim row, so the stage below it gets the screen. */
 @media (min-width:760px) {
   #ask { position:relative; left:50%; transform:translateX(-50%);
