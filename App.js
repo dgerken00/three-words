@@ -32,8 +32,9 @@ const inviteLink = (code) => `${INVITE_BASE}${code}`;
 // Clouds a user starts about any subject live on the web; anyone with the link can answer.
 const TOPIC_BASE = 'https://threewordsapp.com/c/?t=';
 const topicLink = (slug) => `${TOPIC_BASE}${slug}`;
+const FREE_OPEN_CLOUDS = 3;   // must match create_my_topic / set_my_topic_open in the database
 const TOPIC_ERRORS = {
-  limit_reached: 'You can have one open cloud at a time. Close or delete your open cloud first.',
+  limit_reached: `You can have up to ${FREE_OPEN_CLOUDS} open clouds at a time. Close or delete one first.`,
   under_review: 'One of your clouds is paused for review, so new clouds are on hold. Contact support if you think this is a mistake.',
   blocked_title: "That name isn't allowed. Try different words.",
   bad_title: "Names can't include links or the characters < and >.",
@@ -428,7 +429,7 @@ export default function App() {
   // A tap here is the buying signal the free limit is designed to surface.
   const wantSecondCloud = async () => {
     await supabase.rpc('note_topic_signal', { p_kind: 'wants_second_cloud' });
-    Alert.alert('Noted', "Thanks. Right now it's one open cloud per account; if enough people ask, we'll add a way to have more.");
+    Alert.alert('Noted', `Thanks. Right now it's ${FREE_OPEN_CLOUDS} open clouds per account; if enough people ask, we'll add a way to have more.`);
   };
 
   const shareTopic = async () => {
@@ -861,10 +862,14 @@ export default function App() {
                     </View>
                   )}
 
-                  {topics.some((t) => t.is_open || t.paused) ? (
+                  {topics.some((t) => t.paused) ? (
                     <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 12 }]}>
-                      One open cloud at a time. Close or delete it to start another.{' '}
-                      <Text style={{ color: '#F5C95D' }} onPress={wantSecondCloud}>Want more than one?</Text>
+                      New clouds are on hold while a reported cloud is reviewed.
+                    </Text>
+                  ) : topics.filter((t) => t.is_open).length >= FREE_OPEN_CLOUDS ? (
+                    <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 12 }]}>
+                      Up to {FREE_OPEN_CLOUDS} open clouds at a time. Close or delete one to start another.{' '}
+                      <Text style={{ color: '#F5C95D' }} onPress={wantSecondCloud}>Want more?</Text>
                     </Text>
                   ) : (
                     <Btn label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} style={{ marginTop: 10 }} />

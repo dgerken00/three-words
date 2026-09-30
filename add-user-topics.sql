@@ -96,7 +96,7 @@ revoke execute on function tw_request_ip_hash() from public, anon, authenticated
 -- 3. Owner RPCs (signed-in app users)
 -- ─────────────────────────────────────────────────────────────
 
--- Start a cloud. Free limit: one open cloud per account.
+-- Start a cloud. Free limit: three open clouds per account.
 create or replace function create_my_topic(p_title text)
 returns jsonb
 language plpgsql security definer set search_path = public, extensions as $$
@@ -113,7 +113,7 @@ begin
   if ttl ~ '[<>]' or ttl ~* '(https?:|www\.)' then raise exception 'bad_title'; end if;
   if tw_text_is_blocked(ttl) then raise exception 'blocked_title'; end if;
   if exists (select 1 from topics where owner_id = uid and paused) then raise exception 'under_review'; end if;
-  if (select count(*) from topics where owner_id = uid and is_open) >= 1 then raise exception 'limit_reached'; end if;
+  if (select count(*) from topics where owner_id = uid and is_open) >= 3 then raise exception 'limit_reached'; end if;
   -- stops create/delete churn
   if (select count(*) from topics where owner_id = uid and created_at > now() - interval '1 day') >= 5 then
     raise exception 'rate_limited';
@@ -181,7 +181,7 @@ begin
   if t.slug is null then raise exception 'not_found'; end if;
   if t.paused then raise exception 'under_review'; end if;
   if p_open and not t.is_open
-     and (select count(*) from topics where owner_id = auth.uid() and is_open) >= 1 then
+     and (select count(*) from topics where owner_id = auth.uid() and is_open) >= 3 then
     raise exception 'limit_reached';
   end if;
   update topics set is_open = p_open where slug = s;
