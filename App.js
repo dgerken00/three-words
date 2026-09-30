@@ -145,6 +145,7 @@ export default function App() {
   const [appleAvailable, setAppleAvailable] = useState(false);
 
   // clouds this user started about other subjects
+  const [tab, setTab] = useState('me');                // dashboard tab: 'me' | 'anything'
   const [topics, setTopics] = useState([]);
   const [topicTitle, setTopicTitle] = useState('');
   const [topic, setTopic] = useState(null);           // the one being viewed, from list_my_topics
@@ -744,115 +745,133 @@ export default function App() {
           {/* ---- DASHBOARD ---- */}
           {screen === 'dashboard' && me && (
             <View>
-              <ViewShot ref={cloudShotRef} options={{ format: 'png', quality: 1, result: 'tmpfile' }}>
-                <View style={{ backgroundColor: '#16141F', paddingVertical: 10, paddingHorizontal: 4 }}>
-                  <Text style={styles.h1}>{me.name}'s cloud</Text>
-                  <Text style={[styles.muted, { textAlign: 'center' }]}>
-                    {subs.length === 0
-                      ? 'Your cloud is empty until someone describes you.'
-                      : `${subs.length} ${subs.length === 1 ? 'person has' : 'people have'} described you`}
-                    {live ? '  ·  live' : ''}
-                  </Text>
+              {/* Every cloud is about something; the tabs say what. */}
+              <View style={styles.tabs}>
+                {[['me', 'About me'], ['anything', 'About anything']].map(([key, label]) => (
+                  <TouchableOpacity key={key} style={[styles.tab, tab === key && styles.tabOn]} onPress={() => setTab(key)}>
+                    <Text style={[styles.tabText, tab === key && styles.tabTextOn]}>{label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
 
-                  {subs.length > 0 ? (
-                    <WordCloud counts={counts} />
-                  ) : (
-                    <View style={{ opacity: 0.4 }} pointerEvents="none">
-                      <WordCloud counts={SAMPLE_CLOUD} />
-                      <Text style={styles.sampleCaption}>— how it looks once a few people answer</Text>
-                    </View>
-                  )}
+              {tab === 'me' && (
+                <View>
+                  <ViewShot ref={cloudShotRef} options={{ format: 'png', quality: 1, result: 'tmpfile' }}>
+                    <View style={{ backgroundColor: '#16141F', paddingVertical: 10, paddingHorizontal: 4 }}>
+                      <Text style={styles.h1}>{me.name}'s cloud</Text>
+                      <Text style={[styles.muted, { textAlign: 'center' }]}>
+                        {subs.length === 0
+                          ? 'Your cloud is empty until someone describes you.'
+                          : `${subs.length} ${subs.length === 1 ? 'person has' : 'people have'} described you`}
+                        {live ? '  ·  live' : ''}
+                      </Text>
 
-                  {subs.length > 0 && (
-                    <Text style={{ color: '#6B6580', fontSize: 12, textAlign: 'center', marginTop: 2 }}>
-                      three·words  ·  describe me: {INVITE_BASE.replace('https://', '')}{me.invite_code}
-                    </Text>
-                  )}
-                </View>
-              </ViewShot>
-
-              {subs.length > 0 && <Btn label="Share my cloud" onPress={shareCloud} style={{ marginTop: 10 }} />}
-
-              {subs.length === 0 && (
-                <View style={{ marginTop: 10 }}>
-                  <Btn label="Share your invite link" onPress={shareInvite} />
-                  <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 8 }]}>
-                    Three people is enough for a real cloud — and they don't need the app.
-                    Your link works in any browser.
-                  </Text>
-                </View>
-              )}
-
-              <View style={[styles.card, { marginTop: 12 }]}>
-                <Text style={styles.label}>CLOUDS ABOUT ANYTHING</Text>
-                {topics.length === 0 && (
-                  <Text style={[styles.muted, { fontSize: 13 }]}>
-                    Start a cloud about a trip, a team, a year. Anyone with the link adds three words. No app needed.
-                  </Text>
-                )}
-                {topics.map((t, i) => (
-                  <TouchableOpacity
-                    key={t.slug}
-                    onPress={() => openTopic(t)}
-                    style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ color: '#F2EEE8', fontSize: 15 }}>{t.title}</Text>
-                      {t.paused ? (
-                        <Text style={{ color: '#E88C9C', fontSize: 13 }}>paused for review</Text>
+                      {subs.length > 0 ? (
+                        <WordCloud counts={counts} />
                       ) : (
-                        <Text style={{ color: '#A9A3B8', fontSize: 13 }}>
-                          <Text style={{ color: '#F5C95D', fontWeight: '600' }}>
-                            {t.total} {t.total === 1 ? 'answer' : 'answers'}
-                          </Text>
-                          {'  ·  '}{t.is_open ? 'open' : 'closed'}
+                        <View style={{ opacity: 0.4 }} pointerEvents="none">
+                          <WordCloud counts={SAMPLE_CLOUD} />
+                          <Text style={styles.sampleCaption}>— how it looks once a few people answer</Text>
+                        </View>
+                      )}
+
+                      {subs.length > 0 && (
+                        <Text style={{ color: '#6B6580', fontSize: 12, textAlign: 'center', marginTop: 2 }}>
+                          three·words  ·  describe me: {INVITE_BASE.replace('https://', '')}{me.invite_code}
                         </Text>
                       )}
                     </View>
-                    <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>›</Text>
-                  </TouchableOpacity>
-                ))}
-                {topics.some((t) => t.is_open || t.paused) ? (
-                  <Text style={[styles.muted, { fontSize: 12, marginTop: 8, marginBottom: 0 }]}>
-                    One open cloud at a time. Close or delete it to start another.{' '}
-                    <Text style={{ color: '#F5C95D' }} onPress={wantSecondCloud}>Want more than one?</Text>
-                  </Text>
-                ) : (
-                  <Btn ghost label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} />
-                )}
-              </View>
+                  </ViewShot>
 
-              <View style={[styles.card, { marginTop: 12 }]}>
-                <Text style={styles.label}>YOUR INVITE</Text>
-                <Text style={{ fontFamily: SERIF, fontSize: 28, letterSpacing: 3, color: '#F5C95D', marginBottom: 12 }}>
-                  {me.invite_code}
-                </Text>
-                <Btn ghost label="Share invite" onPress={shareInvite} />
-                <Text style={[styles.muted, { fontSize: 13, marginTop: 4 }]}>
-                  Anyone with your code can add words — share it with people you trust.
-                </Text>
-              </View>
+                  <Btn label="Ask people to describe me" onPress={shareInvite} style={{ marginTop: 10 }} />
+                  {subs.length > 0 ? (
+                    <Btn ghost label="Share as image" onPress={shareCloud} />
+                  ) : (
+                    <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 8 }]}>
+                      Three people is enough for a real cloud — and they don't need the app.
+                      Your link works in any browser.
+                    </Text>
+                  )}
 
-              {subs.length > 0 && (
-                <View style={[styles.card, { marginTop: 12 }]}>
-                  <Text style={styles.label}>RECENT</Text>
-                  {subs.slice(0, 8).map((s, i) => (
-                    <View key={s.id || i} style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ color: s.display_name ? '#F2EEE8' : '#8B8698', fontStyle: s.display_name ? 'normal' : 'italic', fontSize: 14 }}>
-                          {s.display_name || 'anonymous'}
-                        </Text>
-                        <Text style={{ color: '#A9A3B8', fontSize: 14 }}>{(s.words || []).join(' · ')}</Text>
-                      </View>
-                      <TouchableOpacity onPress={() => moderateRow(s)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                        <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>⋯</Text>
-                      </TouchableOpacity>
+                  <View style={[styles.card, { marginTop: 12 }]}>
+                    <Text style={styles.label}>YOUR INVITE CODE</Text>
+                    <Text style={{ fontFamily: SERIF, fontSize: 28, letterSpacing: 3, color: '#F5C95D', marginBottom: 6 }}>
+                      {me.invite_code}
+                    </Text>
+                    <Text style={[styles.muted, { fontSize: 13, marginBottom: 0 }]}>
+                      Anyone with your code or link can add words — share it with people you trust.
+                    </Text>
+                  </View>
+
+                  {subs.length > 0 && (
+                    <View style={[styles.card, { marginTop: 12 }]}>
+                      <Text style={styles.label}>RECENT</Text>
+                      {subs.slice(0, 8).map((s, i) => (
+                        <View key={s.id || i} style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}>
+                          <View style={{ flex: 1 }}>
+                            <Text style={{ color: s.display_name ? '#F2EEE8' : '#8B8698', fontStyle: s.display_name ? 'normal' : 'italic', fontSize: 14 }}>
+                              {s.display_name || 'anonymous'}
+                            </Text>
+                            <Text style={{ color: '#A9A3B8', fontSize: 14 }}>{(s.words || []).join(' · ')}</Text>
+                          </View>
+                          <TouchableOpacity onPress={() => moderateRow(s)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                            <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>⋯</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
                     </View>
-                  ))}
+                  )}
+
+                  <Btn ghost label="Describe someone" onPress={() => { setError(''); setScreen('join'); }} style={{ marginTop: 16 }} />
                 </View>
               )}
 
-              <Btn ghost label="Describe someone" onPress={() => { setError(''); setScreen('join'); }} style={{ marginTop: 16 }} />
+              {tab === 'anything' && (
+                <View>
+                  <Text style={styles.h1}>Clouds about anything</Text>
+                  <Text style={[styles.muted, { textAlign: 'center' }]}>
+                    A trip, a team, a year. Anyone with the link adds three words from their browser.
+                  </Text>
+
+                  {topics.length > 0 && (
+                    <View style={styles.card}>
+                      <Text style={styles.label}>YOUR CLOUDS</Text>
+                      {topics.map((t, i) => (
+                        <TouchableOpacity
+                          key={t.slug}
+                          onPress={() => openTopic(t)}
+                          style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}
+                        >
+                          <View style={{ flex: 1 }}>
+                            <Text style={{ color: '#F2EEE8', fontSize: 16 }}>{t.title}</Text>
+                            {t.paused ? (
+                              <Text style={{ color: '#E88C9C', fontSize: 13 }}>paused for review</Text>
+                            ) : (
+                              <Text style={{ color: '#A9A3B8', fontSize: 13 }}>
+                                <Text style={{ color: '#F5C95D', fontWeight: '600' }}>
+                                  {t.total} {t.total === 1 ? 'answer' : 'answers'}
+                                </Text>
+                                {'  ·  '}{t.is_open ? 'open' : 'closed'}
+                              </Text>
+                            )}
+                          </View>
+                          <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>›</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+
+                  {topics.some((t) => t.is_open || t.paused) ? (
+                    <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 12 }]}>
+                      One open cloud at a time. Close or delete it to start another.{' '}
+                      <Text style={{ color: '#F5C95D' }} onPress={wantSecondCloud}>Want more than one?</Text>
+                    </Text>
+                  ) : (
+                    <Btn label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} style={{ marginTop: 10 }} />
+                  )}
+                </View>
+              )}
+
               <View style={styles.footerRow}>
                 <TouchableOpacity onPress={() => { loadSubs(me.id); loadTopics(); }}><Text style={styles.footerLink}>Refresh</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => setScreen('account')}><Text style={styles.footerLink}>Account</Text></TouchableOpacity>
@@ -883,7 +902,7 @@ export default function App() {
               </Text>
               {!!error && <Text style={styles.error}>{error}</Text>}
               <Btn label={busy ? 'Starting…' : 'Start my cloud'} disabled={busy} onPress={createTopic} />
-              <Btn ghost label="Back" onPress={() => { setError(''); setScreen('dashboard'); }} />
+              <Btn ghost label="Back" onPress={() => { setError(''); setTab('anything'); setScreen('dashboard'); }} />
             </View>
           )}
 
@@ -949,7 +968,7 @@ export default function App() {
                 </>
               )}
 
-              <Btn label="Back to my cloud" onPress={() => { setError(''); setScreen('dashboard'); }} style={{ marginTop: 16 }} />
+              <Btn label="Back" onPress={() => { setError(''); setTab('anything'); setScreen('dashboard'); }} style={{ marginTop: 16 }} />
             </View>
           )}
 
@@ -1027,6 +1046,11 @@ const styles = StyleSheet.create({
   sampleCaption: { fontFamily: SERIF, fontStyle: 'italic', fontSize: 13, color: '#8B8698', textAlign: 'center', marginBottom: 8 },
   recentRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 9 },
   footerRow: { flexDirection: 'row', justifyContent: 'center', gap: 24, marginTop: 14 },
+  tabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#2A2639', marginBottom: 14 },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 10, borderBottomWidth: 2, borderBottomColor: 'transparent', marginBottom: -1 },
+  tabOn: { borderBottomColor: '#F5C95D' },
+  tabText: { color: '#8B8698', fontSize: 15, fontWeight: '500' },
+  tabTextOn: { color: '#F2EEE8' },
   footerLink: { color: '#6B6580', fontSize: 13, textAlign: 'center' },
   legalLink: { color: '#6B6580', fontSize: 13, textAlign: 'center', marginTop: 18, textDecorationLine: 'underline' },
   deleteBtn: { borderWidth: 1, borderColor: '#E88C9C', borderRadius: 14, paddingVertical: 14, alignItems: 'center', marginTop: 6 },
