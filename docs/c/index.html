@@ -4,13 +4,12 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/png" href="/favicon.png" />
-<link rel="canonical" href="https://threewordsapp.com/describe/" />
-<title>Live word clouds — describe it in three words</title>
-<meta name="description" content="Public, live word clouds from three·words. Pick a subject, add your three anonymous words, and watch how strangers describe it." />
+<meta name="robots" content="noindex, nofollow" />
+<title>Describe it in three words — a live word cloud</title>
+<meta name="description" content="Add your three anonymous words and watch the word cloud grow live." />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Describe it in three words — live word clouds" />
+<meta property="og:title" content="Describe it in three words" />
 <meta property="og:description" content="Add three anonymous words and watch the cloud grow live." />
-<meta property="og:url" content="https://threewordsapp.com/describe/" />
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -58,14 +57,6 @@
   .ios { background:#F5C95D; color:#16141F; }
   .android { border:1px solid #3D3852; color:#F2EEE8; }
 
-  /* hub list */
-  .topics { max-width:440px; margin:0 auto; text-align:left; }
-  .topic { display:flex; justify-content:space-between; align-items:center; gap:12px; text-decoration:none;
-    background:#211E2E; border:1px solid #322E44; border-radius:14px; padding:16px 18px; margin:10px 0; }
-  .topic:hover { border-color:#F5C95D; }
-  .tprompt { font-family:Georgia,serif; font-size:19px; color:#F2EEE8; }
-  .tcount { color:#8B8698; font-size:13px; white-space:nowrap; }
-
   .about { text-align:left; max-width:440px; margin:40px auto 0; color:#A9A3B8; font-size:15px; }
   .about h2 { font-family:Georgia,serif; font-weight:400; font-size:21px; color:#F2EEE8; margin:0 0 8px; }
   .about a { color:#F5C95D; }
@@ -76,19 +67,12 @@
 <link rel="stylesheet" href="/describe/cloud.css?v=4" />
 </head>
 <body>
+<script>if (!new URLSearchParams(location.search).get("t")) location.replace("/describe/");</script>
 <main>
   <div class="mark"><a href="/" aria-label="three·words home">✳</a></div>
   <div class="wordmark"><a href="/">three<b>·</b>words</a></div>
 
-  <!-- ── hub: list of open clouds (shown when no ?t=) ── -->
-  <div data-when="hub" hidden>
-    <h1>Describe it in <em>three words</em></h1>
-    <p class="sub">Public, live word clouds. Pick a subject, add your three anonymous words, and watch how strangers see it.</p>
-    <div class="topics" id="hub"><p class="whisper">Loading…</p></div>
-  </div>
-
-  <!-- ── one topic (shown when ?t=slug) ── -->
-  <div data-when="topic" hidden>
+  <div>
     <h1 id="h1title" data-generic="1">Describe <em>…</em> in three words</h1>
     <p class="sub">Anonymous. One set of words per person. Every answer lands in the cloud below, live.</p>
 
@@ -98,7 +82,7 @@
       <input id="w3" placeholder="third word" maxlength="20" autocapitalize="none" autocomplete="off" />
       <div class="err" id="err"></div>
       <button id="send">Add my three words</button>
-      <p class="muted">Letters only, one word each. Slurs are blocked automatically; anything cruel gets removed.</p>
+      <p class="muted">Letters only, one word each. Slurs are blocked automatically.</p>
     </div>
     <div class="card" id="mine">
       <p>Your words: <b id="mywords"></b></p>
@@ -129,12 +113,14 @@
     <h2>What is this?</h2>
     <p>A public experiment by <a href="/">three·words</a>, a small app built around one question: how do the people who
     know you <em>really</em> see you? In the app, you invite your friends and family and each of them sends three words
-    that describe you. These pages point the same idea at subjects everyone has an opinion about.</p>
+    that describe you. People who use the app can also start a cloud about any subject, like this one, and share the link.</p>
     <p><strong>How it works.</strong> No account. Your three words are anonymous. One set per person (per browser — you can
     change yours, not add more). A filter blocks slurs before they're saved, and words that are cruel rather than honest
-    get removed by hand. Beyond your three words, the only things stored are a random token your browser keeps so you can
+    can be hidden by the person who started the cloud. Beyond your three words, the only things stored are a random token your browser keeps so you can
     edit them and a hashed IP for rate-limiting — see the <a href="/privacy/">privacy policy</a>.</p>
-    <p>Want a cloud for a different subject? Email <a href="mailto:admin@threewordsapp.com">admin@threewordsapp.com</a>.</p>
+    <p><strong>Something wrong?</strong> A cloud must not target a private person or be hateful or abusive. Use
+    "Report this cloud" under the cloud, or email <a href="mailto:admin@threewordsapp.com">admin@threewordsapp.com</a>.
+    Reported clouds are paused and reviewed by a person.</p>
   </div>
 
   <footer>

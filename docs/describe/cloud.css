@@ -22,6 +22,13 @@ h1 em, .tname { white-space:nowrap; }
   font-family:-apple-system,sans-serif; font-weight:400; }
 .whisper { margin:auto; padding:22px; }
 
+/* Clouds started by app users, and the report link under every cloud. */
+.startedby { color:#8B8698; font-size:13px; margin:-14px auto 22px; max-width:440px; }
+.report { margin:14px 0 0; font-size:13px; color:#6B6580; text-align:center; }
+button.linkish { width:auto; background:none; border:0; padding:4px 6px; margin:0; color:#6B6580; font-size:13px;
+  font-weight:400; text-decoration:underline; cursor:pointer; }
+button.linkish:hover { color:#E88C9C; }
+
 /* The offer shown with "your words", once someone has answered. */
 #mine .nudge { margin:14px 0 0; padding-top:12px; border-top:1px solid #322E44; color:#C9C4D6; font-size:15px;
   line-height:1.5; text-wrap:balance; }
@@ -48,6 +55,7 @@ h1 em, .tname { white-space:nowrap; }
   .wordmark { margin:4px 0 16px; font-size:16px; }
   h1 { font-size:29px; margin-bottom:8px; }
   .sub { font-size:15px; margin-bottom:14px; }
+  .startedby { margin:-8px auto 14px; font-size:12px; }
   #ask { padding:12px 14px; }
   #ask input { padding:11px 14px; margin-bottom:8px; }
   #ask #send { padding:13px; margin-top:0; }

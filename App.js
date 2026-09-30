@@ -29,6 +29,21 @@ Notifications.setNotificationHandler({
 // how to install the app. Recipients still enter the 6-char code in-app.
 const INVITE_BASE = 'https://threewordsapp.com/invite/?c=';
 const inviteLink = (code) => `${INVITE_BASE}${code}`;
+// Clouds a user starts about any subject live on the web; anyone with the link can answer.
+const TOPIC_BASE = 'https://threewordsapp.com/c/?t=';
+const topicLink = (slug) => `${TOPIC_BASE}${slug}`;
+const TOPIC_ERRORS = {
+  limit_reached: 'You can have one open cloud at a time. Close or delete your open cloud first.',
+  under_review: 'One of your clouds is paused for review, so new clouds are on hold. Contact support if you think this is a mistake.',
+  blocked_title: "That name isn't allowed. Try different words.",
+  bad_title: "Names can't include links or the characters < and >.",
+  bad_title_length: 'Use between 2 and 60 characters.',
+  rate_limited: "You've started several clouds today. Try again tomorrow.",
+};
+const topicError = (err, fallback) => {
+  const key = Object.keys(TOPIC_ERRORS).find((k) => (err?.message || '').includes(k));
+  return key ? TOPIC_ERRORS[key] : fallback;
+};
 // faded example shown in the empty state so new users see the payoff before it's real
 const SAMPLE_CLOUD = { kind: 3, funny: 2, loyal: 2, curious: 1, honest: 1, warm: 1 };
 // Hosted from docs/index.html via GitHub Pages (enable: repo Settings -> Pages -> main /docs)
@@ -76,7 +91,7 @@ const isProfane = (w) => {
 };
 
 // ---------- word cloud ----------
-function WordCloud({ counts }) {
+function WordCloud({ counts, onWordPress }) {
   const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   if (!entries.length) return null;
   const max = entries[0][1];
@@ -87,13 +102,18 @@ function WordCloud({ counts }) {
         const size = 17 + t * 28;
         const color = PALETTE[hash(word) % PALETTE.length];
         const tilt = ((hash(word) % 7) - 3) * 1.2;
+        const Wrap = onWordPress ? TouchableOpacity : View;
         return (
-          <View key={word} style={{ transform: [{ rotate: `${tilt}deg` }], flexDirection: 'row', alignItems: 'flex-start', margin: 6 }}>
+          <Wrap
+            key={word}
+            onPress={onWordPress ? () => onWordPress(word) : undefined}
+            style={{ transform: [{ rotate: `${tilt}deg` }], flexDirection: 'row', alignItems: 'flex-start', margin: 6 }}
+          >
             <Text style={{ fontFamily: SERIF, fontSize: size, color, fontWeight: t > 0.55 ? '600' : '400' }}>
               {word}
             </Text>
             {count > 1 && <Text style={{ fontSize: 11, color: '#8B8698', marginLeft: 2 }}>{count}</Text>}
-          </View>
+          </Wrap>
         );
       })}
     </View>
@@ -123,6 +143,12 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [live, setLive] = useState(false);
   const [appleAvailable, setAppleAvailable] = useState(false);
+
+  // clouds this user started about other subjects
+  const [topics, setTopics] = useState([]);
+  const [topicTitle, setTopicTitle] = useState('');
+  const [topic, setTopic] = useState(null);           // the one being viewed, from list_my_topics
+  const [topicCloud, setTopicCloud] = useState(null); // its words, from get_topic_cloud
   const channelRef = useRef(null);
   const cloudShotRef = useRef(null);
 
@@ -219,6 +245,37 @@ export default function App() {
     channelRef.current = channel;
     return () => { supabase.removeChannel(channel); setLive(false); };
   }, [screen, me, loadSubs]);
+
+  const loadTopics = useCallback(async () => {
+    const { data, error: err } = await supabase.rpc('list_my_topics');
+    if (err || !Array.isArray(data)) return null;
+    setTopics(data);
+    return data;
+  }, []);
+
+  useEffect(() => {
+    if (screen === 'dashboard' && me?.id) loadTopics();
+  }, [screen, me?.id, loadTopics]);
+
+  // a topic cloud fills from the web, so poll while it's on screen
+  const topicSlug = topic?.slug;
+  useEffect(() => {
+    if (screen !== 'topic' || !topicSlug) return;
+    let alive = true;
+    const pull = async () => {
+      const { data } = await supabase.rpc('get_topic_cloud', { p_slug: topicSlug });
+      if (alive && data) setTopicCloud(data);
+    };
+    pull();
+    const timer = setInterval(pull, 5000);
+    return () => { alive = false; clearInterval(timer); };
+  }, [screen, topicSlug]);
+
+  const topicCounts = useMemo(() => {
+    const c = {};
+    (topicCloud?.words || []).forEach((x) => { c[x.w] = x.c; });
+    return c;
+  }, [topicCloud]);
 
   const counts = useMemo(() => {
     const c = {};
@@ -341,6 +398,75 @@ export default function App() {
     } catch {}
   };
 
+  // ---------- topic clouds ----------
+  const openTopic = (t) => { setTopic(t); setTopicCloud(null); setError(''); setScreen('topic'); };
+
+  // re-read the list and keep the open topic in step with it
+  const refreshTopic = async (slug) => {
+    const list = await loadTopics();
+    const fresh = (list || []).find((t) => t.slug === slug);
+    if (fresh) setTopic(fresh);
+    const { data } = await supabase.rpc('get_topic_cloud', { p_slug: slug });
+    if (data) setTopicCloud(data);
+  };
+
+  const createTopic = async () => {
+    const title = topicTitle.trim().replace(/\s+/g, ' ');
+    if (title.length < 2) return setError('Give your cloud a subject.');
+    setBusy(true);
+    const { data, error: err } = await supabase.rpc('create_my_topic', { p_title: title });
+    setBusy(false);
+    if (err || !data?.slug) return setError(topicError(err, "Couldn't start your cloud. Try again."));
+    setError('');
+    setTopicTitle('');
+    const list = await loadTopics();
+    openTopic((list || []).find((t) => t.slug === data.slug)
+      || { slug: data.slug, title: data.title, is_open: true, paused: false, hidden_words: [], total: 0 });
+  };
+
+  const shareTopic = async () => {
+    try {
+      await Share.share({ message: `Describe ${topic.title} in three words 👀\n${topicLink(topic.slug)}` });
+    } catch {}
+  };
+
+  const setWordHidden = async (word, hidden) => {
+    const { error: err } = await supabase.rpc('set_my_topic_word_hidden', { p_slug: topic.slug, p_word: word, p_hidden: hidden });
+    if (err) return Alert.alert("Couldn't update", 'Please try again in a moment.');
+    refreshTopic(topic.slug);
+  };
+
+  const askHideWord = (word) => {
+    Alert.alert(`"${word}"`, 'Hide this word from your cloud? You can bring it back later.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Hide', style: 'destructive', onPress: () => setWordHidden(word, true) },
+    ]);
+  };
+
+  const setTopicOpen = async (open) => {
+    setBusy(true);
+    const { error: err } = await supabase.rpc('set_my_topic_open', { p_slug: topic.slug, p_open: open });
+    setBusy(false);
+    if (err) return Alert.alert("Couldn't update", topicError(err, 'Please try again in a moment.'));
+    refreshTopic(topic.slug);
+  };
+
+  const deleteTopic = () => {
+    Alert.alert('Delete this cloud', 'This permanently deletes the cloud and every word in it. The link will stop working.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          const { error: err } = await supabase.rpc('delete_my_topic', { p_slug: topic.slug });
+          if (err) return Alert.alert("Couldn't delete", topicError(err, 'Please try again in a moment.'));
+          setTopic(null); setTopicCloud(null);
+          setScreen('dashboard');
+        },
+      },
+    ]);
+  };
+
   // ---------- moderation ----------
   const moderateRow = (s) => {
     const actions = [
@@ -382,12 +508,13 @@ export default function App() {
   const signOut = async () => {
     await supabase.auth.signOut();
     setSubs([]); setMe(null); setEmail(''); setPassword('');
+    setTopics([]); setTopic(null); setTopicCloud(null); setTopicTitle('');
   };
 
   const deleteAccount = () => {
     Alert.alert(
       'Delete account',
-      'This permanently deletes your profile and every word sent to or from you. This cannot be undone.',
+      'This permanently deletes your profile, every word sent to or from you, and any clouds you started. This cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -680,11 +807,135 @@ export default function App() {
                 </View>
               )}
 
+              <View style={[styles.card, { marginTop: 12 }]}>
+                <Text style={styles.label}>CLOUDS ABOUT ANYTHING</Text>
+                {topics.length === 0 && (
+                  <Text style={[styles.muted, { fontSize: 13 }]}>
+                    Start a cloud about a trip, a team, a year. Anyone with the link adds three words. No app needed.
+                  </Text>
+                )}
+                {topics.map((t, i) => (
+                  <TouchableOpacity
+                    key={t.slug}
+                    onPress={() => openTopic(t)}
+                    style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: '#F2EEE8', fontSize: 15 }}>{t.title}</Text>
+                      <Text style={{ color: t.paused ? '#E88C9C' : '#A9A3B8', fontSize: 13 }}>
+                        {t.paused ? 'paused for review' : `${t.total} ${t.total === 1 ? 'answer' : 'answers'} · ${t.is_open ? 'open' : 'closed'}`}
+                      </Text>
+                    </View>
+                    <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>›</Text>
+                  </TouchableOpacity>
+                ))}
+                {topics.some((t) => t.is_open || t.paused) ? (
+                  <Text style={[styles.muted, { fontSize: 12, marginTop: 8, marginBottom: 0 }]}>
+                    One open cloud at a time. Close or delete it to start another.
+                  </Text>
+                ) : (
+                  <Btn ghost label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} />
+                )}
+              </View>
+
               <Btn ghost label="Describe someone" onPress={() => { setError(''); setScreen('join'); }} style={{ marginTop: 16 }} />
               <View style={styles.footerRow}>
-                <TouchableOpacity onPress={() => loadSubs(me.id)}><Text style={styles.footerLink}>Refresh</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => { loadSubs(me.id); loadTopics(); }}><Text style={styles.footerLink}>Refresh</Text></TouchableOpacity>
                 <TouchableOpacity onPress={() => setScreen('account')}><Text style={styles.footerLink}>Account</Text></TouchableOpacity>
               </View>
+            </View>
+          )}
+
+          {/* ---- NEW TOPIC CLOUD ---- */}
+          {screen === 'newTopic' && (
+            <View style={styles.card}>
+              <Text style={styles.h2}>Start a cloud</Text>
+              <Text style={styles.muted}>What should people describe in three words?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. our team offsite"
+                placeholderTextColor="#6B6580"
+                value={topicTitle}
+                maxLength={60}
+                onChangeText={setTopicTitle}
+              />
+              <Text style={{ fontFamily: SERIF, fontStyle: 'italic', color: '#8B8698', fontSize: 15, marginBottom: 12 }}>
+                Describe {topicTitle.trim() || '…'} in three words
+              </Text>
+              <Text style={[styles.muted, { fontSize: 12, lineHeight: 18 }]}>
+                Answers are anonymous and anyone with the link can add them. Don't start a cloud about a private
+                person, or one meant to hurt someone. Clouds that are reported get paused and reviewed. See our{' '}
+                <Text style={{ color: '#F5C95D' }} onPress={() => Linking.openURL(TERMS_URL)}>Terms</Text>.
+              </Text>
+              {!!error && <Text style={styles.error}>{error}</Text>}
+              <Btn label={busy ? 'Starting…' : 'Start my cloud'} disabled={busy} onPress={createTopic} />
+              <Btn ghost label="Back" onPress={() => { setError(''); setScreen('dashboard'); }} />
+            </View>
+          )}
+
+          {/* ---- ONE TOPIC CLOUD ---- */}
+          {screen === 'topic' && topic && (
+            <View>
+              <Text style={styles.h1}>{topic.title}</Text>
+              <Text style={[styles.muted, { textAlign: 'center' }]}>
+                {topic.paused
+                  ? 'Paused while reports about it are reviewed.'
+                  : `${topicCloud?.total ?? topic.total} ${(topicCloud?.total ?? topic.total) === 1 ? 'person has' : 'people have'} answered  ·  ${topic.is_open ? 'open' : 'closed'}`}
+              </Text>
+
+              {topic.paused ? (
+                <View style={styles.card}>
+                  <Text style={[styles.muted, { marginBottom: 0 }]}>
+                    People with the link reported this cloud, so it's hidden until we've looked at it.
+                    If you think that's a mistake, write to {SUPPORT_EMAIL}.
+                  </Text>
+                  <Btn ghost label="Contact support" onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}`)} />
+                </View>
+              ) : (
+                <>
+                  {Object.keys(topicCounts).length > 0 ? (
+                    <>
+                      <WordCloud counts={topicCounts} onWordPress={askHideWord} />
+                      <Text style={styles.sampleCaption}>tap a word to hide it</Text>
+                    </>
+                  ) : (
+                    <Text style={styles.emptyCloud}>
+                      {topicCloud ? 'No words yet. Share the link to get the first.' : 'Loading…'}
+                    </Text>
+                  )}
+
+                  <Btn label="Share the link" onPress={shareTopic} />
+                  <Text style={[styles.muted, { fontSize: 13, textAlign: 'center', marginTop: 8 }]}>
+                    {topicLink(topic.slug).replace('https://', '')}
+                  </Text>
+
+                  {(topic.hidden_words || []).length > 0 && (
+                    <View style={[styles.card, { marginTop: 4 }]}>
+                      <Text style={styles.label}>HIDDEN WORDS</Text>
+                      {topic.hidden_words.map((w, i) => (
+                        <View key={w} style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}>
+                          <Text style={{ color: '#A9A3B8', fontSize: 15 }}>{w}</Text>
+                          <TouchableOpacity onPress={() => setWordHidden(w, false)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                            <Text style={{ color: '#F5C95D', fontSize: 14 }}>Show again</Text>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+
+                  <Btn
+                    ghost
+                    disabled={busy}
+                    label={topic.is_open ? 'Close to new words' : 'Reopen'}
+                    onPress={() => setTopicOpen(!topic.is_open)}
+                  />
+                  <TouchableOpacity style={styles.deleteBtn} onPress={deleteTopic}>
+                    <Text style={styles.deleteBtnText}>Delete this cloud</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+
+              <Btn label="Back to my cloud" onPress={() => { setError(''); setScreen('dashboard'); }} style={{ marginTop: 16 }} />
             </View>
           )}
 
@@ -704,7 +955,7 @@ export default function App() {
                 <Text style={styles.deleteBtnText}>{busy ? 'Deleting…' : 'Delete my account'}</Text>
               </TouchableOpacity>
               <Text style={[styles.muted, { fontSize: 12, marginTop: 8 }]}>
-                Permanently deletes your profile and all words to or from you.
+                Permanently deletes your profile, all words to or from you, and any clouds you started.
               </Text>
 
               <Btn label="Back" onPress={() => setScreen('dashboard')} style={{ marginTop: 16 }} />

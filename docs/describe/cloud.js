@@ -1,7 +1,8 @@
 // Public topic clouds — shared logic for /describe/ pages.
 // Reads the topic from <main data-topic="…"> (a dedicated page like /describe/2026/)
-// or from ?t=… (the generic /describe/ page). Everything goes through the RPCs in
-// add-topic-clouds.sql; nothing here can read individual submissions.
+// or from ?t=… (the generic /describe/ page, and /c/ for clouds started by app users).
+// Everything goes through the RPCs in add-topic-clouds.sql and add-user-topics.sql;
+// nothing here can read individual submissions.
 (() => {
   const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
   const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
@@ -88,6 +89,7 @@
   let lastTotal = -1;
   let lastData = null;        // kept so the cloud can re-fit when the window is resized
   let topicTitle = '';
+  let userCloud = false;      // started by an app user rather than by three·words
 
   // Type scale that follows both the stage width and how full the cloud is: a handful of
   // answers render large and confident, hundreds settle into a few giants over a haze.
@@ -176,10 +178,45 @@
       return;
     }
     failures = 0;
+    if (body.is_user && !userCloud) markUserCloud();
+    if (body.paused) {
+      setPaused();
+      render(body);
+      return;
+    }
     if (body.title && body.title !== topicTitle) setTitle(body.title);
     if (!body.is_open) setClosed('This cloud is closed to new words, but here is how it ended up.');
     else setOpen();
     render(body);
+  }
+
+  // A cloud started by an app user says so, stays out of search engines, and
+  // doesn't call the people answering "strangers".
+  function markUserCloud() {
+    userCloud = true;
+    if (!document.querySelector('meta[name="robots"]')) {
+      const m = document.createElement('meta'); m.name = 'robots'; m.content = 'noindex, nofollow';
+      document.head.appendChild(m);
+    }
+    const sub = document.querySelector('[data-when="topic"] .sub') || document.querySelector('.sub');
+    if (sub && !$('startedby')) {
+      const p = document.createElement('p');
+      p.id = 'startedby'; p.className = 'startedby';
+      p.textContent = 'Started by a three·words user. Only people with the link can find it.';
+      sub.insertAdjacentElement('afterend', p);
+    }
+    document.querySelectorAll('.ctah').forEach((h) => {
+      if (h.firstChild && h.firstChild.nodeType === 3) h.firstChild.textContent = "That's how people describe ";
+    });
+  }
+
+  function setPaused() {
+    setClosed('This cloud is paused while reports about it are reviewed.');
+    if (el.h1) el.h1.textContent = 'This cloud is paused';
+    document.title = 'This cloud is paused';
+    const cta = document.querySelector('.card.cta'); if (cta) cta.style.display = 'none';
+    const rep = $('report'); if (rep) rep.style.display = 'none';
+    if (el.empty) el.empty.textContent = 'Nothing to show while it is under review.';
   }
   function schedule() {
     clearTimeout(pollTimer);
@@ -277,6 +314,30 @@
       setTimeout(() => { el.share.textContent = old; }, 1600);
     } catch {}
   });
+
+  // ---------- report ----------
+  const wrap = document.querySelector('.cloudwrap');
+  if (wrap) {
+    const reportedKey = 'tw_reported_' + slug;
+    const rep = document.createElement('p');
+    rep.id = 'report'; rep.className = 'report';
+    const done = () => { rep.textContent = 'Reported. Thank you — reports are reviewed by a person.'; };
+    if (store.get(reportedKey)) done();
+    else {
+      const a = document.createElement('button');
+      a.type = 'button'; a.className = 'linkish'; a.textContent = 'Report this cloud';
+      a.addEventListener('click', async () => {
+        const reason = window.prompt('What is wrong with this cloud? (optional)\n\nReport it if it targets a private person, or is hateful or abusive.');
+        if (reason === null) return;
+        a.disabled = true;
+        const { ok } = await rpc('report_topic', { p_slug: slug, p_token: token, p_reason: reason.slice(0, 300) });
+        if (ok) { store.set(reportedKey, '1'); done(); refresh(); }
+        else { a.disabled = false; a.textContent = "Couldn't send the report. Try again"; }
+      });
+      rep.appendChild(a);
+    }
+    wrap.appendChild(rep);
+  }
 
   refresh().then(schedule);
 })();
