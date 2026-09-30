@@ -20,6 +20,7 @@ three·words
 > • Send someone your invite code and watch the words arrive live
 > • Describe the people who invite you — three honest words each
 > • Choose to sign your words or stay anonymous
+> • Start a cloud about any subject and share the link; people answer from their browser
 > • A gentle filter keeps things kind; report or block anything unwelcome
 > • Delete your account and all your words anytime
 >
@@ -55,9 +56,25 @@ Primary: Social Networking (iOS) / Social (Android)
 > an automatic profanity filter blocks objectionable words at submission time;
 > recipients can report content and block senders in-app; reported content is
 > removed immediately and reviewed within 24 hours at admin@threewordsapp.com.
-> Test account: dgerken+appreview@gmail.com / ReviewMe2026! (has a populated cloud).
+> Test account: enter the review account's email and password in the store console's
+> sign-in fields, never in this file (the repository is public). It has a populated cloud.
 > Users agree to Terms with a zero-tolerance clause at sign-up
 > (https://threewordsapp.com/terms/).
+
+## v1.3.0 (clouds about any subject)
+
+**What's new (both stores)**
+> New: start a word cloud about anything. Pick a subject, such as a trip, a team or a year,
+> and share the link. Anyone can add three words from their browser, no app needed. You can
+> hide words, close the cloud, or delete it at any time.
+
+**Add to the notes for the reviewer**
+> New in 1.3.0: users can start a word cloud about a subject and share its link. Answers are
+> added anonymously on our website. Moderation: the same automatic word filter applies to
+> cloud names and answers; the owner can hide words, close or delete the cloud in the app;
+> every cloud page has a "Report this cloud" link, and a cloud reported by three people is
+> paused and hidden until we review it. Clouds are unlisted and reachable only by link. Our
+> Terms forbid clouds that target a private person.
 
 ---
 

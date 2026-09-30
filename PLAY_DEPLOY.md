@@ -23,7 +23,7 @@ Work down the Dashboard checklist — every item must be done before any release
 - **Privacy policy** → `https://threewordsapp.com/privacy/`
 - **App access** → "All functionality is available without special access" is
   WRONG for us (login required). Choose **"All or some functionality is
-  restricted"** and add credentials: `dgerken+appreview@gmail.com` / `ReviewMe2026!`
+  restricted"** and add the review account's email and password (kept out of this file; the repository is public)
   with a note that any user can self-register.
 - **Ads** → No ads.
 - **Content rating** → fill the questionnaire; declare **user-generated content**
