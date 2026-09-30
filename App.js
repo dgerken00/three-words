@@ -424,6 +424,12 @@ export default function App() {
       || { slug: data.slug, title: data.title, is_open: true, paused: false, hidden_words: [], total: 0 });
   };
 
+  // A tap here is the buying signal the free limit is designed to surface.
+  const wantSecondCloud = async () => {
+    await supabase.rpc('note_topic_signal', { p_kind: 'wants_second_cloud' });
+    Alert.alert('Noted', "Thanks. Right now it's one open cloud per account; if enough people ask, we'll add a way to have more.");
+  };
+
   const shareTopic = async () => {
     try {
       await Share.share({ message: `Describe ${topic.title} in three words 👀\n${topicLink(topic.slug)}` });
@@ -808,7 +814,8 @@ export default function App() {
                 ))}
                 {topics.some((t) => t.is_open || t.paused) ? (
                   <Text style={[styles.muted, { fontSize: 12, marginTop: 8, marginBottom: 0 }]}>
-                    One open cloud at a time. Close or delete it to start another.
+                    One open cloud at a time. Close or delete it to start another.{' '}
+                    <Text style={{ color: '#F5C95D' }} onPress={wantSecondCloud}>Want more than one?</Text>
                   </Text>
                 ) : (
                   <Btn ghost label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} />

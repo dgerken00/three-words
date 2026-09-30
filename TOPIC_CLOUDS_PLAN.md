@@ -1,14 +1,14 @@
 # Plan: topic clouds created in the app (v1.3.0)
 
-Status: **approved 2026-09-29; built locally, not yet released.**
+Status: **iOS 1.3.0 (build 14) submitted for App Store review 2026-09-29. Android 1.3.0 (version code 7) built, not yet uploaded to Play.**
 
 | Step | State |
 |---|---|
-| 1. Database change (`add-user-topics.sql`) | Written and tested in a throwaway database. **David still has to run it in Supabase.** |
-| 2. Web (`docs/c/`, report link, labels) | Built and checked locally. Push only after step 1, because the report link needs the new database function. |
-| 3. App screens (`App.js`, v1.3.0) | Built; bundles cleanly. Not yet tried on a phone. |
-| 4. Terms and privacy | Updated locally. |
-| 5. Store release | Not started. |
+| 1. Database change (`add-user-topics.sql`) | Run in Supabase by David 2026-09-29; confirmed live. |
+| 2. Web (`docs/c/`, report link, labels) | Live. A further update that tells visitors they can start their own cloud is built locally and held until 1.3.0 is in both stores. |
+| 3. App screens (`App.js`, v1.3.0) | Tested by David on iPhone through TestFlight; all steps worked. Clouds card moved up the dashboard after that test. |
+| 4. Terms and privacy | Live. |
+| 5. Store release | iOS in review. Android waiting for upload. |
 
 Decisions made: free limit is 1 open cloud; David reviews reports weekly (queries are at the top of `add-user-topics.sql`).
 User cloud links are `threewordsapp.com/c/?t=<8 characters>`.
