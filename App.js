@@ -777,7 +777,45 @@ export default function App() {
                 </View>
               )}
 
-              <View style={styles.card}>
+              <View style={[styles.card, { marginTop: 12 }]}>
+                <Text style={styles.label}>CLOUDS ABOUT ANYTHING</Text>
+                {topics.length === 0 && (
+                  <Text style={[styles.muted, { fontSize: 13 }]}>
+                    Start a cloud about a trip, a team, a year. Anyone with the link adds three words. No app needed.
+                  </Text>
+                )}
+                {topics.map((t, i) => (
+                  <TouchableOpacity
+                    key={t.slug}
+                    onPress={() => openTopic(t)}
+                    style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}
+                  >
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: '#F2EEE8', fontSize: 15 }}>{t.title}</Text>
+                      {t.paused ? (
+                        <Text style={{ color: '#E88C9C', fontSize: 13 }}>paused for review</Text>
+                      ) : (
+                        <Text style={{ color: '#A9A3B8', fontSize: 13 }}>
+                          <Text style={{ color: '#F5C95D', fontWeight: '600' }}>
+                            {t.total} {t.total === 1 ? 'answer' : 'answers'}
+                          </Text>
+                          {'  ·  '}{t.is_open ? 'open' : 'closed'}
+                        </Text>
+                      )}
+                    </View>
+                    <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>›</Text>
+                  </TouchableOpacity>
+                ))}
+                {topics.some((t) => t.is_open || t.paused) ? (
+                  <Text style={[styles.muted, { fontSize: 12, marginTop: 8, marginBottom: 0 }]}>
+                    One open cloud at a time. Close or delete it to start another.
+                  </Text>
+                ) : (
+                  <Btn ghost label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} />
+                )}
+              </View>
+
+              <View style={[styles.card, { marginTop: 12 }]}>
                 <Text style={styles.label}>YOUR INVITE</Text>
                 <Text style={{ fontFamily: SERIF, fontSize: 28, letterSpacing: 3, color: '#F5C95D', marginBottom: 12 }}>
                   {me.invite_code}
@@ -806,37 +844,6 @@ export default function App() {
                   ))}
                 </View>
               )}
-
-              <View style={[styles.card, { marginTop: 12 }]}>
-                <Text style={styles.label}>CLOUDS ABOUT ANYTHING</Text>
-                {topics.length === 0 && (
-                  <Text style={[styles.muted, { fontSize: 13 }]}>
-                    Start a cloud about a trip, a team, a year. Anyone with the link adds three words. No app needed.
-                  </Text>
-                )}
-                {topics.map((t, i) => (
-                  <TouchableOpacity
-                    key={t.slug}
-                    onPress={() => openTopic(t)}
-                    style={[styles.recentRow, i > 0 && { borderTopWidth: 1, borderTopColor: '#2A2639' }]}
-                  >
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ color: '#F2EEE8', fontSize: 15 }}>{t.title}</Text>
-                      <Text style={{ color: t.paused ? '#E88C9C' : '#A9A3B8', fontSize: 13 }}>
-                        {t.paused ? 'paused for review' : `${t.total} ${t.total === 1 ? 'answer' : 'answers'} · ${t.is_open ? 'open' : 'closed'}`}
-                      </Text>
-                    </View>
-                    <Text style={{ color: '#6B6580', fontSize: 18, paddingHorizontal: 6 }}>›</Text>
-                  </TouchableOpacity>
-                ))}
-                {topics.some((t) => t.is_open || t.paused) ? (
-                  <Text style={[styles.muted, { fontSize: 12, marginTop: 8, marginBottom: 0 }]}>
-                    One open cloud at a time. Close or delete it to start another.
-                  </Text>
-                ) : (
-                  <Btn ghost label="Start a cloud" onPress={() => { setError(''); setScreen('newTopic'); }} />
-                )}
-              </View>
 
               <Btn ghost label="Describe someone" onPress={() => { setError(''); setScreen('join'); }} style={{ marginTop: 16 }} />
               <View style={styles.footerRow}>
