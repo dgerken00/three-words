@@ -1,6 +1,6 @@
 # Plan: topic clouds created in the app (v1.3.0)
 
-Status: **iOS 1.3.0 (build 14) submitted for App Store review 2026-09-29. Android 1.3.0 (version code 7) built, not yet uploaded to Play.**
+Status: **2026-09-30: Android 1.3.0 live; Android 1.3.1 (version code 9) and iOS 1.3.1 (build 16) in review. Free limit raised to three open clouds (raise-topic-limit.sql, run 2026-09-30).**
 
 | Step | State |
 |---|---|
@@ -10,7 +10,7 @@ Status: **iOS 1.3.0 (build 14) submitted for App Store review 2026-09-29. Androi
 | 4. Terms and privacy | Live. |
 | 5. Store release | iOS in review. Android waiting for upload. |
 
-Decisions made: free limit is 1 open cloud; David reviews reports weekly (queries are at the top of `add-user-topics.sql`).
+Decisions made: free limit is 3 open clouds (raised from 1 on 2026-09-30, never to be lowered); David reviews reports weekly (queries are at the top of `add-user-topics.sql`).
 User cloud links are `threewordsapp.com/c/?t=<8 characters>`.
 
 ## Why
@@ -37,7 +37,7 @@ web with no account; this release lets app users start their own.
 | A cloud with 3 reports from different visitors is paused until reviewed | Stops a harmful cloud without waiting for a person |
 | Topic names go through the same slur filter as words | |
 | The page says "Started by a three·words user" | Visitors know it isn't an official cloud |
-| Free limit: 1 open cloud per account | Leaves room for a paid tier later; no payments in this release |
+| Free limit: 3 open clouds per account (was 1 until 2026-09-30) | Clouds are the growth loop, so the count stays generous and permanent; a paid tier would sell better clouds, not more |
 
 Known gap: nothing can automatically tell that a topic names a private person. The terms will
 forbid clouds that target a private individual, and reports plus the pause rule enforce it.
