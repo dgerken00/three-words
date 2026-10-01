@@ -61,27 +61,35 @@ Primary: Social Networking (iOS) / Social (Android)
 > Users agree to Terms with a zero-tolerance clause at sign-up
 > (https://threewordsapp.com/terms/).
 
-## Full description, updated for clouds about any subject (NOT yet pasted into either store — do after the first promotion round)
-> How do the people who know you *really* see you?
+## Listing update for clouds about any subject (NOT yet pasted into either store — do after the first promotion round)
+
+David's steer (2026-10-01): many people are reluctant to ask about themselves but like clouds
+about anything, so the listing must lead with both, not bury the second.
+
+- iOS subtitle (≤30): `Word clouds on you or anything` (30 exactly)
+- Android short (≤80): `Live word clouds about you or anything. Three words each, from a link.`
+
+Full description (both stores):
+> Ask anyone to describe anything in three words. Watch the answers form a live word cloud.
 >
-> three·words is a simple, honest little app. Invite the people who know you — friends, family,
-> the group chat — and each of them sends three words that describe you. Named or anonymous. As
-> the words come in, they gather into a living word cloud that's unmistakably *you*.
+> Start a cloud about any subject — a trip, a team, a wedding, the year so far — and share the
+> link. Anyone can add three words from their browser; they never need the app. The words gather
+> live into a cloud that's funnier and more honest than any survey.
 >
-> • Send someone your invite link and watch the words arrive live
-> • Describe the people who invite you — three honest words each
-> • Choose to sign your words or stay anonymous
-> • A gentle filter keeps things kind; report or block anything unwelcome
+> Or turn it on yourself. Send your invite to the people who know you and find out, in their own
+> words, how they really see you. Named or anonymous, their choice.
+>
+> • Clouds about anything: pick a subject, share a link, watch it grow
+> • Your own cloud: how friends, family and the group chat really see you
+> • Answers come from a link, so nobody else needs the app
+> • Named or anonymous, each person decides
+> • A gentle filter keeps things kind; hide, report or block anything unwelcome
+> • Up to three clouds open at a time; close or delete them whenever you like
 > • Delete your account and all your words anytime
->
-> NEW: CLOUDS ABOUT ANYTHING
-> Start a cloud about a trip, a team, a wedding, a year — any subject — and share the link. Anyone
-> can add three words from their browser; they never need the app. Watch the cloud grow live, hide
-> any word, and close the cloud whenever you like. Up to three clouds open at a time.
 >
 > No feeds, no followers, no ads. Just people, in their own words.
 
-Screenshots to add at the same time: the "About anything" tab, and a topic cloud on the web.
+Screenshots, in this order: a topic cloud (sets the frame), the personal cloud, the "About anything" tab.
 
 ## v1.3.0 (clouds about any subject)
 
