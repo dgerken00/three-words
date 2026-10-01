@@ -61,6 +61,28 @@ Primary: Social Networking (iOS) / Social (Android)
 > Users agree to Terms with a zero-tolerance clause at sign-up
 > (https://threewordsapp.com/terms/).
 
+## Full description, updated for clouds about any subject (NOT yet pasted into either store — do after the first promotion round)
+> How do the people who know you *really* see you?
+>
+> three·words is a simple, honest little app. Invite the people who know you — friends, family,
+> the group chat — and each of them sends three words that describe you. Named or anonymous. As
+> the words come in, they gather into a living word cloud that's unmistakably *you*.
+>
+> • Send someone your invite link and watch the words arrive live
+> • Describe the people who invite you — three honest words each
+> • Choose to sign your words or stay anonymous
+> • A gentle filter keeps things kind; report or block anything unwelcome
+> • Delete your account and all your words anytime
+>
+> NEW: CLOUDS ABOUT ANYTHING
+> Start a cloud about a trip, a team, a wedding, a year — any subject — and share the link. Anyone
+> can add three words from their browser; they never need the app. Watch the cloud grow live, hide
+> any word, and close the cloud whenever you like. Up to three clouds open at a time.
+>
+> No feeds, no followers, no ads. Just people, in their own words.
+
+Screenshots to add at the same time: the "About anything" tab, and a topic cloud on the web.
+
 ## v1.3.0 (clouds about any subject)
 
 **What's new (both stores)**
