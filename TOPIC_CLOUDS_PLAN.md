@@ -1,14 +1,14 @@
 # Plan: topic clouds created in the app (v1.3.0)
 
-Status: **2026-09-30: Android 1.3.0 live; Android 1.3.1 (version code 9) and iOS 1.3.1 (build 16) in review. Free limit raised to three open clouds (raise-topic-limit.sql, run 2026-09-30).**
+Status: **2026-10-04: 1.3.1 live on both stores (iOS build 16, Android version code 9). Free limit is three open clouds.**
 
 | Step | State |
 |---|---|
 | 1. Database change (`add-user-topics.sql`) | Run in Supabase by David 2026-09-29; confirmed live. |
-| 2. Web (`docs/c/`, report link, labels) | Live. A further update that tells visitors they can start their own cloud is built locally and held until 1.3.1 is in both stores. |
+| 2. Web (`docs/c/`, report link, labels) | Live, including the update that tells visitors they can start their own cloud (pushed 2026-10-04). |
 | 3. App screens (`App.js`, v1.3.0) | Tested by David on iPhone through TestFlight; all steps worked. Clouds card moved up the dashboard after that test. |
 | 4. Terms and privacy | Live. |
-| 5. Store release | Android 1.3.0 live; 1.3.1 in review on both stores (iOS build 16, Android version code 9). |
+| 5. Store release | 1.3.1 live on both stores. Next build should also turn on Android code shrinking (Play's DEX optimisation notice, deadline Feb 2027). |
 | 6. Store listings | **Not yet updated.** Descriptions still describe 1.2.0; screenshots show 1.2.0 screens. David's call (2026-10-01): leave them until after the web-driven promotion round, then update text (draft in STORE_LISTING.md) and add two screenshots: the "About anything" tab and a topic cloud on the web. |
 
 Decisions made: free limit is 3 open clouds (raised from 1 on 2026-09-30, never to be lowered); David reviews reports weekly (queries are at the top of `add-user-topics.sql`).
