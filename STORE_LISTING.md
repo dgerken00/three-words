@@ -74,7 +74,7 @@ Full description (both stores):
 >
 > Start a cloud about any subject — a trip, a team, a wedding, the year so far — and share the
 > link. Anyone can add three words from their browser; they never need the app. The words gather
-> live into a cloud that's funnier and more honest than any survey.
+> live into a cloud that says more than any survey.
 >
 > Or turn it on yourself. Send your invite to the people who know you and find out, in their own
 > words, how they really see you. Named or anonymous, their choice.
