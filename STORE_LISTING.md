@@ -61,7 +61,7 @@ Primary: Social Networking (iOS) / Social (Android)
 > Users agree to Terms with a zero-tolerance clause at sign-up
 > (https://threewordsapp.com/terms/).
 
-## Listing update for clouds about any subject (NOT yet pasted into either store — do after the first promotion round)
+## Listing update for clouds about any subject (David decided 2026-10-04 to apply it now, alongside the landing page)
 
 David's steer (2026-10-01): many people are reluctant to ask about themselves but like clouds
 about anything, so the listing must lead with both, not bury the second.
