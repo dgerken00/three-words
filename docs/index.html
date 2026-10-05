@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/png" href="/favicon.png" />
 <link rel="canonical" href="https://threewordsapp.com/" />
-<title>three·words — how the people who know you really see you</title>
-<meta name="description" content="Invite the people who know you. Each sends three words that describe you — named or anonymous — and your word cloud takes shape." />
+<title>three·words — live word clouds on you or anything</title>
+<meta name="description" content="Ask anyone to describe anything in three words — you, your team, the year so far — and watch the answers form a live word cloud. Answers come from a link; nobody needs the app." />
 <meta property="og:title" content="three·words" />
-<meta property="og:description" content="How do the people who know you really see you? Three words at a time." />
+<meta property="og:description" content="Live word clouds on you or anything. Three words each, from a link." />
 <meta property="og:url" content="https://threewordsapp.com/" />
 <style>
   :root { color-scheme: dark; }
@@ -29,6 +29,18 @@
   .cloud span { display:inline-block; }
   .cloud .n { font-size:12px; color:#8B8698; vertical-align:super; margin-left:1px; font-family:-apple-system,sans-serif; }
   .whisper { font-family:Georgia,serif; font-style:italic; color:#4E4963; font-size:15px; margin:0 0 44px; }
+  .kind { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#8B8698; margin:0 0 6px; }
+  .kind b { color:#F5C95D; font-weight:600; }
+  .about-anything { max-width:460px; margin:0 auto 44px; }
+  .about-anything h2 { font-family:Georgia,serif; font-weight:300; font-size:28px; line-height:1.25; color:#F2EEE8; margin:0 0 10px; }
+  .about-anything h2 em { font-style:italic; color:#F5C95D; }
+  .about-anything p { color:#A9A3B8; margin:0 0 18px; }
+  .livecard { display:block; border:1px solid #322E44; border-radius:16px; overflow:hidden; text-decoration:none;
+    background:#110F17; }
+  .livecard img { display:block; width:100%; height:auto; }
+  .livecard span { display:block; padding:12px 16px; color:#F2EEE8; font-size:15px; border-top:1px solid #1E1B2A; }
+  .livecard span small { color:#8B8698; display:block; font-size:13px; }
+  .livecard:hover { border-color:#F5C95D; }
   .btn { display:block; max-width:340px; margin:12px auto; padding:16px; border-radius:14px;
     text-decoration:none; font-weight:600; font-size:17px; }
   .ios { background:#F5C95D; color:#16141F; }
@@ -52,10 +64,11 @@
   <div class="mark">✳</div>
   <div class="wordmark">three<b>·</b>words</div>
 
-  <h1>How do the people who know you <em>really</em> see you?</h1>
-  <p class="sub">Invite your people. Each sends three honest words that describe you —
-  named or anonymous. Watch them gather into a cloud that's unmistakably you.</p>
+  <h1>Ask anyone to describe <em>anything</em> in three words.</h1>
+  <p class="sub">You, your team, a trip, the year so far. Share a link, each person sends three honest
+  words, and a live word cloud takes shape.</p>
 
+  <p class="kind"><b>About you</b> · how the people who know you really see you</p>
   <div class="cloud" aria-label="Example word cloud">
     <span style="font-size:42px;color:#F5C95D;font-weight:600;">kind<span class="n">4</span></span>
     <span style="font-size:23px;color:#8FB8C9;transform:rotate(-2deg);">curious</span>
@@ -68,7 +81,18 @@
     <span style="font-size:20px;color:#E88C9C;transform:rotate(1deg);">witty</span>
     <span style="font-size:18px;color:#C9A6E8;transform:rotate(-1.5deg);">thoughtful</span>
   </div>
-  <p class="whisper">— someone's cloud, after seven people answered honestly</p>
+  <p class="whisper">— an example of someone's cloud, after seven people answered honestly</p>
+
+  <section class="about-anything">
+    <p class="kind"><b>About anything</b> · a subject everyone has an opinion on</p>
+    <h2>Start a cloud, share the link, <em>watch it grow</em>.</h2>
+    <p>Answers are anonymous and come from any browser; nobody else needs the app.
+    Here's a real one, open to everyone right now:</p>
+    <a class="livecard" href="/describe/2026/">
+      <img src="/describe/2026/og.png?v=20261004" alt="Live word cloud: how people describe 2026 so far" width="1200" height="630" loading="lazy" />
+      <span>Describe 2026 so far in three words <small>Live. Add your three words, no account needed.</small></span>
+    </a>
+  </section>
 
   <a class="btn ios" href="https://apps.apple.com/app/id6786531783">Get it on iPhone</a>
   <a class="btn android" href="https://play.google.com/store/apps/details?id=com.davidgerken.threewords">Get it on Google Play</a>
@@ -77,12 +101,12 @@
   <div class="how">
     <h2>How it works</h2>
     <div class="step"><div class="num">1</div>
-      <p>Create your cloud and share your invite link.</p></div>
+      <p>Start a cloud in the app: about you, or about any subject you choose.</p></div>
     <div class="step"><div class="num">2</div>
-      <p>Friends send three honest words.
+      <p>Share the link. Each person sends three honest words.
       <small>They don't need the app — the link works right in their browser.</small></p></div>
     <div class="step"><div class="num">3</div>
-      <p>Your cloud takes shape with every word — live, and yours to share.</p></div>
+      <p>The cloud takes shape with every word — live, and yours to share.</p></div>
     <p style="text-align:center; color:#8B8698; font-size:15px; margin-top:26px;">
       Celebrating someone? <a href="/tribute/" style="color:#F5C95D;">Make a word-cloud tribute</a>
       for a birthday, retirement, or send-off.</p>
