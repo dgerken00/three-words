@@ -244,7 +244,7 @@
     const ios = /iPhone|iPad|iPod/.test(ua), android = /Android/.test(ua);
     const nudge = document.createElement('p');
     nudge.className = 'nudge';
-    nudge.innerHTML = 'Now the personal version: how would the people who know <em>you</em> describe you? '
+    nudge.innerHTML = 'Want a cloud of your own? Ask the people who know <em>you</em> to describe you, or start one about anything. '
       + (ios ? '<a data-track="ios" href="https://apps.apple.com/app/id6786531783">Get your own cloud →</a>'
         : android ? '<a data-track="android" href="https://play.google.com/store/apps/details?id=com.davidgerken.threewords">Get your own cloud →</a>'
         : '<a href="#get" id="nudgejump">Get your own cloud →</a>');

@@ -29,6 +29,9 @@ button.linkish { width:auto; background:none; border:0; padding:4px 6px; margin:
   font-weight:400; text-decoration:underline; cursor:pointer; }
 button.linkish:hover { color:#E88C9C; }
 
+/* Second line of the app offer under the cloud. */
+.cta p.also { margin-top:-8px; color:#A9A3B8; font-size:15px; text-wrap:balance; }
+
 /* The offer shown with "your words", once someone has answered. */
 #mine .nudge { margin:14px 0 0; padding-top:12px; border-top:1px solid #322E44; color:#C9C4D6; font-size:15px;
   line-height:1.5; text-wrap:balance; }
