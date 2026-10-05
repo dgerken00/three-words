@@ -9,7 +9,7 @@ Status: **2026-10-04: 1.3.1 live on both stores (iOS build 16, Android version c
 | 3. App screens (`App.js`, v1.3.0) | Tested by David on iPhone through TestFlight; all steps worked. Clouds card moved up the dashboard after that test. |
 | 4. Terms and privacy | Live. |
 | 5. Store release | 1.3.1 live on both stores. Next build should also turn on Android code shrinking (Play's DEX optimisation notice, deadline Feb 2027). |
-| 6. Store listings | Text being updated 2026-10-04 (wording in STORE_LISTING.md; David pastes it). Screenshots still show 1.2.0 screens: add the "About anything" tab and a topic cloud on the web. |
+| 6. Store listings | Done 2026-10-04: new subtitle, promo text, description, keywords and two new screenshots (the 2026 cloud in the app, the About anything tab). Google Play listing in review; Apple as version 1.3.2 (build 17, no app changes) waiting for review. |
 
 Decisions made: free limit is 3 open clouds (raised from 1 on 2026-09-30, never to be lowered); David reviews reports weekly (queries are at the top of `add-user-topics.sql`).
 User cloud links are `threewordsapp.com/c/?t=<8 characters>`.
