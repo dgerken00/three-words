@@ -4,18 +4,13 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/png" href="/favicon.png" />
-<link rel="canonical" href="https://threewordsapp.com/describe/2026/" />
-<title>Describe 2026 so far in three words — a live word cloud</title>
-<meta name="description" content="How would you describe 2026 so far? Add your three words, anonymously, and watch the live word cloud grow as strangers answer. One set of words per person." />
+<link rel="canonical" href="https://threewordsapp.com/describe/year-ahead/" />
+<title>Describe how you feel about the year ahead in three words — a live word cloud</title>
+<meta name="description" content="Describe how you feel about the year ahead in three words. Feelings, not predictions. Anonymous; watch the live word cloud grow as strangers answer." />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Describe 2026 so far in three words" />
-<meta property="og:description" content="A live word cloud of how strangers describe the year so far. Anonymous, three words, one set per person." />
-<meta property="og:url" content="https://threewordsapp.com/describe/2026/" />
-<meta property="og:image" content="https://threewordsapp.com/describe/2026/og.png?v=20261004" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Word cloud of how people describe 2026 so far. The most-said words are expensive, chaotic and depressing." />
-<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:title" content="Describe how you feel about the year ahead in three words" />
+<meta property="og:description" content="A live word cloud of how strangers feel about the year ahead. Anonymous, three words, one set per person." />
+<meta property="og:url" content="https://threewordsapp.com/describe/year-ahead/" />
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -71,14 +66,18 @@
   footer a:hover { color:#F5C95D; }
 </style>
 <link rel="stylesheet" href="/describe/cloud.css?v=5" />
+<style>
+  /* The topic name is a phrase here, so it may wrap (cloud.css keeps short names on one line). */
+  h1 em, .tname { white-space:normal; }
+</style>
 </head>
 <body>
-<main data-topic="2026">
+<main data-topic="year-ahead">
   <div class="mark"><a href="/" aria-label="three·words home">✳</a></div>
   <div class="wordmark"><a href="/">three<b>·</b>words</a></div>
 
-  <h1 id="h1title">Describe <em>2026 so far</em> in three words</h1>
-  <p class="sub">Anonymous. One set of words per person. Every answer lands in the cloud below, live.</p>
+  <h1 id="h1title">Describe <em>how you feel about the year ahead</em> in three words</h1>
+  <p class="sub">Feelings, not predictions. Anonymous, one set of words per person. Every answer lands in the cloud below, live.</p>
 
   <div class="card" id="ask">
     <input id="w1" placeholder="first word" maxlength="20" autocapitalize="none" autocomplete="off" autofocus />
@@ -97,7 +96,7 @@
   <section class="cloudwrap">
     <div class="cloudbox">
       <p class="stat"><span><b id="total">…</b> <span id="totallabel">people have answered</span></span> <span class="live" id="live">● live</span></p>
-      <div class="cloud" id="cloud" aria-live="polite" aria-label="Live word cloud: how strangers describe 2026 so far"></div>
+      <div class="cloud" id="cloud" aria-live="polite" aria-label="Live word cloud: how strangers feel about the year ahead"></div>
       <p class="whisper" id="empty">Nobody's answered yet. Be the first.</p>
       <p class="mostsaid" id="most"></p>
     </div>
@@ -105,7 +104,7 @@
   </section>
 
   <div class="card cta">
-    <p class="ctah">That's how strangers describe <span class="tname">2026 so far</span>.</p>
+    <p class="ctah">That's how strangers feel about the year ahead.</p>
     <p>Want a cloud of your own? Make one about <em>you</em> — how the people who know you really see you — or about anything: a trip, a team, a year.</p>
     <a class="btn ios" data-track="ios" href="https://apps.apple.com/app/id6786531783">Get three·words on iPhone</a>
     <a class="btn android" data-track="android" href="https://play.google.com/store/apps/details?id=com.davidgerken.threewords">Get it on Google Play</a>
@@ -116,7 +115,7 @@
     <h2>What is this?</h2>
     <p>A public experiment by <a href="/">three·words</a>, a small app built around one question: how do the people who
     know you <em>really</em> see you? In the app, you invite your friends and family and each of them sends three words
-    that describe you. This page points the same idea at a year everyone has lived through.</p>
+    that describe you. This page asks how people feel about the year they are about to live through. Its companion, <a href="/describe/2026/">2026 so far</a>, looks back.</p>
     <p><strong>How it works.</strong> No account. Your three words are anonymous. One set per person (per browser — you can
     change yours, not add more). A filter blocks slurs before they're saved, and words that are cruel rather than honest
     get removed by hand. Beyond your three words, the only things stored are a random token your browser keeps so you can
@@ -126,7 +125,7 @@
 
   <footer>
     <a href="/">three·words</a> ·
-    <a href="/describe/year-ahead/">How you feel about the year ahead</a> ·
+    <a href="/describe/2026/">Describe 2026 so far</a> ·
     <a href="/describe/">All live clouds</a> ·
     <a href="/tribute/">Tributes</a> ·
     <a href="/words-to-describe-someone/">Word ideas</a> ·
