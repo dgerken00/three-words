@@ -69,6 +69,7 @@ David hasn't run `add-topic-clouds.sql` yet — say so in the Notes and move on.
 | 2026-10-06 | Results post on r/SampleSize (posted 10-04) did well: 6.2K views, 53 upvotes, 2 comments; 2026 cloud 23 → 40 answers, "expensive" 5 → 13, 1 store tap, 2 signups that week. Second official cloud opened: "Describe how you feel about the year ahead in three words" (/describe/year-ahead/) | David chose the theme (feelings, not predictions) and the "Describe how you…" framing. Decision: keep the cloud visible before answering (no blur-to-reveal); reinforcement of existing words is acceptable. Question post drafted for r/SampleSize; results post in ~5 days comparing both clouds. Landing page now links both live clouds. |
 | 2026-10-06 | r/SampleSize question post for the year-ahead cloud (u/davids-side-project, [Casual], links to the 2026 results as companion) | Baseline at posting: year-ahead 1 answer (David's own: unsettled · optimistic · wary); 2026 cloud 40 answers. Next: draw /describe/year-ahead/og.png once it has ~12 answers; results post in ~5 days comparing both clouds. |
 | 2026-10-08 | Facebook post for the year-ahead cloud ("Part 2", public) | Reddit question post had stalled at 9 answers (0 in the last day) while the 2026 cloud kept growing (48). Decision: no early results post on r/SampleSize; results/comparison post planned for the weekend of 10-10/11 with both cloud images. year-ahead preview image still to be drawn. |
+| 2026-10-14 | 30-second promo video live at threewordsapp.com/video/ (commit 47ba7cf), linked from the landing page and every cloud page; r/SideProject video post drafted (top of the DRAFT QUEUE, replaces Draft A) | Baseline for the post: your-job 1 answer / 0 store taps; year-ahead 17 / 0; 2026 57 / 2 (1 iOS, 1 Android), 7 shares. The post's try-it link is the your-job cloud, so a jump there is the post's doing. |
 
 ## DRAFT QUEUE (for David — post yourself, as yourself, then move to Done)
 
@@ -82,6 +83,82 @@ Grandparents Day tribute") for *next* year's search traffic is the constraint-co
 asking for an app like this, and for an occasion community worth joining — nothing genuine
 turned up, so I'm not drafting filler. See the nomination draft below instead; it's a better
 use of the same 15 minutes.
+
+---
+
+### ✳️ NEW DRAFT 2026-10-14 — r/SideProject: the 30-second video (you post it, as yourself)
+
+**Why this one.** Reddit is the one place a post has reached strangers (the r/SampleSize results
+post: 6.2K views, 2026 cloud 23 → 40 answers, the first store tap). r/SideProject is the sub built
+for "I made this", and an uploaded video autoplays in the feed with the sound off; this one reads
+fine muted. The "try it" link goes to the *your job* cloud, which had 1 answer on 2026-10-14, so
+its answers and store taps afterwards show what this post did.
+
+**Replaces Draft A** (the 2026-09-26 r/SideProject text post below, never posted). One
+r/SideProject post per project, so post this one instead.
+
+**Where:** r/SideProject, from u/davids-side-project. Post type *Images & Video*: upload the file,
+don't link it. File: `~/Downloads/three-words/three-words-promo-30s.mp4` (the same video as
+threewordsapp.com/video/; AirDrop it to your phone if you post from the app).
+
+**Title** (first choice):
+
+```
+I built an app where people describe anything in three words. When 57 people described 2026 so far, the top word was "expensive"
+```
+
+Shorter alternative:
+
+```
+My side project: ask people to describe anything in three words and watch the cloud fill in live
+```
+
+**First comment** (post it right after the video goes up; change any line that doesn't sound like you):
+
+```
+I made this. three·words started with one question: how do the people who know you really see you? You send a link, each person answers with three words, and the words pile up into a cloud.
+
+It turns out a lot of people would rather not ask about themselves, so now you can start a cloud about anything: a team, a trip, a wedding, the year so far. People answering never need the app. It works in the browser.
+
+The cloud in the video is real. 57 people have described 2026 so far, and 18 of them said "expensive".
+
+If you want to try it without installing anything, there's a new one with almost no answers yet: describe your job in three words → https://threewordsapp.com/describe/your-job/
+
+The app is free on iPhone and Android, no ads: https://threewordsapp.com
+
+Two things I'd love feedback on: did the video make it clear what the app does in the first few seconds? And would you start a cloud about something, or only answer other people's?
+```
+
+**If people ask** (answer in your own words):
+- *How did you make the video?* It's code: an HTML page animated frame by frame and recorded with
+  headless Chrome, and the music is synthesized in code, so no stock footage or music. (If you're
+  comfortable saying so: built with Claude as a coding partner, like the app.)
+- *Stack?* Expo / React Native app; Supabase (Postgres, everything behind RPCs); a static site on
+  GitHub Pages with vanilla JS.
+- *Anonymous?* Answers to public clouds are anonymous, one set per person (editable). On your own
+  cloud, each person chooses whether to sign their words.
+- *Moderation?* Slurs are blocked before anything is saved; whoever started a cloud can hide words
+  or close it; every cloud page has a report link, and three reports pause a cloud.
+- *How does it make money?* It doesn't yet. Free, no ads.
+
+**Posting notes**
+- Read the sidebar and pinned posts first. I can't open Reddit. The 2026-09-26 check and a fresh
+  search on 2026-10-14 agree: "I made this" posts with a story and a specific question are welcome;
+  posts that read like a product page, and repeat posts, get removed.
+- Post the first comment straight away, then reply to every comment for the first couple of hours.
+- The same day, leave a few real comments on other people's projects there. It's the sub's
+  culture, and Reddit's ~1-in-10 self-promotion norm applies to the whole account (mods check
+  profiles).
+- A weekday morning, US time, gets the most eyes.
+- Keep it at least a day away from the next r/SampleSize post. Don't post the video to other subs
+  the same week, and don't repost it here if it flops.
+- The numbers drift: check https://threewordsapp.com/describe/2026/ on the day and update "57" and
+  "18" in the title and comment.
+
+**What to watch.** The *your job* cloud: 1 answer, 0 store taps on 2026-10-14 (for comparison, the
+2026 cloud: 57 answers, 1 iOS + 1 Android tap, 7 shares). A jump there after the post is this
+post's doing; the daily tick reads it from `get_topic_stats`. Once it's up, add the time and link
+to the action log and move this draft to Done.
 
 ---
 
@@ -119,6 +196,7 @@ via web search; Reddit itself blocks my fetches, so still glance at each sidebar
   space these out (different days) and don't repost.
 
 **Draft A — r/SideProject** (text post):
+_Superseded 2026-10-14 by the r/SideProject video draft at the top of the queue; post that one instead._
 
 > **Title:** I built a live "describe 2026 so far in three words" cloud — no signup, three words.
 > Does the format work?
