@@ -22,6 +22,11 @@ h1 em, .tname { white-space:nowrap; }
   font-family:-apple-system,sans-serif; font-weight:400; }
 .whisper { margin:auto; padding:22px; }
 
+/* The other live clouds: one line under the subtitle, and cards under the cloud. */
+.alsotop { margin:-14px auto 22px; max-width:460px; font-size:14px; color:#8B8698; text-wrap:balance; }
+.alsotop a { color:#F5C95D; text-decoration:none; }
+.alsotop a:hover { text-decoration:underline; }
+.alsotop span { color:#6B6580; }
 /* The other live clouds, shown under every cloud. */
 .more { max-width:440px; margin:0 auto 18px; text-align:left; }
 .moreh { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#8B8698; margin:0 0 8px; text-align:center; }
@@ -68,6 +73,7 @@ button.linkish:hover { color:#E88C9C; }
   h1 { font-size:29px; margin-bottom:8px; }
   .sub { font-size:15px; margin-bottom:14px; }
   .startedby { margin:-8px auto 14px; font-size:12px; }
+  .alsotop { margin:-6px auto 14px; font-size:13px; }
   #ask { padding:12px 14px; }
   #ask input { padding:11px 14px; margin-bottom:8px; }
   #ask #send { padding:13px; margin-top:0; }

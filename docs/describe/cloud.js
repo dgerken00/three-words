@@ -324,6 +324,17 @@
     if (!ok || !Array.isArray(body)) return;
     const others = body.filter((t) => t.slug !== slug);
     if (!others.length) return;
+    // a compact line up top, under the subtitle, so the other clouds are seen before the form
+    const sub = document.querySelector('[data-when="topic"] .sub') || document.querySelector('.sub');
+    if (sub) {
+      const top = document.createElement('p');
+      top.className = 'alsotop';
+      top.innerHTML = 'Also open: ' + others.map((t) => {
+        const n = Number(t.total) || 0;
+        return `<a href="/describe/${encodeURIComponent(t.slug)}/">${esc(t.title)}</a> <span>(${n.toLocaleString()})</span>`;
+      }).join(' · ');
+      (document.getElementById('startedby') || sub).insertAdjacentElement('afterend', top);
+    }
     const sec = document.createElement('section');
     sec.className = 'more';
     sec.innerHTML = '<p class="moreh">More live clouds, still open</p>' + others.map((t) => {
