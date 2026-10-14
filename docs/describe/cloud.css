@@ -43,6 +43,10 @@ button.linkish { width:auto; background:none; border:0; padding:4px 6px; margin:
   font-weight:400; text-decoration:underline; cursor:pointer; }
 button.linkish:hover { color:#E88C9C; }
 
+/* Video link in the offer card. */
+.cta .vid { color:#F5C95D; text-decoration:none; white-space:nowrap; }
+.cta .vid:hover { text-decoration:underline; }
+
 /* Second line of the app offer under the cloud. */
 .cta p.also { margin-top:-8px; color:#A9A3B8; font-size:15px; text-wrap:balance; }
 

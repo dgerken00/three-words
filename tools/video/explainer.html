@@ -52,10 +52,10 @@
   .cloud .w { display:inline-block; line-height:1.05; white-space:nowrap; }
   .cloud .n { font-size:0.3em; color:#8B8698; vertical-align:super; margin-left:3px; font-family:-apple-system,sans-serif; font-weight:400; }
   .caption { position:absolute; left:0; right:0; bottom:18px; text-align:center; font-family:Georgia,serif; font-style:italic; font-size:24px; color:#6B6580; }
-  .linkcard { position:absolute; left:60px; right:60px; background:var(--card); border:2px solid var(--line); border-radius:28px; padding:26px 40px; display:flex; align-items:center; justify-content:center; gap:34px; }
-  .linkcard .pill { font-family:Georgia,serif; font-size:36px; color:var(--gold); letter-spacing:1px; background:var(--bg); border-radius:999px; padding:14px 30px; white-space:nowrap; }
-  .linkcard .txt { font-size:30px; color:var(--soft); line-height:1.3; white-space:nowrap; }
-  .linkcard .txt b { color:var(--ink); font-weight:600; display:block; font-size:34px; }
+  .linkcard { position:absolute; left:120px; right:120px; background:var(--card); border:2px solid var(--line); border-radius:28px; padding:26px 40px 24px; display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; }
+  .linkcard .pill { font-family:Georgia,serif; font-size:38px; color:var(--gold); letter-spacing:1px; background:var(--bg); border-radius:999px; padding:12px 34px; white-space:nowrap; }
+  .linkcard .txt { font-size:28px; color:var(--soft); line-height:1.3; }
+  .linkcard .txt b { color:var(--ink); font-weight:600; font-size:30px; }
 
   /* how it works */
   .step { position:absolute; left:120px; right:120px; display:flex; align-items:center; gap:34px; }
@@ -100,9 +100,9 @@
   <div class="abs center serif" id="m1" style="top:120px;font-size:70px">Share one link.</div>
   <div class="linkcard" id="m2" style="top:230px">
     <span class="pill">threewordsapp.com/invite</span>
-    <span class="txt"><b>They answer in their browser.</b>No app, no account.</span>
+    <span class="txt"><b>They answer in their browser.</b> No app, no account.</span>
   </div>
-  <div class="stage" id="mstage" style="top:400px;bottom:60px">
+  <div class="stage" id="mstage" style="top:450px;bottom:60px">
     <div class="stat"><span><b id="mcount">0</b> <span id="mlabel">people have described you</span></span><span class="live">● live</span></div>
     <div class="cloud" id="mcloud"></div>
     <div class="caption">an example cloud</div>
