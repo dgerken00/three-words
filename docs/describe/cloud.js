@@ -331,8 +331,8 @@
       top.className = 'alsotop';
       top.innerHTML = 'Also open: ' + others.map((t) => {
         const n = Number(t.total) || 0;
-        return `<a href="/describe/${encodeURIComponent(t.slug)}/">${esc(t.title)}</a> <span>(${n.toLocaleString()})</span>`;
-      }).join(' · ');
+        return `<span class="it"><a href="/describe/${encodeURIComponent(t.slug)}/">${esc(t.title)}</a> <span>(${n.toLocaleString()})</span></span>`;
+      }).join('&nbsp;· ');
       (document.getElementById('startedby') || sub).insertAdjacentElement('afterend', top);
     }
     const sec = document.createElement('section');

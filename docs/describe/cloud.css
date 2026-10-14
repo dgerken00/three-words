@@ -27,6 +27,8 @@ h1 em, .tname { white-space:nowrap; }
 .alsotop a { color:#F5C95D; text-decoration:none; }
 .alsotop a:hover { text-decoration:underline; }
 .alsotop span { color:#6B6580; }
+/* a cloud's name and its count stay on one line */
+.alsotop .it { color:inherit; white-space:nowrap; }
 /* The other live clouds, shown under every cloud. */
 .more { max-width:440px; margin:0 auto 18px; text-align:left; }
 .moreh { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#8B8698; margin:0 0 8px; text-align:center; }
