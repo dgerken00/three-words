@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>three·words in 30 seconds</title>
+<!--
+  30-second three·words explainer, 1080x1080, cut to the soundtrack in music.mjs
+  (C major, 96 BPM: one beat = 0.625 s, one bar = 2.5 s, 12 bars = 30 s).
+  render(t) draws the exact state at time t; capture.mjs calls it frame by frame.
+    bar 0      hook: "How do the people who know you really see you?"
+    bar 1      "Ask them for three words."
+    bars 2–4   about you: share a link, words arrive, a cloud forms (an example, labelled)
+    bars 5–7   about anything: the real 2026 cloud forms from real answers (data.js)
+    bar 8      how it works, three steps
+    bar 9      no feeds, no followers, no ads
+    bar 10     your turn
+    bar 11     end card
+  Copy rules: the personal cloud is labelled an example; the 2026 cloud uses real
+  answers with the real count and date; nothing invented.
+-->
+<script src="data.js"></script>
+<style>
+  :root { --bg:#16141F; --card:#211E2E; --line:#322E44; --ink:#F2EEE8; --soft:#A9A3B8; --mute:#6B6580; --gold:#F5C95D; --stage:#110F17; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1080px; height:1080px; overflow:hidden; background:var(--bg); }
+  body { font-family:-apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .scene { position:absolute; inset:0; display:none; overflow:hidden; }
+  .abs { position:absolute; }
+  .serif { font-family:Georgia, "Times New Roman", serif; font-weight:300; letter-spacing:-0.5px; }
+  .gold { color:var(--gold); }
+  .em { color:var(--gold); font-style:italic; }
+  .center { left:0; right:0; text-align:center; }
+  .label { font-size:26px; letter-spacing:5px; text-transform:uppercase; color:var(--soft); }
+  .label b { color:var(--gold); font-weight:700; }
+  .watermark { position:absolute; right:56px; bottom:44px; font-size:28px; color:var(--mute); font-family:Georgia,serif; }
+  .watermark b { color:var(--gold); font-weight:400; }
+
+  /* hook */
+  .hookline { font-size:96px; line-height:1; }
+
+  /* three words */
+  .ask { font-size:92px; line-height:1; }
+  .chips { left:0; right:0; top:620px; display:flex; justify-content:center; gap:26px; }
+  .chip { font-family:Georgia,serif; font-size:60px; color:var(--ink); background:var(--card); border:2px solid var(--line); border-radius:999px; padding:18px 44px; }
+
+  /* clouds */
+  .stage { position:absolute; left:60px; right:60px; background:var(--stage); border:2px solid var(--line); border-radius:34px; overflow:hidden; }
+  .stat { position:absolute; left:34px; right:34px; top:26px; display:flex; justify-content:space-between; font-size:28px; color:var(--soft); }
+  .stat b { color:var(--ink); font-weight:600; }
+  .live { color:#A8D8B0; font-size:24px; letter-spacing:1px; }
+  .cloud { position:absolute; left:30px; right:30px; top:90px; bottom:60px; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; align-items:center; gap:10px 30px; font-family:Georgia,serif; }
+  .cloud .w { display:inline-block; line-height:1.05; white-space:nowrap; }
+  .cloud .n { font-size:0.3em; color:#8B8698; vertical-align:super; margin-left:3px; font-family:-apple-system,sans-serif; font-weight:400; }
+  .caption { position:absolute; left:0; right:0; bottom:18px; text-align:center; font-family:Georgia,serif; font-style:italic; font-size:24px; color:#6B6580; }
+  .linkcard { position:absolute; left:60px; right:60px; background:var(--card); border:2px solid var(--line); border-radius:28px; padding:26px 40px; display:flex; align-items:center; justify-content:center; gap:34px; }
+  .linkcard .pill { font-family:Georgia,serif; font-size:36px; color:var(--gold); letter-spacing:1px; background:var(--bg); border-radius:999px; padding:14px 30px; white-space:nowrap; }
+  .linkcard .txt { font-size:30px; color:var(--soft); line-height:1.3; white-space:nowrap; }
+  .linkcard .txt b { color:var(--ink); font-weight:600; display:block; font-size:34px; }
+
+  /* how it works */
+  .step { position:absolute; left:120px; right:120px; display:flex; align-items:center; gap:34px; }
+  .num { flex:none; width:84px; height:84px; border-radius:50%; background:var(--card); border:2px solid var(--line); color:var(--gold); font-family:Georgia,serif; font-size:44px; display:flex; align-items:center; justify-content:center; }
+  .step .t { font-family:Georgia,serif; font-size:60px; color:var(--ink); }
+  .step .t small { display:block; font-family:-apple-system,sans-serif; font-size:30px; color:var(--soft); margin-top:4px; }
+
+  /* no feeds */
+  .noline { font-size:104px; line-height:1; }
+
+  /* turn */
+  #turn { background:var(--gold); }
+  #turnword { font-size:150px; color:var(--bg); }
+  #turnsub { font-size:50px; color:#4a3d12; font-family:Georgia,serif; }
+
+  /* end */
+  #end .mark { font-size:150px; color:var(--gold); line-height:1; }
+  #end .word { font-size:112px; }
+  #end .word b { color:var(--gold); font-weight:400; }
+  #end .tag { font-size:40px; color:var(--soft); }
+  #end .url { font-size:54px; font-weight:700; color:var(--bg); background:var(--gold); border-radius:999px; padding:24px 60px; }
+  #end .cta { font-size:32px; color:var(--soft); }
+</style>
+</head>
+<body>
+
+<section id="hook" class="scene">
+  <div class="abs center serif hookline" id="k0" style="top:300px">How do the people</div>
+  <div class="abs center serif hookline" id="k1" style="top:420px">who know you</div>
+  <div class="abs center serif hookline em" id="k2" style="top:540px">really</div>
+  <div class="abs center serif hookline" id="k3" style="top:660px">see you?</div>
+</section>
+
+<section id="three" class="scene">
+  <div class="abs center serif ask" id="a0" style="top:330px">Ask them for</div>
+  <div class="abs center serif ask" id="a1" style="top:440px"><span class="em">three words.</span></div>
+  <div class="abs chips"><span class="chip" id="c0">kind</span><span class="chip" id="c1">funny</span><span class="chip" id="c2">stubborn</span></div>
+</section>
+
+<section id="mine" class="scene">
+  <div class="abs center label" id="m0" style="top:70px"><b>About you</b></div>
+  <div class="abs center serif" id="m1" style="top:120px;font-size:70px">Share one link.</div>
+  <div class="linkcard" id="m2" style="top:230px">
+    <span class="pill">threewordsapp.com/invite</span>
+    <span class="txt"><b>They answer in their browser.</b>No app, no account.</span>
+  </div>
+  <div class="stage" id="mstage" style="top:400px;bottom:60px">
+    <div class="stat"><span><b id="mcount">0</b> <span id="mlabel">people have described you</span></span><span class="live">● live</span></div>
+    <div class="cloud" id="mcloud"></div>
+    <div class="caption">an example cloud</div>
+  </div>
+</section>
+
+<section id="any" class="scene">
+  <div class="abs center label" id="y0" style="top:70px"><b>About anything</b></div>
+  <div class="abs center serif" id="y1" style="top:120px;font-size:64px">Describe <span class="em">2026 so far</span> in three words</div>
+  <div class="abs center" id="y2" style="top:212px;font-size:30px;color:var(--soft)">A public cloud. Strangers answer from a link.</div>
+  <div class="stage" id="ystage" style="top:290px;bottom:60px">
+    <div class="stat"><span><b id="ycount">0</b> <span id="ylabel">people have answered</span></span><span class="live">● live</span></div>
+    <div class="cloud" id="ycloud"></div>
+    <div class="caption" id="ycap">real answers, as of October 14, 2026</div>
+  </div>
+</section>
+
+<section id="how" class="scene">
+  <div class="abs center serif" id="h0" style="top:110px;font-size:76px">How it works</div>
+  <div class="step" id="s1" style="top:300px"><div class="num">1</div><div class="t">Start a cloud.<small>About you, or about anything.</small></div></div>
+  <div class="step" id="s2" style="top:510px"><div class="num">2</div><div class="t">Share the link.<small>Anyone can answer. They never need the app.</small></div></div>
+  <div class="step" id="s3" style="top:720px"><div class="num">3</div><div class="t">Watch it grow.<small>Live, and yours to share.</small></div></div>
+  <div class="watermark">three<b>·</b>words</div>
+</section>
+
+<section id="no" class="scene">
+  <div class="abs center serif noline" id="n0" style="top:330px">No feeds.</div>
+  <div class="abs center serif noline" id="n1" style="top:460px">No followers.</div>
+  <div class="abs center serif noline em" id="n2" style="top:590px">No ads.</div>
+  <div class="watermark">three<b>·</b>words</div>
+</section>
+
+<section id="turn" class="scene">
+  <div class="abs center serif" id="turnword" style="top:330px">Your turn.</div>
+  <div class="abs center" id="turnsub" style="top:560px">Word clouds on you or anything.</div>
+</section>
+
+<section id="end" class="scene">
+  <div class="abs center mark" id="e0" style="top:230px">✳</div>
+  <div class="abs center serif word" id="e1" style="top:400px">three<b>·</b>words</div>
+  <div class="abs center tag" id="e2" style="top:540px">Word clouds on you or anything.</div>
+  <div class="abs url" id="e3" style="left:50%;top:650px;transform:translateX(-50%)">threewordsapp.com</div>
+  <div class="abs center cta" id="e4" style="top:790px">Free on iPhone and Android.</div>
+</section>
+
+<script>
+const BPM = 96, BEAT = 60 / BPM, BAR = 4 * BEAT;
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+const easeBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const PALETTE = ['#F5C95D', '#E88C9C', '#8FB8C9', '#C9A6E8', '#A8D8B0'];
+const hash = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+const mix = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h >>> 0; };
+
+const SCENES = [["hook", 0, 1], ["three", 1, 2], ["mine", 2, 5], ["any", 5, 8], ["how", 8, 9], ["no", 9, 10], ["turn", 10, 11], ["end", 11, 12.2]];
+
+function pop(el, lb, b, dur = 0.5, from = 0.6) {
+  const p = prog(lb, b, b + dur);
+  el.style.opacity = clamp(p * 3);
+  el.style.transform = `scale(${from + (1 - from) * easeBack(p)})`;
+}
+function rise(el, lb, b, dur = 0.6, dist = 40, extra = "") {
+  const p = easeOut(prog(lb, b, b + dur));
+  el.style.opacity = p;
+  el.style.transform = `${extra} translateY(${(1 - p) * dist}px)`;
+}
+
+// ---- clouds: each word has hit times (in local beats); count at t = hits so far ----
+// hits are spread over [b0, b1]; first appearances come in a shuffled order, extra
+// hits for repeated words follow later, so the big words grow as the scene runs.
+function schedule(words, b0, b1, firstBias) {
+  const order = words.slice().sort((a, b) => mix(a.w) - mix(b.w));
+  if (firstBias) { const i = order.findIndex((x) => x.w === firstBias); if (i > 0) order.unshift(order.splice(i, 1)[0]); }
+  const firsts = order.map((x, i) => ({ w: x.w, t: b0 + (b1 - b0) * 0.6 * (i / Math.max(1, order.length - 1)) }));
+  const extras = [];
+  for (const x of order) for (let k = 1; k < x.c; k++) extras.push({ w: x.w, k, total: x.c });
+  extras.sort((a, b) => (a.k / a.total) - (b.k / b.total) || mix(a.w + a.k) - mix(b.w + b.k));
+  const extraT = extras.map((e, i) => ({ w: e.w, t: b0 + (b1 - b0) * (0.25 + 0.75 * (i / Math.max(1, extras.length - 1))) }));
+  const hits = {};
+  for (const h of [...firsts, ...extraT]) (hits[h.w] = hits[h.w] || []).push(h.t);
+  for (const w in hits) hits[w].sort((a, b) => a - b);
+  return { order, hits, lastHit: Math.max(...extraT.map((e) => e.t), ...firsts.map((f) => f.t)) };
+}
+function drawCloud(container, sched, lb, biggest, floor, maxCount) {
+  if (!container.dataset.built) {
+    container.innerHTML = sched.order.map((x) => {
+      let ci = hash(x.w) % PALETTE.length;
+      return `<span class="w" data-w="${x.w}" style="color:${PALETTE[ci]};transform:rotate(${((hash(x.w) % 7) - 3) * 1.2}deg)">${x.w}<span class="n"></span></span>`;
+    }).join('');
+    container.dataset.built = '1';
+  }
+  let people = 0;
+  for (const el of container.children) {
+    const w = el.dataset.w, hs = sched.hits[w];
+    const c = hs.filter((h) => h <= lb).length;
+    if (!c) { el.style.display = 'none'; continue; }
+    el.style.display = 'inline-block';
+    const tt = maxCount === 1 ? 0.5 : (c - 1) / (maxCount - 1);
+    const size = floor + tt * (biggest - floor);
+    const since = lb - hs[c - 1];
+    const bump = c === 1 ? (0.45 + 0.55 * easeBack(clamp(since / 0.45))) : (1 + 0.18 * Math.exp(-since * 6));
+    el.style.fontSize = `${size}px`;
+    el.style.fontWeight = tt > 0.55 ? 600 : 400;
+    el.style.opacity = c === 1 ? clamp(since * 6) : 1;
+    el.style.transform = `rotate(${((hash(w) % 7) - 3) * 1.2}deg) scale(${bump})`;
+    el.lastChild.textContent = c > 1 ? c : '';
+  }
+}
+
+// About you: an example cloud (seven people, labelled as an example).
+const MINE = [{ w: 'kind', c: 4 }, { w: 'funny', c: 3 }, { w: 'loyal', c: 2 }, { w: 'warm', c: 2 }, { w: 'curious', c: 1 }, { w: 'patient', c: 1 }, { w: 'stubborn', c: 1 }, { w: 'driven', c: 1 }, { w: 'witty', c: 1 }, { w: 'thoughtful', c: 1 }];
+const MINE_S = schedule(MINE, 3.0, 11.2, 'kind');
+const MINE_HITS = MINE.reduce((s, x) => s + x.c, 0);
+// About anything: real answers.
+const ANY = window.DATA_2026.words.slice(0, 40);
+const ANY_S = schedule(ANY, 1.6, 11.4, 'expensive');
+const ANY_MAX = Math.max(...ANY.map((x) => x.c));
+
+function render(t) {
+  for (const [id, a, b] of SCENES) $(id).style.display = t >= a * BAR && t < b * BAR ? 'block' : 'none';
+  const beatOf = (bar) => (t - bar * BAR) / BEAT;
+
+  // bar 0 — hook, one line per beat
+  { const lb = beatOf(0); ['k0', 'k1', 'k2', 'k3'].forEach((id, i) => pop($(id), lb, i * 0.9, 0.5, 0.6)); }
+
+  // bar 1 — ask them for three words, then three chips
+  {
+    const lb = beatOf(1);
+    pop($('a0'), lb, 0, 0.5, 0.7); pop($('a1'), lb, 0.7, 0.5, 0.7);
+    ['c0', 'c1', 'c2'].forEach((id, i) => pop($(id), lb, 1.8 + i * 0.5, 0.45, 0.4));
+  }
+
+  // bars 2–4 — about you
+  {
+    const lb = beatOf(2);
+    rise($('m0'), lb, 0, 0.5, 20); rise($('m1'), lb, 0.3, 0.5, 30); rise($('m2'), lb, 0.9, 0.6, 50);
+    rise($('mstage'), lb, 1.8, 0.7, 60);
+    drawCloud($('mcloud'), MINE_S, lb, 96, 44, 4);
+    const hitsSoFar = Object.values(MINE_S.hits).flat().filter((h) => h <= lb).length;
+    const people = Math.min(7, Math.ceil(hitsSoFar * 7 / MINE_HITS));
+    $('mcount').textContent = people;
+    $('mlabel').textContent = people === 1 ? 'person has described you' : 'people have described you';
+  }
+
+  // bars 5–7 — about anything (real data)
+  {
+    const lb = beatOf(5);
+    rise($('y0'), lb, 0, 0.5, 20); rise($('y1'), lb, 0.3, 0.5, 30); rise($('y2'), lb, 0.7, 0.5, 20);
+    rise($('ystage'), lb, 1.0, 0.7, 60);
+    drawCloud($('ycloud'), ANY_S, lb, 118, 30, ANY_MAX);
+    const allHits = Object.values(ANY_S.hits).flat();
+    const soFar = allHits.filter((h) => h <= lb).length;
+    const people = Math.min(window.DATA_2026.total, Math.ceil(soFar * window.DATA_2026.total / allHits.length));
+    $('ycount').textContent = people;
+    $('ylabel').textContent = people === 1 ? 'person has answered' : 'people have answered';
+  }
+
+  // bar 8 — how it works
+  {
+    const lb = beatOf(8);
+    pop($('h0'), lb, 0, 0.5, 0.7);
+    rise($('s1'), lb, 0.8, 0.5, 40); rise($('s2'), lb, 1.7, 0.5, 40); rise($('s3'), lb, 2.6, 0.5, 40);
+  }
+
+  // bar 9 — no feeds, no followers, no ads
+  { const lb = beatOf(9); ['n0', 'n1', 'n2'].forEach((id, i) => pop($(id), lb, i * 1.0, 0.45, 0.6)); }
+
+  // bar 10 — your turn
+  {
+    const lb = beatOf(10);
+    pop($('turnword'), lb, 0, 0.5, 0.5);
+    rise($('turnsub'), lb, 1.2, 0.6, 30);
+  }
+
+  // bar 11 — end card
+  {
+    const lb = beatOf(11);
+    pop($('e0'), lb, 0, 0.6, 0.3);
+    pop($('e1'), lb, 0.6, 0.5, 0.7);
+    rise($('e2'), lb, 1.3, 0.5, 20);
+    const p = prog(lb, 1.9, 2.4);
+    $('e3').style.opacity = clamp(p * 3);
+    $('e3').style.transform = `translateX(-50%) scale(${0.7 + 0.3 * easeBack(p)})`;
+    rise($('e4'), lb, 2.6, 0.5, 16);
+  }
+}
+window.render = render;
+render(Number(new URLSearchParams(location.search).get('t') ?? 0));
+</script>
+</body>
+</html>
