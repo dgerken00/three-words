@@ -315,6 +315,26 @@
     } catch {}
   });
 
+  // ---------- the other live clouds ----------
+  // Official clouds stay open for months, so every cloud page points at the others.
+  (async () => {
+    const wrap0 = document.querySelector('.cloudwrap');
+    if (!wrap0) return;
+    const { ok, body } = await rpc('list_topics');
+    if (!ok || !Array.isArray(body)) return;
+    const others = body.filter((t) => t.slug !== slug);
+    if (!others.length) return;
+    const sec = document.createElement('section');
+    sec.className = 'more';
+    sec.innerHTML = '<p class="moreh">More live clouds, still open</p>' + others.map((t) => {
+      const n = Number(t.total) || 0;
+      return `<a class="morecard" href="/describe/${encodeURIComponent(t.slug)}/">
+        <span class="moreq">${esc(t.prompt)}</span>
+        <span class="moren">${n.toLocaleString()} ${n === 1 ? 'answer' : 'answers'} · add yours →</span></a>`;
+    }).join('');
+    wrap0.insertAdjacentElement('afterend', sec);
+  })();
+
   // ---------- report ----------
   const wrap = document.querySelector('.cloudwrap');
   if (wrap) {
