@@ -1,18 +1,20 @@
-// Original 30-second soundtrack for the three·words explainer, synthesized from
-// scratch (no samples, nothing to license). Warm and unhurried: C major, 96 BPM,
-// I–vi–IV–V, 12 bars = exactly 30 s. Scene changes in explainer.html sit on bars.
-//   Bars 0–1  (0–5 s)      pad + electric piano; a mallet note per hook line
-//   Bars 2–7  (5–20 s)     soft groove: kick, shaker, hats, bass, plucked arpeggio;
-//                          mallet melody from bar 5 (the 2026 cloud); word pops
-//   Bar 8     (20–22.5 s)  groove, three notes for the three steps
-//   Bar 9     (22.5–25 s)  breakdown: chords only, one per line
-//   Bar 10    (25–27.5 s)  lift: full groove + riser ("Your turn")
-//   Bar 11    (27.5–30 s)  final C chord, strum, rising chime on the mark
-// Usage: node music.mjs <out.wav>
+// Original 30-second soundtrack for the three·words promo (promo.html), synthesized
+// from scratch (no samples, nothing to license). Bright and warm: F major, 104 BPM,
+// 13 bars = exactly 30 s, every scene change on a downbeat.
+//   Bar 0      (0–2.3 s)    pad and felt keys; a mallet note under each hook line
+//   Bar 1      (2.3–4.6 s)  eight bell notes as the star's eight rays burst; IV–V into the groove
+//   Bars 2–5   (4.6–13.8 s) groove: kick, claps, hats, shaker, bass, plucked arpeggio;
+//                           a whoosh for each subject, three rising notes for its three words
+//   Bars 6–7   (13.8–18.5 s) lighter groove; key ticks as the words are typed, a tap, a ding
+//   Bars 8–9   (18.5–23.1 s) melody, and a soft note as each new word lands in the cloud
+//   Bar 10     (23.1–25.4 s) breakdown: one chord a line, then a fill
+//   Bar 11     (25.4–27.7 s) the lift ("Your turn.")
+//   Bar 12     (27.7–30 s)   final F chord, strum, the bells again for the star, fade
+// Usage: node promo-music.mjs <out.wav>
 import fs from "node:fs";
 
 const SR = 44100;
-const BPM = 96;
+const BPM = 104;
 const BEAT = 60 / BPM;
 const BAR = 4 * BEAT;
 const DUR = 30;
@@ -48,14 +50,15 @@ function biquad(type, f, q = 0.707) {
   return (x) => { const y = B0 * x + B1 * x1 + B2 * x2 - A1 * y1 - A2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; };
 }
 
-// ---- Harmony: I–vi–IV–V in C, voice-led ----
-const PROG = [
-  { pad: [48, 55, 60, 64], keys: [60, 64, 67], arp: [60, 64, 67, 72], root: 36 }, // C
-  { pad: [45, 52, 57, 60], keys: [57, 60, 64], arp: [57, 60, 64, 69], root: 33 }, // Am
-  { pad: [53, 57, 60, 65], keys: [53, 57, 60], arp: [53, 57, 60, 65], root: 41 }, // F
-  { pad: [55, 59, 62, 67], keys: [55, 59, 62], arp: [55, 59, 62, 67], root: 43 }, // G
-];
-const chordOf = (bar) => PROG[bar % 4];
+// ---- Harmony: I–vi–IV–V in F, voice-led ----
+const CH = {
+  F:  { pad: [53, 57, 60, 65], keys: [57, 60, 65], arp: [53, 57, 60, 65], root: 41 },
+  Dm: { pad: [50, 57, 62, 65], keys: [57, 62, 65], arp: [50, 57, 62, 65], root: 38 },
+  Bb: { pad: [50, 58, 62, 65], keys: [58, 62, 65], arp: [50, 53, 58, 62], root: 34 },
+  C:  { pad: [52, 55, 60, 64], keys: [55, 60, 64], arp: [52, 55, 60, 64], root: 36 },
+};
+// One chord a bar; bar 1 turns to C halfway, bar 10 is three stabs, bar 11 turns to C on beat 4.
+const BARS = ["F", "Bb", "F", "Dm", "Bb", "C", "F", "Dm", "Bb", "C", "Dm", "F", "F"];
 
 // ---- Instruments ----
 function pad(t0, t1, notes, gain) {
@@ -131,6 +134,18 @@ function mallet(t0, m, vel, p = 0, ring = 1.3) {
       + 0.3 * Math.exp(-t / 0.07) * Math.sin(TAU * 3.93 * f * t)
       + 0.06 * Math.exp(-t / 0.025) * Math.sin(TAU * 9.2 * f * t)) * vel * 0.13 * tailFade(k, len);
     put(n0 + k, v * gl, v * gr, 0.35);
+  }
+}
+
+// Glockenspiel-like bell (bar partials at 2.76× and 5.4×): the star's rays and the words.
+function bell(t0, m, vel, p = 0, ring = 1.6) {
+  const f = mtof(m), n0 = Math.round(t0 * SR), len = Math.round(ring * SR), [gl, gr] = panLR(p);
+  for (let k = 0; k < len; k++) {
+    const t = k / SR;
+    const v = (1 - Math.exp(-t / 0.0015)) * (Math.exp(-t / 0.5) * Math.sin(TAU * f * t)
+      + 0.32 * Math.exp(-t / 0.16) * Math.sin(TAU * 2.76 * f * t)
+      + 0.1 * Math.exp(-t / 0.06) * Math.sin(TAU * 5.4 * f * t)) * vel * 0.085 * tailFade(k, len);
+    put(n0 + k, v * gl, v * gr, 0.5);
   }
 }
 
@@ -215,9 +230,8 @@ function crash(t0, vel) {
   }
 }
 
-
-// ---- Sound effects synced to the picture (explainer.html v2 timings) ----
-// A soft "pop" for taps and arriving comments.
+// ---- Sound effects synced to the picture (promo.html timings) ----
+// A soft "pop" for taps.
 function popSfx(t0, vel = 1, f0 = 1100, f1 = 480) {
   const n0 = Math.round(t0 * SR), len = Math.round(0.12 * SR);
   let ph = 0;
@@ -228,7 +242,7 @@ function popSfx(t0, vel = 1, f0 = 1100, f1 = 480) {
     put(n0 + k, v * 0.707, v * 0.707, 0.25);
   }
 }
-// A short airy whoosh that peaks on the beat, for each category card.
+// A short airy whoosh that peaks on the beat, for each subject's colour wipe.
 function whoosh(tPeak, vel = 1, p = 0.4) {
   const pre = 0.16, post = 0.12, n0 = Math.round((tPeak - pre) * SR), len = Math.round((pre + post) * SR);
   const [gl, gr] = panLR(p);
@@ -245,86 +259,136 @@ function whoosh(tPeak, vel = 1, p = 0.4) {
     put(n0 + k, v * gl, v * gr, 0.3);
   }
 }
-
-// ---- Word arrivals, same schedule as explainer.html so pops land on the picture ----
-const mix = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h >>> 0; };
-function firstHits(words, b0, b1, firstBias) {
-  const order = words.slice().sort((a, b) => mix(a.w) - mix(b.w));
-  if (firstBias) { const i = order.findIndex((x) => x.w === firstBias); if (i > 0) order.unshift(order.splice(i, 1)[0]); }
-  return order.map((x, i) => b0 + (b1 - b0) * 0.6 * (i / Math.max(1, order.length - 1)));
+// A key tick for each typed letter: a short bright click over a soft low knock.
+function tick(t0, vel = 1, p = 0) {
+  const n0 = Math.round(t0 * SR), len = Math.round(0.03 * SR), bp = biquad("bp", 3000 + 900 * rnd(), 1.4), [gl, gr] = panLR(p);
+  for (let k = 0; k < len; k++) {
+    const t = k / SR;
+    const v = (bp(rnd()) * Math.exp(-t / 0.0035) + 0.35 * Math.sin(TAU * 190 * t) * Math.exp(-t / 0.008)) * vel * 0.3 * tailFade(k, len, 4);
+    put(n0 + k, v * gl, v * gr, 0.08);
+  }
 }
-const MINE = [{ w: 'kind' }, { w: 'funny' }, { w: 'loyal' }, { w: 'warm' }, { w: 'curious' }, { w: 'patient' }, { w: 'stubborn' }, { w: 'driven' }, { w: 'witty' }, { w: 'thoughtful' }];
-const data = {}; new Function('window', fs.readFileSync(new URL('./data.js', import.meta.url), 'utf8'))(data);
-const ANY = data.DATA_2026.words.slice(0, 40);
 
-// ---- Arrangement (12 bars) ----
+// ---- When each word first lands in the cloud: the same schedule as promo.html ----
+const data = {}; new Function("window", fs.readFileSync(new URL("./data.js", import.meta.url), "utf8"))(data);
+const CLOUD_WORDS = data.PROMO_DATA.clouds["2026"].words;
+function cloudArrivals() {
+  const tokens = [];
+  for (const [w, c] of CLOUD_WORDS) for (let k = 0; k < c; k++) tokens.push(w);
+  let s = 20261014;
+  const r = () => { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
+  for (let i = tokens.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [tokens[i], tokens[j]] = [tokens[j], tokens[i]]; }
+  const first = tokens.indexOf("expensive"); tokens.splice(first, 1); tokens.splice(2, 0, "expensive");
+  const B0 = 0.9, B1 = 6.4, seen = new Set(), out = [];
+  tokens.forEach((w, i) => {
+    if (seen.has(w)) return;
+    seen.add(w);
+    out.push({ w, beat: B0 + (B1 - B0) * Math.pow(i / (tokens.length - 1), 0.62) });
+  });
+  return out;
+}
+
+// ---- Arrangement (13 bars) ----
+const GROOVE = [2, 3, 4, 5, 6, 7, 8, 9, 11];
 // Kicks first, so the sidechain is in place before pads and keys are drawn.
-for (let bar = 2; bar <= 8; bar++) { kick(at(bar, 0), 0.75); kick(at(bar, 2), 0.6); }
-kick(at(9, 0), 0.5);
-for (const b of [0, 1, 2, 2.5, 3]) kick(at(10, b), b === 0 ? 0.85 : 0.6);
-kick(at(11, 0), 0.9);
-
-for (let bar = 0; bar <= 10; bar++) pad(at(bar), at(bar + 1), chordOf(bar).pad, bar < 2 ? 0.055 : 0.04);
-pad(at(11), DUR - 0.4, chordOf(0).pad, 0.05);
-
-// Intro keys, long and soft; a mallet note under each hook line.
-keys(at(0, 0), chordOf(0).keys, 0.8, 1.8, -0.1);
-[72, 74, 79, 76].forEach((m, i) => mallet(at(0, i * 0.9), m, 0.7, i % 2 ? 0.25 : -0.25, 1.3));
-keys(at(1, 0), chordOf(1).keys, 0.85, 1.4, -0.1);
-keys(at(1, 0.7), chordOf(1).keys.map((x) => x + 12), 0.5, 1.0, 0.1);
-[1.8, 2.3, 2.8].forEach((b, i) => popSfx(at(1, b), 0.9, 1000 + i * 120, 440)); // the three chips
-
-// Groove bars 2–8 and 10: shaker, light hats, bass, plucked arpeggio, off-beat keys.
-const GROOVE = [2, 3, 4, 5, 6, 7, 8, 10];
 for (const bar of GROOVE) {
-  for (let s = 0; s < 16; s++) shaker(at(bar, s / 4), [0.8, 0.3, 0.55, 0.3][s % 4] * 0.7);
-  for (let e = 0; e < 8; e++) { const off = e % 2 === 1; hat(at(bar, e / 2) + (off ? 0.018 : 0), off ? 0.4 : 0.2, off ? 0.3 : 0.15); }
-  clap(at(bar, 1), 0.45); clap(at(bar, 3), 0.45);
-  const r = chordOf(bar).root;
-  bass(at(bar, 0), r, 1.5, 0.95); bass(at(bar, 1.5), r, 0.5, 0.6); bass(at(bar, 2), r, 1, 0.85); bass(at(bar, 3), r + 7, 0.5, 0.6); bass(at(bar, 3.5), r, 0.5, 0.7);
-  const ARP = [0, 2, 3, 2, 1, 2, 3, 2], ARPV = [0.9, 0.5, 0.7, 0.45, 0.8, 0.5, 0.7, 0.45];
-  for (let e = 0; e < 8; e++) pluck(at(bar, e / 2), chordOf(bar).arp[ARP[e]] + 12, ARPV[e] * 0.8, e % 2 ? 0.35 : -0.35, 0.9);
-  keys(at(bar, 1.5), chordOf(bar).keys, 0.38, 0.3, -0.2); keys(at(bar, 3.5), chordOf(bar).keys, 0.32, 0.3, 0.2);
+  if (bar === 11) [0, 1, 2, 3].forEach((b) => kick(at(11, b), b % 2 ? 0.6 : 0.85));
+  else { kick(at(bar, 0), 0.8); kick(at(bar, 2), 0.65); }
 }
-// Shaker through the intro too, quieter.
-for (let s = 4; s < 16; s++) shaker(at(1, s / 4), [0.8, 0.3, 0.55, 0.3][s % 4] * 0.45);
+[0, 1, 2].forEach((b) => kick(at(10, b), 0.55));
+kick(at(12, 0), 0.9);
 
-// Word pops: the first ten arrivals in each cloud, soft and rising in pitch.
-firstHits(MINE, 3.0, 11.2, 'kind').slice(0, 10).forEach((b, i) => popSfx(at(2, b), 0.55, 900 + i * 60, 420));
-firstHits(ANY, 1.6, 11.4, 'expensive').slice(0, 12).forEach((b, i) => popSfx(at(5, b), 0.5, 850 + i * 45, 400));
-// A deeper thump when "expensive" first lands.
-kick(at(5, 1.6), 0.5);
+// Pads: one chord a bar, with the turns inside bars 1, 10 and 11.
+pad(0, at(1), CH.F.pad, 0.042);
+pad(at(1), at(1, 2), CH.Bb.pad, 0.046); pad(at(1, 2), at(2), CH.C.pad, 0.046);
+for (let bar = 2; bar <= 9; bar++) pad(at(bar), at(bar + 1), CH[BARS[bar]].pad, 0.04);
+pad(at(10), at(10, 1), CH.Dm.pad, 0.04); pad(at(10, 1), at(10, 2), CH.Bb.pad, 0.04); pad(at(10, 2), at(11), CH.C.pad, 0.04);
+pad(at(11), at(11, 3), CH.F.pad, 0.045); pad(at(11, 3), at(12), CH.C.pad, 0.045);
+pad(at(12), DUR - 0.4, CH.F.pad, 0.05);
 
-// Melody (mallet), two phrases over the 2026 cloud and the steps.
-const MEL = [
-  [[0, 72], [1.5, 76], [2, 74], [3, 67]],
-  [[0, 72], [1.5, 69], [2, 64]],
-  [[0, 77], [1.5, 76], [2, 72], [3, 69]],
-  [[0, 71], [1, 74], [2, 76], [3, 79]],
-];
-for (let bar = 5; bar <= 8; bar++) for (const [b, m] of MEL[bar - 5]) mallet(at(bar, b), m, 0.85, 0.1, 1.1);
-// Three clear notes for the three steps.
-[0.8, 1.7, 2.6].forEach((b, i) => mallet(at(8, b), [79, 81, 84][i], 0.9, 0.2, 1.3));
-riser(at(4, 2), at(5, 0), 0.7);
+// Bar 0: felt keys, a mallet note under each hook line, ending on the open ninth ("In three words?").
+keys(at(0, 0), CH.F.keys, 0.7, 1.8, -0.1);
+[72, 74, 77, 79].forEach((m, i) => mallet(at(0, i * 0.75), m, 0.72, i % 2 ? 0.25 : -0.25, 1.3));
 
-// Bar 9: breakdown — one chord per line, no drums.
-[[0, 0], [1, 1], [2, 2]].forEach(([b, k]) => keys(at(9, b), [chordOf(0).keys, chordOf(1).keys, chordOf(2).keys][k], 0.8, 1.2, k === 1 ? 0.2 : -0.2));
-mallet(at(9, 2), 84, 0.8, 0.1, 1.4); // "No ads."
-riser(at(9, 2.5), at(10, 0), 0.9);
+// Bar 1: eight bells for the star's eight rays, the name on IV, the line on V; shaker and riser into the groove.
+[77, 79, 82, 84, 86, 89, 91, 94].forEach((m, k) => bell(at(1, k * 0.07), m, 0.42 + k * 0.03, -0.6 + k * 0.17, 1.5));
+keys(at(1, 0.95), CH.Bb.keys, 0.85, 1.4, -0.1);
+mallet(at(1, 0.95), 86, 0.75, 0.15, 1.4);
+keys(at(1, 2), CH.C.keys, 0.6, 1.0, 0.1);
+mallet(at(1, 1.75), 77, 0.6, -0.2, 1.1); mallet(at(1, 2.25), 79, 0.6, 0.2, 1.1);
+for (let s = 8; s < 16; s++) shaker(at(1, s / 4), [0.8, 0.3, 0.55, 0.3][s % 4] * (0.3 + 0.05 * (s - 8)));
+riser(at(1, 1.5), at(2, 0), 0.8);
 
-// Bar 10: "Your turn." — the lift.
-crash(at(10, 0), 0.5);
-keys(at(10, 0), chordOf(3).keys.map((x) => x + 12), 0.9, 1.4, 0);
-[79, 84].forEach((m, i) => mallet(at(10, 1.2 + i * 0.4), m, 0.85, 0.15, 1.2));
+// The groove.
+const ARP = [0, 2, 3, 2, 1, 2, 3, 2], ARPV = [0.9, 0.5, 0.7, 0.45, 0.8, 0.5, 0.7, 0.45];
+for (const bar of GROOVE) {
+  const ch = CH[BARS[bar]], light = bar === 6 || bar === 7;
+  for (let s = 0; s < 16; s++) shaker(at(bar, s / 4), [0.8, 0.3, 0.55, 0.3][s % 4] * (light ? 0.5 : 0.7));
+  for (let e = 0; e < 8; e++) { const off = e % 2 === 1; hat(at(bar, e / 2) + (off ? 0.018 : 0), off ? 0.42 : 0.2, off ? 0.3 : 0.15); }
+  clap(at(bar, 1), 0.5); clap(at(bar, 3), 0.5);
+  const arpGain = light ? 0.45 : bar === 8 || bar === 9 ? 0.6 : 0.8;
+  for (let e = 0; e < 8; e++) pluck(at(bar, e / 2), ch.arp[ARP[e]] + 12, ARPV[e] * arpGain, e % 2 ? 0.35 : -0.35, 0.9);
+  if (bar === 11) {
+    // the lift: F, turning to C on the last beat
+    bass(at(11, 0), 41, 1.5, 1.0); bass(at(11, 1.5), 41, 0.5, 0.7); bass(at(11, 2), 41, 1, 0.9); bass(at(11, 3), 36, 0.5, 0.8); bass(at(11, 3.5), 36, 0.5, 0.8);
+    continue;
+  }
+  const r = ch.root;
+  bass(at(bar, 0), r, 1.5, 0.95); bass(at(bar, 1.5), r, 0.5, 0.6); bass(at(bar, 2), r, 1, 0.85); bass(at(bar, 3), r + 7, 0.5, 0.6); bass(at(bar, 3.5), r, 0.5, 0.7);
+  keys(at(bar, 1.5), ch.keys, 0.36, 0.3, -0.2); keys(at(bar, 3.5), ch.keys, 0.3, 0.3, 0.2);
+}
+
+// Bars 2–5: the title, then a whoosh as each subject's colour sweeps in and three rising
+// bell notes (the chord's own tones) as its three words pop up.
+mallet(at(2, 0), 81, 0.7, -0.2, 1.2); mallet(at(2, 0.62), 84, 0.75, 0.2, 1.2);
+for (let k = 0; k < 7; k++) {
+  const lb = 2 + 2 * k, bar = 2 + Math.floor(lb / 4), beat = lb % 4;
+  whoosh(at(bar, beat), 0.85, k % 2 ? -0.4 : 0.4);
+  CH[BARS[bar]].keys.forEach((m, i) => bell(at(bar, beat + 0.42 + i * 0.2), m + 24, 0.5 + i * 0.08, -0.3 + i * 0.3, 1.1));
+}
+
+// Bars 6–7: the headline, a tap on the first field, a tick per typed letter, the send tap, a ding.
+mallet(at(6, 0), 81, 0.7, -0.2, 1.2); mallet(at(6, 0.72), 84, 0.75, 0.2, 1.2);
+popSfx(at(6, 1.95), 1.0, 1300, 520);
+for (const [word, t0, t1] of [["expensive", 2.25, 3.0], ["chaotic", 3.15, 3.75], ["hopeful", 3.9, 4.5]])
+  for (let i = 1; i <= word.length; i++) tick(at(6, t0 + ((i - 0.5) / word.length) * (t1 - t0)), 0.75 + 0.25 * Math.abs(rnd()), 0.15 * rnd());
+popSfx(at(6, 5.25), 1.0, 1250, 500);
+bell(at(6, 5.45), 84, 0.9, -0.1, 1.4); bell(at(6, 5.7), 89, 1.0, 0.1, 1.8);
+
+// Bars 8–9: the headline, a counter-melody, and a soft note as each new word lands
+// (rising through the F major pentatonic), with a low knock when "expensive" arrives.
+mallet(at(8, 0), 86, 0.7, -0.2, 1.2); mallet(at(8, 0.62), 89, 0.75, 0.2, 1.2);
+for (const [bar, b, m] of [[8, 1.5, 77], [8, 2, 82], [8, 3, 81], [9, 0, 79], [9, 1, 76], [9, 2, 79], [9, 3, 84]]) mallet(at(bar, b), m, 0.55, 0.1, 1.1);
+const PENTA = [72, 74, 77, 79, 81, 84, 86, 89, 91, 93];
+cloudArrivals().forEach(({ w, beat }, i) => {
+  if (w === "expensive") { kick(at(8, beat), 0.45); mallet(at(8, beat), 65, 0.8, 0, 1.2); }
+  if (i < 28) bell(at(8, beat), PENTA[i % PENTA.length], Math.max(0.22, 0.6 - i * 0.014), ((i * 37) % 13) / 6.5 - 1, 0.9);
+});
+
+// Bar 10: breakdown, a chord and a rising note for each line, then a clap fill and a riser.
+[["Dm", 86], ["Bb", 89], ["C", 91]].forEach(([c, m], b) => {
+  keys(at(10, b), CH[c].keys, 0.7, 1.0, b === 1 ? 0.2 : -0.2);
+  bass(at(10, b), CH[c].root, b === 2 ? 2 : 1, 0.8);
+  mallet(at(10, b), m, 0.8, 0.1, 1.3);
+});
 [3.25, 3.5, 3.75].forEach((b, j) => clap(at(10, b), 0.4 + j * 0.15, j % 2 ? -0.2 : 0.2));
+riser(at(10, 2.25), at(11, 0), 0.9);
 
-// Final bar: C chord, strum, rising chime on the mark, then the wordmark.
-crash(at(11, 0), 0.8);
-keys(at(11, 0), [60, 64, 67, 72], 0.9, 1.6, 0);
-bass(at(11, 0), 36, 3.5, 1.0);
-[36, 43, 48, 52, 55, 60].forEach((m, j) => pluck(at(11, 0) + j * 0.03, m + 12, 0.7, -0.4 + j * 0.16, 2.0));
-[[0, 72], [0.25, 76], [0.5, 79], [0.75, 84], [1.0, 88]].forEach(([b, m]) => mallet(at(11, b), m, b === 1.0 ? 1.0 : 0.7, 0.15, b === 1.0 ? 1.8 : 0.8));
-mallet(at(11, 1.9), 84, 0.6, 0, 1.2); // the url lands
+// Bar 11: "Your turn." — crash, big F, a pop as the button lands.
+crash(at(11, 0), 0.6);
+keys(at(11, 0), CH.F.keys.map((x) => x + 12), 0.9, 1.4, 0);
+mallet(at(11, 0), 84, 0.8, -0.1, 1.2);
+popSfx(at(11, 1.0), 0.9, 1200, 500); mallet(at(11, 1.0), 89, 0.8, 0.15, 1.2);
+keys(at(11, 3), CH.C.keys.map((x) => x + 12), 0.55, 0.8, 0);
+
+// Bar 12: final F chord and strum; the bells again as the star bursts, a note for the name and the address.
+crash(at(12, 0), 0.85);
+keys(at(12, 0), [65, 69, 72, 77], 0.9, 1.6, 0);
+bass(at(12, 0), 41, 3.5, 1.0);
+[41, 48, 53, 57, 60, 65].forEach((m, j) => pluck(at(12, 0) + j * 0.03, m + 12, 0.7, -0.4 + j * 0.16, 2.0));
+[77, 79, 81, 84, 86, 89, 91, 93].forEach((m, k) => bell(at(12, k * 0.07), m, 0.4 + k * 0.035, -0.6 + k * 0.17, 1.6));
+mallet(at(12, 0.45), 89, 0.95, 0.1, 1.8);
+mallet(at(12, 1.5), 84, 0.6, -0.1, 1.2);
 
 // ---- Reverb (Freeverb-style) on the send bus ----
 function reverb(input, spread) {
@@ -375,10 +439,10 @@ const rmsDb = (a, b) => { let s = 0, c = 0; for (let n = Math.round(a * SR); n <
 let finalPeak = 0, nan = 0;
 for (let n = 0; n < N; n++) { if (!Number.isFinite(L[n]) || !Number.isFinite(R[n])) nan++; finalPeak = Math.max(finalPeak, Math.abs(L[n]), Math.abs(R[n])); }
 console.log(`peak ${(20 * Math.log10(finalPeak)).toFixed(2)} dBFS, NaN samples ${nan}`);
-for (const [a, b, label] of [[0, 5, "intro"], [5, 12.5, "about you"], [12.5, 20, "2026 cloud"], [20, 22.5, "steps"], [22.5, 25, "breakdown"], [25, 27.5, "lift"], [27.5, 30, "end"]])
-  console.log(`${label.padEnd(12)} ${a.toFixed(1)}–${b.toFixed(1)}s  RMS ${rmsDb(a, b)} dBFS`);
+for (const [a, b, label] of [[0, at(1), "hook"], [at(1), at(2), "brand"], [at(2), at(6), "subjects"], [at(6), at(8), "share"], [at(8), at(10), "cloud"], [at(10), at(11), "breakdown"], [at(11), at(12), "your turn"], [at(12), 30, "end"]])
+  console.log(`${label.padEnd(10)} ${a.toFixed(1)}–${b.toFixed(1)}s  RMS ${rmsDb(a, b)} dBFS`);
 
-const out = process.argv[2] ?? "music.wav";
+const out = process.argv[2] ?? "promo-music.wav";
 const buf = Buffer.alloc(44 + N * 4);
 buf.write("RIFF", 0); buf.writeUInt32LE(36 + N * 4, 4); buf.write("WAVE", 8);
 buf.write("fmt ", 12); buf.writeUInt32LE(16, 16); buf.writeUInt16LE(1, 20); buf.writeUInt16LE(2, 22);

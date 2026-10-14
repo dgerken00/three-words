@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>three·words promo</title>
+<script src="data.js"></script>
+<!--
+  30-second three·words promo, 1080x1080, cut to the soundtrack in promo-music.mjs
+  (F major, 104 BPM: one beat = 0.577 s, one bar = 2.308 s, 13 bars = 30 s).
+  Every scene starts on a downbeat; render(t) draws the exact state at time t and
+  keeps no state between calls, so capture.mjs can ask for any frame in any order.
+    bar 0      hook: "Your job. Your year. You. In three words?", one line a beat
+    bar 1      the star bursts open: "three·words. Ask anyone. Three words each."
+    bars 2–5   "Start a cloud about anything", then seven subjects, two beats each
+    bars 6–7   "Share one link. No app needed.": someone answers on the real page
+    bars 8–9   "Watch the cloud take shape.": the real 2026 cloud fills in
+    bar 10     No feeds. No followers. No ads.
+    bar 11     Your turn.
+    bar 12     end card
+  Copy rules: subjects marked "Live cloud" show the real most-said words of the
+  three public clouds; the others are marked "Example". The 2026 cloud uses the
+  real answers with the real count and date (data.js). Nothing else is counted.
+-->
+<style>
+  :root { --bg:#16141F; --card:#211E2E; --stage:#110F17; --line:#322E44; --line2:#3D3852; --field:#1B1827;
+          --ink:#F2EEE8; --text:#C9C4D6; --soft:#A9A3B8; --mute:#8B8698; --dim:#6B6580; --gold:#F5C95D; --mint:#A8D8B0; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1080px; height:1080px; overflow:hidden; background:var(--bg); }
+  body { font-family:-apple-system, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .scene { position:absolute; inset:0; display:none; overflow:hidden; }
+  .dark { background:radial-gradient(ellipse 80% 70% at 50% 36%, #231F33 0%, #16141F 70%); }
+  .abs { position:absolute; }
+  .center { left:0; right:0; text-align:center; }
+  .serif { font-family:Georgia, "Times New Roman", serif; font-weight:400; letter-spacing:-1px; }
+  .em { font-style:italic; color:var(--gold); }
+  .watermark { position:absolute; right:52px; bottom:40px; font-family:Georgia, serif; font-size:26px; color:var(--dim); }
+  .watermark b { color:var(--gold); font-weight:400; }
+  .wm b { color:var(--gold); font-weight:400; }
+
+  /* hook */
+  .hook { font-size:118px; line-height:1; }
+
+  /* star */
+  .star { position:absolute; overflow:visible; }
+  .glow { position:absolute; border-radius:50%; background:radial-gradient(circle, rgba(245,201,93,0.34) 0%, rgba(245,201,93,0.10) 38%, rgba(245,201,93,0) 70%); }
+
+  /* subjects */
+  .catlayer { position:absolute; inset:0; }
+  .cap { font-size:34px; font-weight:700; letter-spacing:9px; text-transform:uppercase; }
+  #emoji { left:0; right:0; top:150px; text-align:center; font-size:168px; line-height:1; }
+  #subject { left:40px; right:40px; top:352px; text-align:center; font-family:Georgia, serif; font-style:italic; font-size:112px; line-height:1; letter-spacing:-1.5px; }
+  #ccard { left:100px; right:100px; top:600px; height:300px; background:var(--bg); border-radius:32px; box-shadow:0 26px 60px rgba(22,20,31,0.32); }
+  #ctag { position:absolute; left:34px; top:28px; font-size:23px; font-weight:700; letter-spacing:3px; text-transform:uppercase; }
+  #chips { position:absolute; left:30px; right:30px; top:76px; bottom:26px; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; gap:20px 18px; }
+  .chip { display:inline-block; font-family:Georgia, serif; font-size:56px; line-height:1; padding:16px 36px 20px; border-radius:999px; border:3px solid; white-space:nowrap; }
+  #dots { left:0; right:0; bottom:52px; display:flex; justify-content:center; gap:16px; }
+  #dots span { width:14px; height:14px; border-radius:50%; }
+
+  /* share */
+  .head { font-size:86px; line-height:1; }
+  #phone { left:150px; right:150px; top:290px; background:var(--bg); border:2px solid var(--line2); border-radius:40px; padding:24px 30px 30px; box-shadow:0 30px 70px rgba(0,0,0,0.45); }
+  #url { display:flex; align-items:center; justify-content:center; gap:10px; background:var(--card); border-radius:999px; padding:12px 20px; font-size:27px; color:var(--soft); }
+  #url i { font-style:normal; font-size:20px; }
+  #ph1 { margin:22px 6px 20px; text-align:center; font-family:Georgia, serif; font-size:50px; line-height:1.16; color:var(--ink); }
+  #ask { background:var(--card); border:2px solid var(--line); border-radius:22px; padding:22px; }
+  .field { position:relative; height:78px; background:var(--field); border:2px solid var(--line2); border-radius:18px; margin-bottom:14px; padding:0 24px; font-size:36px; line-height:74px; color:var(--ink); white-space:nowrap; }
+  .field .ph { color:var(--dim); }
+  .field .caret { display:inline-block; width:3px; height:42px; background:var(--gold); vertical-align:-8px; margin-left:2px; }
+  #send { position:relative; overflow:hidden; height:82px; border-radius:20px; background:var(--gold); color:var(--bg); font-size:35px; font-weight:700; text-align:center; line-height:82px; margin-top:4px; }
+  #ripple { position:absolute; width:40px; height:40px; border-radius:50%; background:#fff; }
+  #finger { font-size:96px; line-height:1; }
+  #noacct { top:990px; font-size:34px; color:var(--soft); }
+
+  /* cloud */
+  #stage { left:56px; right:56px; top:282px; bottom:44px; background:var(--stage); border:2px solid var(--line); border-radius:34px; overflow:hidden; }
+  #stat { position:absolute; left:30px; right:30px; top:0; height:74px; display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #1E1B2A; font-size:28px; color:var(--mute); }
+  #stat b { color:var(--ink); font-weight:600; }
+  #live { color:var(--mint); font-size:24px; letter-spacing:1px; }
+  #cloud { position:absolute; left:22px; right:22px; top:84px; bottom:76px; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; align-items:center; gap:8px 24px; font-family:Georgia, serif; }
+  #cloud .w { display:inline-block; line-height:1.08; white-space:nowrap; transform-origin:50% 60%; }
+  #cloud .n { display:inline-block; font-size:0.26em; color:var(--mute); vertical-align:super; margin-left:2px; font-family:-apple-system, sans-serif; font-weight:400; text-align:left; }
+  #foot { position:absolute; left:30px; right:30px; bottom:0; height:72px; display:flex; align-items:center; justify-content:center; border-top:2px solid #1E1B2A; font-family:Georgia, serif; font-style:italic; font-size:26px; color:var(--mute); }
+
+  /* values */
+  .big { font-size:120px; line-height:1; }
+
+  /* turn */
+  #turn { background:var(--gold); }
+  #turnword { font-size:176px; color:var(--bg); line-height:1; }
+  #turnbtn { left:50%; top:610px; background:var(--bg); color:var(--gold); font-size:54px; font-weight:700; padding:32px 66px; border-radius:999px; white-space:nowrap; box-shadow:0 20px 44px rgba(22,20,31,0.28); }
+
+  /* end */
+  #wordmark { font-size:134px; line-height:1; }
+  #tagline { font-size:48px; color:var(--text); font-style:italic; }
+  #urlpill { left:50%; top:744px; background:var(--gold); color:var(--bg); font-size:56px; font-weight:700; padding:24px 60px; border-radius:999px; white-space:nowrap; }
+  #endcta { top:890px; font-size:34px; color:var(--mute); }
+</style>
+</head>
+<body>
+
+<section id="hook" class="scene dark">
+  <div class="abs center serif hook" id="k0" style="top:236px">Your job.</div>
+  <div class="abs center serif hook" id="k1" style="top:372px">Your year.</div>
+  <div class="abs center serif hook" id="k2" style="top:508px">You.</div>
+  <div class="abs center serif hook em" id="k3" style="top:690px">In three words?</div>
+</section>
+
+<section id="brand" class="scene dark">
+  <div class="glow" id="bglow"></div>
+  <svg class="star" id="bstar" viewBox="-1.1 -1.1 2.2 2.2"></svg>
+  <div class="abs center serif wm" id="bword" style="top:560px;font-size:132px;line-height:1">three<b>·</b>words</div>
+  <div class="abs center serif" id="bline" style="top:748px;font-size:58px;color:var(--text)">Ask anyone. <span class="em">Three words each.</span></div>
+</section>
+
+<section id="cats" class="scene">
+  <div class="catlayer" id="catprev"></div>
+  <div class="catlayer" id="catcur"></div>
+  <div class="catlayer dark" id="cattitle">
+    <div class="abs center serif" id="t0" style="top:330px;font-size:124px;line-height:1">Start a cloud</div>
+    <div class="abs center serif em" id="t1" style="top:476px;font-size:124px;line-height:1">about anything.</div>
+  </div>
+  <div class="catlayer" id="catbody">
+    <div class="abs center cap" id="lab0" style="top:84px">Describe</div>
+    <div class="abs" id="emoji"></div>
+    <div class="abs" id="subject"></div>
+    <div class="abs center cap" id="lab1" style="top:494px">in three words</div>
+    <div class="abs" id="ccard"><div id="ctag"></div><div id="chips"><span class="chip"></span><span class="chip"></span><span class="chip"></span></div></div>
+    <div class="abs" id="dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<section id="share" class="scene dark">
+  <div class="abs center serif head" id="s0" style="top:62px">Share one link.</div>
+  <div class="abs center serif head em" id="s1" style="top:160px">No app needed.</div>
+  <div class="abs" id="phone">
+    <div id="url"><i>🔒</i>threewordsapp.com/describe/2026</div>
+    <div id="ph1">Describe <span class="em">2026 so far</span><br>in three words</div>
+    <div id="ask">
+      <div class="field" id="f0"></div>
+      <div class="field" id="f1"></div>
+      <div class="field" id="f2"></div>
+      <div id="send"><div id="ripple"></div><span id="sendtxt">Add my three words</span></div>
+    </div>
+  </div>
+  <div class="abs center" id="noacct">Anonymous. No account.</div>
+  <div class="abs" id="finger">👆</div>
+</section>
+
+<section id="grow" class="scene dark">
+  <div class="abs center serif head" id="g0" style="top:70px;font-size:84px">Watch the cloud</div>
+  <div class="abs center serif head em" id="g1" style="top:166px;font-size:84px">take shape.</div>
+  <div class="abs" id="stage">
+    <div id="stat"><span><b id="count">0</b> <span id="countlabel">people have answered</span></span><span id="live">● live</span></div>
+    <div id="cloud"></div>
+    <div id="foot"><span>Real answers to “Describe 2026 so far in three words” · <span id="asof"></span></span></div>
+  </div>
+</section>
+
+<section id="values" class="scene dark">
+  <div class="abs center serif big" id="v0" style="top:290px">No feeds.</div>
+  <div class="abs center serif big" id="v1" style="top:436px">No followers.</div>
+  <div class="abs center serif big em" id="v2" style="top:582px">No ads.</div>
+  <div class="watermark">threewordsapp.com</div>
+</section>
+
+<section id="turn" class="scene">
+  <div class="abs center serif" id="turnword" style="top:318px">Your turn.</div>
+  <div class="abs" id="turnbtn">Start a cloud →</div>
+</section>
+
+<section id="end" class="scene dark">
+  <div class="glow" id="eglow"></div>
+  <svg class="star" id="estar" viewBox="-1.1 -1.1 2.2 2.2"></svg>
+  <div class="abs center serif wm" id="wordmark" style="top:470px">three<b>·</b>words</div>
+  <div class="abs center serif" id="tagline" style="top:640px">Word clouds on you or anything.</div>
+  <div class="abs" id="urlpill">threewordsapp.com</div>
+  <div class="abs center" id="endcta">Free on iPhone and Android.</div>
+</section>
+
+<script>
+const BPM = 104, BEAT = 60 / BPM, BAR = 4 * BEAT;
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const easeBack = (x, k = 1.70158) => 1 + (k + 1) * Math.pow(x - 1, 3) + k * Math.pow(x - 1, 2);
+
+// The public clouds, from data.js (one snapshot shared with promo-music.mjs).
+const CLOUDS = window.PROMO_DATA.clouds;
+const DATA = CLOUDS["2026"];
+const top3 = (slug) => CLOUDS[slug].words.slice(0, 3).map(([w]) => w);
+const AS_OF = new Date(`${window.PROMO_DATA.as_of}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+// Seven subjects for the montage. live: the real most-said words of a public cloud.
+const SUBJECTS = [
+  { s: "your team",      e: "🤝", c: "#E88C9C", w: ["scrappy", "loyal", "caffeinated"] },
+  { s: "2026 so far",    e: "🗓️", c: "#F5C95D", w: top3("2026"), live: true },
+  { s: "Grandpa at 90",  e: "🎂", c: "#C9A6E8", w: ["wise", "stubborn", "legendary"] },
+  { s: "your job",       e: "💼", c: "#8FB8C9", w: top3("your-job"), live: true },
+  { s: "the road trip",  e: "🚐", c: "#F2A97E", w: ["long", "loud", "perfect"] },
+  { s: "the year ahead", e: "🔭", c: "#A8D8B0", w: top3("year-ahead"), live: true },
+  { s: "you",            e: "🫵", c: "#211E2E", w: ["kind", "funny", "stubborn"], dark: true },
+];
+const PALETTE = ["#F5C95D", "#E88C9C", "#8FB8C9", "#C9A6E8", "#A8D8B0"];
+const hash = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+const mix = (s) => { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h >>> 0; };
+
+// Scenes on the bar grid: [id, startBar, endBar]
+const SCENES = [["hook", 0, 1], ["brand", 1, 2], ["cats", 2, 6], ["share", 6, 8], ["grow", 8, 10], ["values", 10, 11], ["turn", 11, 12], ["end", 12, 13.1]];
+
+// Appear: fade in, settle from a slightly smaller size with a soft overshoot and a focus pull.
+function pop(el, lb, b, dur = 0.38, from = 0.82, extra = "") {
+  const p = prog(lb, b, b + dur);
+  el.style.opacity = clamp(p * 2.4);
+  el.style.transform = `${extra} scale(${from + (1 - from) * easeBack(p, 1.2)})`;
+  el.style.filter = p < 1 ? `blur(${((1 - easeOut(p)) * 6).toFixed(2)}px)` : "none";
+}
+function rise(el, lb, b, dur = 0.45, dist = 34, extra = "") {
+  const p = easeOut(prog(lb, b, b + dur));
+  el.style.opacity = p;
+  el.style.transform = `${extra} translateY(${(1 - p) * dist}px)`;
+}
+
+// ---- the star: eight rays, each a kite from the centre, like the app icon (valleys at 0.295 of a tip) ----
+function buildStar(svg) {
+  const r = 0.295, pt = (a, d) => `${(d * Math.sin(a)).toFixed(4)},${(-d * Math.cos(a)).toFixed(4)}`;
+  let html = "";
+  for (let k = 0; k < 8; k++) {
+    const a = (k * Math.PI) / 4, h = Math.PI / 8;
+    html += `<polygon fill="#F5C95D" points="0,0 ${pt(a - h, r)} ${pt(a, 1)} ${pt(a + h, r)}" data-a="${k * 45}"/>`;
+  }
+  svg.innerHTML = html;
+}
+// Rays burst out one after another from b, the whole star turning into place.
+function drawStar(svg, glow, lb, b, cx, cy, R) {
+  if (!svg.firstChild) buildStar(svg);
+  const size = 2.2 * R;
+  Object.assign(svg.style, { left: `${cx - size / 2}px`, top: `${cy - size / 2}px`, width: `${size}px`, height: `${size}px` });
+  const spin = easeOut(prog(lb, b, b + 1.1));
+  svg.style.transform = `rotate(${-50 * (1 - spin)}deg)`;
+  [...svg.children].forEach((ray, k) => {
+    const p = prog(lb, b + k * 0.07, b + k * 0.07 + 0.45);
+    const s = p <= 0 ? 0 : easeBack(p, 1.5);
+    ray.setAttribute("transform", `rotate(${ray.dataset.a}) scale(${(0.55 + 0.45 * s).toFixed(4)} ${s.toFixed(4)}) rotate(${-ray.dataset.a})`);
+    ray.style.opacity = clamp(p * 4);
+  });
+  const g = easeOut(prog(lb, b + 0.2, b + 1.4));
+  const gs = R * 4.2;
+  Object.assign(glow.style, { left: `${cx - gs / 2}px`, top: `${cy - gs / 2}px`, width: `${gs}px`, height: `${gs}px`, opacity: g, transform: `scale(${0.6 + 0.4 * g})` });
+}
+
+// ---- the 2026 cloud ----
+// Laid out once at every word's final size (the same type scale as the live page), then
+// each word shows at the size its count has reached: growth is a transform, so no word
+// ever pushes another one around. Hits are dealt out over the scene, slow then fast.
+const CLOUD = (() => {
+  const words = DATA.words.map(([w, c]) => ({ w, c }));
+  const max = Math.max(...words.map((x) => x.c));
+  const tokens = [];
+  for (const x of words) for (let k = 0; k < x.c; k++) tokens.push(x.w);
+  // deterministic shuffle, then make sure "expensive" lands early so it visibly grows
+  let seed = 20261014;
+  const rnd = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+  for (let i = tokens.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [tokens[i], tokens[j]] = [tokens[j], tokens[i]]; }
+  const first = tokens.indexOf("expensive"); tokens.splice(first, 1); tokens.splice(2, 0, "expensive");
+  const B0 = 0.9, B1 = 6.4; // local beats of the cloud scene
+  const hits = {};
+  tokens.forEach((w, i) => { (hits[w] = hits[w] || []).push(B0 + (B1 - B0) * Math.pow(i / (tokens.length - 1), 0.62)); });
+  const allHits = tokens.map((w, i) => B0 + (B1 - B0) * Math.pow(i / (tokens.length - 1), 0.62));
+  return { words, max, hits, allHits, placed: words.slice().sort((a, b) => mix(a.w) - mix(b.w)), built: false, scale: 1 };
+})();
+
+function buildCloud() {
+  // measure with the scene shown, whichever frame asks first: a hidden stage measures zero
+  const scene = $("grow"), shown = scene.style.display;
+  scene.style.display = "block";
+  const box = $("cloud");
+  const W = box.clientWidth - 20;
+  const fit = (scale) => {
+    const biggest = Math.min(120, W / 7.5) * scale;
+    const crowd = Math.sqrt(Math.max(CLOUD.words.length, 6) / 6);
+    const floor = Math.max(15, (biggest * 0.7) / crowd);
+    CLOUD.sizeAt = (w, c) => Math.min(floor + ((c - 1) / (CLOUD.max - 1)) * (biggest - floor), W / (0.6 * w.length));
+    let last = -1;
+    box.innerHTML = CLOUD.placed.map((x) => {
+      let ci = hash(x.w) % PALETTE.length;
+      if (ci === last) ci = (ci + 1 + (hash(x.w) % (PALETTE.length - 1))) % PALETTE.length;
+      last = ci;
+      const t = (x.c - 1) / (CLOUD.max - 1), digits = String(x.c).length;
+      return `<span class="w" data-w="${x.w}" style="font-size:${CLOUD.sizeAt(x.w, x.c).toFixed(1)}px;color:${PALETTE[ci]};font-weight:${t > 0.55 ? 700 : 400}">${x.w}<span class="n" style="min-width:${x.c > 1 ? digits * 0.62 : 0}em"></span></span>`;
+    }).join("");
+  };
+  // shrink the type scale until every word fits on the stage
+  let scale = 1;
+  fit(scale);
+  while (box.scrollHeight > box.clientHeight + 1 && scale > 0.5) { scale -= 0.02; fit(scale); }
+  CLOUD.scale = scale;
+  CLOUD.built = true;
+  scene.style.display = shown;
+}
+
+function drawCloud(lb) {
+  if (!CLOUD.built) buildCloud();
+  for (const el of $("cloud").children) {
+    const w = el.dataset.w, hs = CLOUD.hits[w], final = hs.length;
+    const c = hs.filter((h) => h <= lb).length;
+    const tilt = ((hash(w) % 7) - 3) * 1.2;
+    if (!c) { el.style.opacity = 0; continue; }
+    const since = lb - hs[c - 1];
+    const grow = CLOUD.sizeAt(w, c) / CLOUD.sizeAt(w, final);
+    const arrive = easeBack(clamp(since / 0.42), 1.6);
+    const bump = c === 1 ? 0.5 + 0.5 * arrive : 1 + 0.14 * Math.exp(-since * 7);
+    el.style.opacity = c === 1 ? clamp(since * 5) : 1;
+    el.style.transform = `rotate(${tilt}deg) scale(${(grow * bump).toFixed(4)})`;
+    el.lastChild.textContent = c > 1 ? c : "";
+  }
+  const soFar = CLOUD.allHits.filter((h) => h <= lb).length;
+  const people = Math.min(DATA.total, Math.round((soFar * DATA.total) / CLOUD.allHits.length));
+  $("asof").textContent = AS_OF;
+  $("count").textContent = people;
+  $("countlabel").textContent = people === 1 ? "person has answered" : "people have answered";
+  const lastHit = Math.max(-9, ...CLOUD.allHits.filter((h) => h <= lb));
+  $("live").style.color = lb - lastHit < 0.18 ? "#F5C95D" : "#A8D8B0";
+}
+
+// typed text in a field: placeholder until the first letter, a caret while focused
+function typeField(el, word, placeholder, lb, t0, t1, focus0, focus1) {
+  const n = Math.round(word.length * prog(lb, t0, t1));
+  const focused = lb >= focus0 && lb < focus1;
+  const caret = focused && Math.floor((lb - focus0) * 2) % 2 === 0 ? '<span class="caret"></span>' : "";
+  el.innerHTML = n ? word.slice(0, n) + caret : caret + `<span class="ph">${placeholder}</span>`;
+  el.style.borderColor = focused ? "#F5C95D" : "";
+}
+
+function render(t) {
+  for (const [id, a, b] of SCENES) $(id).style.display = t >= a * BAR && t < b * BAR ? "block" : "none";
+  const beatOf = (bar) => (t - bar * BAR) / BEAT; // local beats since the scene's first downbeat
+
+  // bar 0 — hook, one line a beat-and-a-bit apart so the last one has time to land
+  { const lb = beatOf(0); ["k0", "k1", "k2", "k3"].forEach((id, i) => pop($(id), lb, i * 0.75, 0.38, 0.8)); }
+
+  // bar 1 — the star bursts open, then the name and the idea
+  {
+    const lb = beatOf(1);
+    drawStar($("bstar"), $("bglow"), lb, 0, 540, 318, 168);
+    pop($("bword"), lb, 0.95, 0.4, 0.86);
+    rise($("bline"), lb, 1.75, 0.45, 26);
+  }
+
+  // bars 2–5 — "Start a cloud about anything", then seven subjects × 2 beats
+  {
+    const lb = beatOf(2);
+    const title = lb < 2;
+    $("cattitle").style.display = title ? "block" : "none";
+    $("catbody").style.display = title ? "none" : "block";
+    if (title) {
+      $("catprev").style.background = "#16141F";
+      $("catcur").style.background = "#16141F";
+      $("catcur").style.clipPath = "none";
+      pop($("t0"), lb, 0, 0.36, 0.84); pop($("t1"), lb, 0.62, 0.36, 0.84);
+    } else {
+      const k = Math.min(SUBJECTS.length - 1, Math.floor((lb - 2) / 2)), cb = lb - 2 - 2 * k;
+      const S = SUBJECTS[k], ink = S.dark ? "#F2EEE8" : "#16141F";
+      $("catprev").style.background = k === 0 ? "#16141F" : SUBJECTS[k - 1].c;
+      $("catcur").style.background = S.c;
+      $("catcur").style.clipPath = `circle(${(easeOut(prog(cb, 0, 0.38)) * 1600).toFixed(1)}px at 86% 16%)`;
+      $("emoji").textContent = S.e;
+      $("subject").textContent = S.s;
+      $("subject").style.color = S.dark ? "#F5C95D" : ink;
+      ["lab0", "lab1"].forEach((id) => { $(id).style.color = S.dark ? "rgba(242,238,232,0.62)" : "rgba(22,20,31,0.6)"; });
+      $("ccard").style.background = S.dark ? "#110F17" : "#16141F";
+      $("ccard").style.border = S.dark ? "2px solid #3D3852" : "none";
+      $("ctag").textContent = S.live ? "● Live cloud" : "Example";
+      $("ctag").style.color = S.live ? "#A8D8B0" : "#8B8698";
+      const chipColor = S.dark ? "#F5C95D" : S.c;
+      [...$("chips").children].forEach((el, i) => {
+        el.textContent = S.w[i];
+        el.style.color = chipColor;
+        el.style.borderColor = chipColor + "73";
+        pop(el, cb, 0.42 + i * 0.2, 0.32, 0.55);
+      });
+      pop($("emoji"), cb, 0.04, 0.4, 0.35);
+      rise($("subject"), cb, 0.1, 0.34, 30);
+      rise($("ccard"), cb, 0.2, 0.4, 56);
+      [...$("dots").children].forEach((d, i) => {
+        d.style.background = i === k ? ink : S.dark ? "rgba(242,238,232,0.28)" : "rgba(22,20,31,0.24)";
+        d.style.transform = i === k ? "scale(1.45)" : "scale(1)";
+      });
+    }
+  }
+
+  // bars 6–7 — someone answers from the link, in the browser
+  {
+    const lb = beatOf(6);
+    pop($("s0"), lb, 0, 0.36, 0.84); pop($("s1"), lb, 0.72, 0.36, 0.84);
+    rise($("phone"), lb, 0.45, 0.5, 60);
+    // the finger glides in, taps the first field, steps off the card while the words go in, then taps the button
+    const inP = easeInOut(prog(lb, 1.2, 1.9)), toBtn = easeInOut(prog(lb, 4.6, 5.2));
+    const aside = easeInOut(prog(lb, 2.2, 2.7)) * (1 - toBtn);
+    let fx = 820 - 330 * inP + 440 * aside, fy = 1060 - 490 * inP + 150 * aside;
+    fx += (730 - fx) * toBtn; fy += (868 - fy) * toBtn;
+    const press = (lb > 1.95 && lb < 2.2) || (lb > 5.25 && lb < 5.5) ? 0.86 : 1;
+    $("finger").style.left = `${fx}px`; $("finger").style.top = `${fy}px`;
+    $("finger").style.opacity = clamp(prog(lb, 1.1, 1.4)) * (1 - prog(lb, 6.0, 6.5));
+    $("finger").style.transform = `rotate(-14deg) scale(${press})`;
+    typeField($("f0"), "expensive", "first word", lb, 2.25, 3.0, 2.0, 3.1);
+    typeField($("f1"), "chaotic", "second word", lb, 3.15, 3.75, 3.1, 3.85);
+    typeField($("f2"), "hopeful", "third word", lb, 3.9, 4.5, 3.85, 5.3);
+    const tap = prog(lb, 5.3, 6.0);
+    $("ripple").style.left = "50%"; $("ripple").style.top = "50%";
+    $("ripple").style.opacity = tap > 0 && tap < 1 ? 0.45 * (1 - tap) : 0;
+    $("ripple").style.transform = `translate(-50%, -50%) scale(${1 + tap * 18})`;
+    const done = lb >= 5.45;
+    $("sendtxt").textContent = done ? "✓  Added to the cloud" : "Add my three words";
+    $("send").style.background = done ? "#A8D8B0" : "#F5C95D";
+    rise($("noacct"), lb, 5.8, 0.45, 20);
+  }
+
+  // bars 8–9 — the real 2026 cloud fills in
+  {
+    const lb = beatOf(8);
+    pop($("g0"), lb, 0, 0.36, 0.84); pop($("g1"), lb, 0.62, 0.36, 0.84);
+    rise($("stage"), lb, 0.2, 0.5, 50);
+    if (t >= 8 * BAR && t < 10 * BAR) drawCloud(lb);
+  }
+
+  // bar 10 — no feeds, no followers, no ads
+  { const lb = beatOf(10); ["v0", "v1", "v2"].forEach((id, i) => pop($(id), lb, i, 0.36, 0.8)); }
+
+  // bar 11 — your turn; the button pulses on each beat
+  {
+    const lb = beatOf(11);
+    pop($("turnword"), lb, 0, 0.4, 0.6);
+    const p = prog(lb, 1, 1.4);
+    const pulse = lb >= 1.5 ? 1 + 0.055 * Math.exp(-((lb - 1.5) % 1) * 5) : 0.6 + 0.4 * easeBack(p);
+    $("turnbtn").style.opacity = clamp(p * 3);
+    $("turnbtn").style.transform = `translateX(-50%) scale(${pulse})`;
+  }
+
+  // bar 12 — end card
+  {
+    const lb = beatOf(12);
+    drawStar($("estar"), $("eglow"), lb, 0, 540, 278, 128);
+    pop($("wordmark"), lb, 0.45, 0.4, 0.86);
+    rise($("tagline"), lb, 1.0, 0.45, 22);
+    const p = prog(lb, 1.5, 1.88);
+    $("urlpill").style.opacity = clamp(p * 3);
+    $("urlpill").style.transform = `translateX(-50%) scale(${0.7 + 0.3 * easeBack(p)})`;
+    rise($("endcta"), lb, 2.2, 0.45, 16);
+  }
+}
+window.render = render;
+render(Number(new URLSearchParams(location.search).get("t") ?? 0));
+</script>
+</body>
+</html>
