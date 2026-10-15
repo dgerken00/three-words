@@ -1,6 +1,6 @@
-// Original 30-second soundtrack for the three·words promo (promo.html), synthesized
-// from scratch (no samples, nothing to license). Bright and warm: F major, 104 BPM,
-// 13 bars = exactly 30 s, every scene change on a downbeat.
+// Original soundtrack for the three·words promo (promo.html), synthesized from scratch
+// (no samples, nothing to license). Bright and warm: F major, 94 BPM, 13 bars = 33.2 s,
+// every scene change on a downbeat. Times below are for 104 BPM, where it ran 30 s.
 //   Bar 0      (0–2.3 s)    pad and felt keys; a mallet note under each hook line
 //   Bar 1      (2.3–4.6 s)  eight bell notes as the star's eight rays burst; IV–V into the groove
 //   Bars 2–5   (4.6–13.8 s) groove: kick, claps, hats, shaker, bass, plucked arpeggio;
@@ -14,10 +14,10 @@
 import fs from "node:fs";
 
 const SR = 44100;
-const BPM = 104;
+const BPM = 94; // must match promo.html
 const BEAT = 60 / BPM;
 const BAR = 4 * BEAT;
-const DUR = 30;
+const DUR = 13 * BAR;
 const N = Math.round(SR * DUR);
 const TAU = 2 * Math.PI;
 
@@ -427,7 +427,7 @@ for (let n = 0; n < N; n++) {
   peak = Math.max(peak, Math.abs(L[n]), Math.abs(R[n]));
 }
 const drive = 1.5, norm = 1 / peak;
-const fadeOutStart = 28.8;
+const fadeOutStart = DUR - 1.2;
 for (let n = 0; n < N; n++) {
   const t = n / SR;
   let g = Math.min(1, t / 0.03);
@@ -439,7 +439,7 @@ const rmsDb = (a, b) => { let s = 0, c = 0; for (let n = Math.round(a * SR); n <
 let finalPeak = 0, nan = 0;
 for (let n = 0; n < N; n++) { if (!Number.isFinite(L[n]) || !Number.isFinite(R[n])) nan++; finalPeak = Math.max(finalPeak, Math.abs(L[n]), Math.abs(R[n])); }
 console.log(`peak ${(20 * Math.log10(finalPeak)).toFixed(2)} dBFS, NaN samples ${nan}`);
-for (const [a, b, label] of [[0, at(1), "hook"], [at(1), at(2), "brand"], [at(2), at(6), "subjects"], [at(6), at(8), "share"], [at(8), at(10), "cloud"], [at(10), at(11), "breakdown"], [at(11), at(12), "your turn"], [at(12), 30, "end"]])
+for (const [a, b, label] of [[0, at(1), "hook"], [at(1), at(2), "brand"], [at(2), at(6), "subjects"], [at(6), at(8), "share"], [at(8), at(10), "cloud"], [at(10), at(11), "breakdown"], [at(11), at(12), "your turn"], [at(12), DUR, "end"]])
   console.log(`${label.padEnd(10)} ${a.toFixed(1)}–${b.toFixed(1)}s  RMS ${rmsDb(a, b)} dBFS`);
 
 const out = process.argv[2] ?? "promo-music.wav";

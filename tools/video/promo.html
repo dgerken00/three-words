@@ -6,7 +6,7 @@
 <script src="data.js"></script>
 <!--
   30-second three·words promo, 1080x1080, cut to the soundtrack in promo-music.mjs
-  (F major, 104 BPM: one beat = 0.577 s, one bar = 2.308 s, 13 bars = 30 s).
+  (F major, 94 BPM: one beat = 0.638 s, one bar = 2.553 s, 13 bars = 33.2 s).
   Every scene starts on a downbeat; render(t) draws the exact state at time t and
   keeps no state between calls, so capture.mjs can ask for any frame in any order.
     bar 0      hook: "Your job. Your year. You. In three words?", one line a beat
@@ -178,7 +178,7 @@
 </section>
 
 <script>
-const BPM = 104, BEAT = 60 / BPM, BAR = 4 * BEAT;
+const BPM = 94, BEAT = 60 / BPM, BAR = 4 * BEAT;
 const $ = (id) => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const prog = (t, a, b) => clamp((t - a) / (b - a));

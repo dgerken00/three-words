@@ -43,8 +43,10 @@ echo "== music"
 node "$here/promo-music.mjs" "$work/music.wav"
 afconvert -f m4af -d aac -b 192000 "$work/music.wav" "$work/music.m4a"
 
-echo "== frames (900 at 30 fps)"
-node "$here/capture.mjs" "$work/frames" 30 30 1080 1080 promo.html
+# 13 bars at the BPM in promo.html / promo-music.mjs, rounded up to whole frames
+seconds=$(node -e 'const b=Number(process.argv[1]); console.log((Math.ceil(13*240/b*30)/30).toFixed(4))' "$(grep -o "const BPM = [0-9]*" "$here/promo.html" | grep -o "[0-9]*$")")
+echo "== frames ($seconds s at 30 fps)"
+node "$here/capture.mjs" "$work/frames" 30 "$seconds" 1080 1080 promo.html
 
 echo "== encode"
 swiftc -O -suppress-warnings "$here/encode.swift" -o "$work/encode"
@@ -52,6 +54,6 @@ swiftc -O -suppress-warnings "$here/mux.swift" -o "$work/mux"
 "$work/encode" "$work/frames" "$work/silent.mp4" 30
 "$work/mux" "$work/silent.mp4" "$work/music.m4a" "$out/three-words-in-30-seconds.mp4"
 
-echo "== poster (the finished 2026 cloud, frame at 22.9 s)"
-sips -s format jpeg -s formatOptions 85 "$work/frames/f0687.png" --out "$out/three-words-in-30-seconds.jpg" >/dev/null
+echo "== poster (the finished 2026 cloud, frame at 25.3 s)"
+sips -s format jpeg -s formatOptions 85 "$work/frames/f0760.png" --out "$out/three-words-in-30-seconds.jpg" >/dev/null
 ls -la "$out"
