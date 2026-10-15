@@ -19,7 +19,7 @@ const fps = Number(process.argv[3] ?? 30);
 const seconds = Number(process.argv[4] ?? 30);
 const W = Number(process.argv[5] ?? 1080);
 const H = Number(process.argv[6] ?? W);
-const page = process.argv[7] ?? "promo.html";
+const [page, query] = (process.argv[7] ?? "promo.html").split("?"); // e.g. promo.html?wide=1
 const snaps = process.env.SNAP ? process.env.SNAP.split(",").map(Number) : null;
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -60,7 +60,7 @@ const send = (method, params = {}) => new Promise((resolve, reject) => {
 
 await send("Page.enable");
 await send("Emulation.setDeviceMetricsOverride", { width: W, height: H, deviceScaleFactor: 1, mobile: false });
-await send("Page.navigate", { url: pathToFileURL(path.join(here, page)).href + "?t=0" });
+await send("Page.navigate", { url: pathToFileURL(path.join(here, page)).href + `?${query ? query + "&" : ""}t=0` });
 await sleep(1500);
 await send("Runtime.evaluate", { expression: "document.fonts.ready.then(() => true)", awaitPromise: true });
 

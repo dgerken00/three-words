@@ -35,3 +35,6 @@ play-service-account.json
 *.p8
 ios/
 android/
+
+# 16:9 promo for YouTube / Google Play: rebuilt with WIDE=1 tools/video/make.sh
+store-assets/video/
