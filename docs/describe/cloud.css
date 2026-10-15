@@ -48,6 +48,17 @@ button.linkish:hover { color:#E88C9C; }
 /* Video link in the offer card. */
 .cta .vid { color:#F5C95D; text-decoration:none; white-space:nowrap; }
 .cta .vid:hover { text-decoration:underline; }
+/* ...which the script swaps for the video itself: poster first, tap to play. */
+.cta .film { position:relative; margin:4px 0 14px; border-radius:14px; overflow:hidden;
+  border:1px solid #322E44; background:#110F17; aspect-ratio:1/1; }
+.cta .film video { display:block; width:100%; height:100%; }
+.cta .film button { position:absolute; inset:0; width:100%; margin:0; border:0; border-radius:0; padding:0; cursor:pointer;
+  background:linear-gradient(rgba(22,20,31,0) 55%, rgba(22,20,31,.55)); }
+.cta .film button span { position:absolute; left:50%; top:50%; width:72px; height:72px; margin:-36px 0 0 -36px;
+  border-radius:50%; background:#F5C95D; box-shadow:0 10px 30px rgba(0,0,0,.45); }
+.cta .film button span::after { content:""; position:absolute; left:29px; top:22px;
+  border-style:solid; border-width:14px 0 14px 22px; border-color:transparent transparent transparent #16141F; }
+.cta .film button small { position:absolute; left:0; right:0; bottom:12px; color:#F2EEE8; font-size:14px; font-weight:400; }
 
 /* Second line of the app offer under the cloud. */
 .cta p.also { margin-top:-8px; color:#A9A3B8; font-size:15px; text-wrap:balance; }

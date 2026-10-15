@@ -29,6 +29,26 @@
 
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  // The promo video in the app offer: it takes the place of the "Watch how it works" link,
+  // poster first, and only downloads when someone taps play.
+  const vidLink = document.querySelector('.card.cta .vid');
+  if (vidLink) {
+    const card = vidLink.closest('.cta'), firstBtn = card.querySelector('.btn');
+    const film = document.createElement('div');
+    film.className = 'film';
+    film.innerHTML = '<video playsinline preload="none" poster="/video/three-words-in-30-seconds.jpg?v=4"'
+      + ' src="/video/three-words-in-30-seconds.mp4?v=4" aria-label="three·words, how it works"></video>'
+      + '<button type="button" aria-label="Play the video"><span></span><small>Watch how it works · sound on</small></button>';
+    film.querySelector('button').addEventListener('click', function () {
+      const v = film.querySelector('video'); this.remove(); v.controls = true; v.play();
+    });
+    if (firstBtn) {
+      card.insertBefore(film, firstBtn);
+      if (vidLink.previousSibling && vidLink.previousSibling.nodeType === 3) vidLink.previousSibling.textContent = vidLink.previousSibling.textContent.trimEnd();
+      vidLink.remove();
+    }
+  }
+
   // The generic /describe/ page carries both layouts; show the one that applies.
   document.querySelectorAll('[data-when]').forEach((n) => { n.hidden = n.dataset.when !== (slug ? 'topic' : 'hub'); });
 
