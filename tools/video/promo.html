@@ -336,6 +336,10 @@ function typeField(el, word, placeholder, lb, t0, t1, focus0, focus1) {
 // with each side filled by the colour of the scene, so it reads as one wide picture, not a box.
 const WIDE = new URLSearchParams(location.search).get("wide") === "1";
 if (WIDE) document.head.insertAdjacentHTML("beforeend", "<style>html { width:1920px; } body { position:absolute; left:420px; top:0; }</style>");
+// ?tall=1: the same square in the middle of a 1080x1920 frame (for YouTube Shorts, TikTok and
+// Instagram Reels), with the bands above and below painted the way ?wide=1 paints its sides.
+const TALL = new URLSearchParams(location.search).get("tall") === "1";
+if (TALL) document.head.insertAdjacentHTML("beforeend", "<style>html { height:1920px; } body { position:absolute; left:0; top:420px; }</style>");
 function paintSides(t) {
   let L = "#16141F", R = "#16141F";
   const bar = t / BAR;
@@ -349,11 +353,12 @@ function paintSides(t) {
       R = p > 0.15 ? cur : prev; L = p > 0.6 ? cur : prev;
     }
   }
-  document.documentElement.style.background = `linear-gradient(90deg, ${L} 50%, ${R} 50%)`;
+  // in a tall frame the band above turns first, as the right side does in a wide one
+  document.documentElement.style.background = TALL ? `linear-gradient(180deg, ${R} 50%, ${L} 50%)` : `linear-gradient(90deg, ${L} 50%, ${R} 50%)`;
 }
 
 function render(t) {
-  if (WIDE) paintSides(t);
+  if (WIDE || TALL) paintSides(t);
   for (const [id, a, b] of SCENES) $(id).style.display = t >= a * BAR && t < b * BAR ? "block" : "none";
   const beatOf = (bar) => (t - bar * BAR) / BEAT; // local beats since the scene's first downbeat
 

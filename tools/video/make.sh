@@ -3,6 +3,8 @@
 #   tools/video/make.sh            -> docs/video/three-words-in-30-seconds.mp4 (+ poster .jpg)
 #   WIDE=1 tools/video/make.sh     -> store-assets/video/three-words-promo-16x9.mp4 (+ 1280x720 .jpg):
 #                                     the same video, 1920x1080, for YouTube and the Google Play listing
+#   TALL=1 tools/video/make.sh     -> store-assets/video/three-words-promo-9x16.mp4 (+ 1080x1920 .jpg):
+#                                     the same video, 1080x1920, for YouTube Shorts, TikTok and Reels
 #   REFRESH=1 tools/video/make.sh  -> the same, after fetching the live clouds into data.js first;
 #                                     the words, counts and date in the video change with it,
 #                                     so watch the result before publishing it
@@ -18,6 +20,8 @@ work="$(mktemp -d "${TMPDIR:-/tmp}/three-words-video.XXXXXX")"
 trap 'rm -rf "$work"' EXIT
 if [ "${WIDE:-0}" = 1 ]; then
   out="$root/store-assets/video"; name="three-words-promo-16x9"; size="1920 1080"; page="promo.html?wide=1"
+elif [ "${TALL:-0}" = 1 ]; then
+  out="$root/store-assets/video"; name="three-words-promo-9x16"; size="1080 1920"; page="promo.html?tall=1"
 else
   out="$root/docs/video"; name="three-words-in-30-seconds"; size="1080 1080"; page="promo.html"
 fi
