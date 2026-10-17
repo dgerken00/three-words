@@ -1,0 +1,222 @@
+# three·words promo kit
+
+Started 2026-10-17. Everything here is organic: no paid promotion, no personal feeds or family
+chats, posted from three·words accounts or as David's own project with a plain "my side project"
+note. Never ask for upvotes. Numbers in the drafts are from 17 Oct; refresh them on the day
+(ask Claude, or `select get_topic_stats();`).
+
+Already done elsewhere (not repeated here): the promo plays on the landing page and every cloud
+page; the 16:9 version is the Google Play listing video (YouTube, unlisted); the r/SideProject
+video post (drafted in TRACTION_LOG.md) went up on 14 Oct.
+
+**r/SideProject status (17 Oct):** the post was removed by Reddit's filters, which are automatic
+and not the moderators. The account is not restricted across Reddit (the profile shows when
+logged out), so it's that one post. Most likely trigger: a two-week-old account with 34 karma
+whose posts nearly all link to the same new site. Don't repost or rewrite it; that can look like
+dodging the removal. Wait for the mods' reply (sent messages: old.reddit.com/message/sent/,
+replies: reddit.com/message/inbox/); if nothing by **Wed 21 Oct**, send one short follow-up in the
+same thread asking whether they can approve it, or whether a version without links is acceptable.
+
+## Calendar
+
+| Date | What | Who |
+|---|---|---|
+| Sat 17 Oct | Run `add-promo-events.sql` (video play counter) | David |
+| Sat 17 Oct | Create the three short-video accounts; first post: the vertical promo | David |
+| 18–21 Oct | Record the App Store preview (25 s, script below); Claude cuts it and builds 1.3.3 | David, then Claude |
+| Wed 21 Oct | If the r/SideProject mods haven't replied: one short follow-up in the same thread | David |
+| Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip | David |
+| Thu 29 Oct | **Product Hunt launch** (refresh numbers that morning) | David posts, Claude drafts |
+| Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
+| Thu 5 Nov | Indie Hackers post (with the Product Hunt numbers) | David posts, Claude drafts |
+| Fri 13 Nov | Thanksgiving cloud page + database line ready | Claude |
+| Mon 16 Nov | Thanksgiving cloud opens (David runs the line) | David |
+| Tue 17 Nov | r/SampleSize: Thanksgiving question | David |
+| Mon 23 Nov | r/SampleSize: Thanksgiving results (before the holiday on Thu 26) | David |
+| Tue 1 Dec | Year-end push: 2026 results on r/SampleSize; pitch to year-in-review writers | David, Claude drafts |
+| Mon 28 Dec | Final "2026 in three words" results | David |
+| Fri 1 Jan | Year-ahead results | David |
+
+Avoid Tue 3 Nov (US election day) and Thanksgiving week for anything that needs attention.
+
+## 1. Short-video accounts (YouTube Shorts, TikTok, Instagram Reels)
+
+These platforms show videos to people who don't follow the account, so a brand account starting
+from zero can still reach people. Use three·words accounts, not your personal ones.
+
+**Setup, same everywhere**
+- Handle: `threewordsapp` (matches the domain). Name: `three·words` (or `three words` if the dot is refused).
+- Picture: `store-assets/play-icon-512.png`.
+- YouTube: make a separate channel for three·words (YouTube → your picture → Settings →
+  "Add or manage your channel(s)" → Create a channel) rather than posting Shorts on your own.
+  The Play listing video can stay where it is.
+- TikTok only shows a website link in the bio on a business account: switch to one (free) in settings.
+- If a platform asks whether the video is AI-generated, answer the way you did on Google Play.
+
+**Bio**
+
+TikTok (80 characters max):
+```
+Word clouds on you or anything. Ask anyone for three words ✳
+```
+
+Instagram and YouTube:
+```
+Word clouds on you or anything. Ask anyone for three words and watch the cloud grow, live. Free on iPhone and Android.
+```
+
+Link: `https://threewordsapp.com`
+
+**Post 1 — the vertical promo** (`store-assets/video/three-words-promo-9x16.mp4`)
+
+TikTok and Instagram caption:
+```
+Ask anyone to describe anything in three words, and watch the cloud fill in live. 59 people have described 2026 so far; 18 of them said "expensive". What would you say? Link in bio.
+
+#wordcloud #threewords #2026
+```
+
+YouTube Shorts title:
+```
+Ask anyone to describe anything in three words
+```
+
+YouTube Shorts description:
+```
+Start a cloud about anything, share one link, and everyone adds three words from their browser. Add yours to "Describe 2026 so far": https://threewordsapp.com/describe/2026/
+```
+
+**Posts 2 and 3 — cloud reveals** (made by `tools/reveal/make.sh`; rebuild on the day so the
+numbers are current): a 15-second vertical clip of one cloud filling in with the real answers.
+
+Post 2, `store-assets/shorts/2026-reveal.mp4`:
+```
+59 people described 2026 so far in three words. 18 of them said "expensive". What's yours? Link in bio.
+
+#wordcloud #threewords #2026
+```
+
+Post 3, `store-assets/shorts/year-ahead-reveal.mp4`:
+```
+19 people told us how they feel about the year ahead, in three words. "Worried" leads, then "hopeful", "tired", "wary" and "dread". How do you feel? Link in bio.
+
+#wordcloud #threewords
+```
+
+## 2. App Store preview video
+
+A preview plays automatically (muted) in App Store search results, which is where almost all
+iPhone installs come from. Apple only accepts screen recordings of the app itself; captions are
+allowed. So the promo can't be used, but a short recording can.
+
+**Before recording:** turn on Do Not Disturb so no notifications appear. Optional, for a full
+cloud on screen: give the 2026 cloud to your account for a few minutes (Supabase → SQL Editor):
+```sql
+update topics set owner_id = (select id from profiles where invite_code = 'AJ4NEV') where slug = '2026';
+```
+While that's on, the public 2026 page says "Started by a three·words user". Undo it right after:
+```sql
+update topics set owner_id = null where slug = '2026';
+```
+
+**Record** (Control Centre → Screen Recording; tap the red pill to stop), about 25–30 seconds:
+1. Start on **About me** with your cloud showing (3 s).
+2. Tap **About anything** (2 s).
+3. Tap **Start a cloud**, type `our team offsite`, tap **Start my cloud** (6 s).
+4. Tap **Share the link**; when the share sheet opens, wait a second and close it (3 s).
+5. Tap **Back**, open **2026 so far**, and let the full cloud sit for 4 seconds (6 s).
+
+Several takes are fine. AirDrop the recordings to the Mac (they land in Downloads), delete the
+`our team offsite` test cloud in the app, and run the undo line.
+
+**Then (Claude):** cut to under 30 s at Apple's size (886×1920, 30 fps) with three short captions
+("Start a cloud about anything", "Share one link", "Watch it grow"), build version 1.3.3, and you
+add the preview and submit, as with 1.3.2.
+
+## 3. Product Hunt — Thursday 29 October
+
+One day of attention from people who try new apps, and a lasting link. You need a Product Hunt
+account (it's the maker's own account). Schedule the launch for 12:01 a.m. Pacific on the 29th.
+
+- **Name:** `three·words`
+- **Tagline** (60 max):
+  ```
+  Word clouds on you or anything, three words at a time
+  ```
+- **Description** (260 max):
+  ```
+  Start a cloud about anything — a trip, a team, the year so far — and share one link. People answer with three words from their browser, no app needed, and the cloud grows live. Or ask the people who know you how they really see you. Free, no ads.
+  ```
+- **Topics:** Social Media, iOS, Android
+- **Links:** `https://threewordsapp.com`, the App Store and Google Play pages
+- **Thumbnail:** `store-assets/play-icon-512.png`
+- **Gallery, in order:** the YouTube video `https://youtu.be/rFaNs5C0DHY`; the 2026 cloud image
+  (`docs/describe/2026/og.png`); `store-assets/screenshots/threewords-6.5-01.png` to `-03.png`
+
+**First comment** (post it as soon as the launch is live; change anything that doesn't sound like you):
+```
+Hi Product Hunt, I'm David and I made three·words.
+
+It started with one question: how do the people who know you really see you? You share a link, each person answers with three words, and the words pile up into a cloud. Named or anonymous, their choice.
+
+Then I pointed it at a subject instead of a person: "Describe 2026 so far in three words." 59 people answered, and the top word wasn't political or dramatic. It was "expensive" (18 of them). That's when clouds about anything became the main feature: start one about a trip, a team or a year, share the link, and people answer from their browser without installing anything.
+
+No feed, no followers, no ads. Free on iPhone and Android.
+
+I'd love honest feedback, especially: what would you start a cloud about?
+```
+
+On the day: reply to every comment; don't ask anyone to upvote (Product Hunt penalises it).
+
+## 4. Indie Hackers — Thursday 5 November
+
+A community that rewards honest numbers. Post in the main feed, as yourself.
+
+**Title:**
+```
+What happened when I asked strangers to describe 2026 in three words
+```
+
+**Post** (add the Product Hunt results before posting):
+```
+I make three·words, a small app where people describe you, or anything, in three words and the answers form a live word cloud.
+
+The app launched in July and growth was slow: about 25 signups in three months. So I tried something that needed no app at all: a public web page asking "Describe 2026 so far in three words." No account, one set of words per person, and the cloud updates live.
+
+What worked
+- r/SampleSize, a subreddit for surveys. The first question post brought 20 answers in a day. A results post with the cloud image got 6,200 views and took the cloud from 23 to 40 answers in a couple of days. It's at 59 now, and 18 of them said "expensive".
+
+What didn't
+- Turning answers into installs. Across about 80 answers on the web, two people tapped through to an app store. People happily answer a cloud; very few will install an app to start their own.
+- Going back to the same well. Each new question post on r/SampleSize did less than the one before; the fourth brought no answers at all.
+
+What I changed
+- The app now lets you start a cloud about anything and share the link. People answer from their browser.
+- A 30-second video on every page, and now on Product Hunt: [results here]
+
+The question I'm stuck on: if you've had lots of people enjoy the free web part but not install the app, what moved the needle for you?
+
+The live clouds, if you want to add three words: https://threewordsapp.com/describe/
+```
+
+## 5. r/SampleSize rhythm
+
+The best channel so far, but it's tiring: the first question post brought 20 answers in a day and
+the first results post 6,200 views, while the "your job" question (14 Oct) brought none in three
+days. So: rest it until the Thanksgiving question on Tue 17 Nov, then no more than one post a
+fortnight, results posts preferred. Always flaired, always with the "(My own side project.)" line.
+No "your job" results post: there are no answers to report.
+
+## 6. Seasonal clouds and the year-end push
+
+- **Thanksgiving:** "Describe what you're thankful for in three words" (`/describe/thankful/`).
+  Claude builds the page and the database line by Fri 13 Nov; it opens Mon 16 Nov.
+- **Year-end:** aim the 2026 cloud at a few hundred answers by early December, then pitch "the
+  internet's three words for 2026" to writers doing year-in-review pieces, using outlets' public
+  tips pages, with the video and the cloud image. Claude drafts the pitch on Tue 1 Dec.
+
+## 7. Measuring it
+
+- Video plays per page: `select get_promo_stats();` (after `add-promo-events.sql` is run).
+- Clouds, answers and store taps: `select get_topic_stats();` and `select get_user_topic_stats();`.
+- Signups: `select get_growth_stats();`.

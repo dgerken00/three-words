@@ -38,3 +38,4 @@ android/
 
 # 16:9 promo for YouTube / Google Play: rebuilt with WIDE=1 tools/video/make.sh
 store-assets/video/
+store-assets/shorts/

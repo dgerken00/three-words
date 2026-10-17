@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>three·words cloud reveal</title>
+<!--
+  A 15-second vertical clip (1080x1920) of one public cloud filling in with its real answers,
+  for YouTube Shorts, TikTok and Instagram Reels. ?slug=2026 picks the cloud from data.js;
+  schedule.js holds the timing, shared with the soundtrack (music.mjs).
+  render(t) draws the exact state at time t and keeps no state between calls, so
+  ../video/capture.mjs can ask for any frame in any order.
+    0–2.5 s     the question
+    2.5–9.4 s   the cloud fills in, its count rising with it
+    10 s        "Most said: …"
+    12.5–15 s   "Add your three words" and the address, held to the end
+  Motion rules (calm, never jumpy): fades and small rises only, nothing overshoots;
+  every word is laid out at its final size before the first frame, so words appear
+  where they stay and grow in place; numbers have their room reserved.
+  Layout keeps everything between y=230 and y=1480 and inside x=100–980, clear of the
+  platforms' own buttons and captions.
+-->
+<script src="data.js"></script>
+<script src="schedule.js"></script>
+<style>
+  :root { --bg:#16141F; --stage:#110F17; --line:#322E44; --ink:#F2EEE8; --soft:#A9A3B8; --mute:#8B8698; --dim:#6B6580; --gold:#F5C95D; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1080px; height:1920px; overflow:hidden; background:var(--bg); }
+  body { font-family:-apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  #col { position:absolute; left:100px; right:100px; top:230px; bottom:440px; display:flex; flex-direction:column; align-items:center; gap:22px; text-align:center; }
+  .mark { font-family:Georgia, serif; font-size:32px; color:var(--mute); }
+  .mark b { color:var(--gold); font-weight:400; }
+  .label { font-size:28px; letter-spacing:6px; text-transform:uppercase; color:var(--soft); margin-top:14px; }
+  h1 { font-family:Georgia, serif; font-weight:300; font-size:72px; line-height:1.14; letter-spacing:-0.5px; text-wrap:balance; }
+  h1 em { color:var(--gold); font-style:italic; }
+  .count { font-size:30px; color:var(--soft); white-space:nowrap; }
+  .count b { color:var(--ink); font-weight:600; display:inline-block; min-width:2ch; text-align:right; font-variant-numeric:tabular-nums; }
+  .count span { display:inline-block; min-width:8.6em; text-align:left; }
+  .stage { flex:1; min-height:0; align-self:stretch; background:var(--stage); border:2px solid var(--line); border-radius:34px; overflow:hidden; display:flex; flex-direction:column; }
+  .cloud { flex:1; min-height:0; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; align-items:center; gap:4px 22px; padding:24px 24px 6px; font-family:Georgia, serif; }
+  .cloud .w { display:inline-block; line-height:1.06; white-space:nowrap; opacity:0; }
+  .cloud .n { position:relative; display:inline-block; font-size:0.32em; color:var(--mute); vertical-align:super; margin-left:3px; font-family:-apple-system, sans-serif; font-weight:400; font-variant-numeric:tabular-nums; }
+  .cloud .n .nr { visibility:hidden; }
+  .cloud .n .nc { position:absolute; left:0; top:0; font-style:normal; }
+  .asof { font-family:Georgia, serif; font-style:italic; font-size:22px; color:var(--dim); padding:0 20px 18px; }
+  .most { font-size:32px; color:var(--soft); text-wrap:balance; }
+  .most b { color:var(--ink); font-weight:600; }
+  .cta { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .cta .add { font-size:30px; color:var(--soft); }
+  .cta .url { font-size:34px; font-weight:700; color:var(--bg); background:var(--gold); border-radius:999px; padding:18px 38px; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div id="col">
+  <div class="mark" id="mark">✳ three<b>·</b>words</div>
+  <div class="label" id="label">We asked</div>
+  <h1 id="q"></h1>
+  <div class="count" id="countline"><b id="count">0</b> <span id="countlabel">people answered</span></div>
+  <div class="stage" id="stage"><div class="cloud" id="cloud"></div><div class="asof" id="asof"></div></div>
+  <div class="most" id="most"></div>
+  <div class="cta" id="cta"><span class="add">Add your three words:</span><span class="url" id="url"></span></div>
+</div>
+<script>
+const { T, mix, wordsOf, schedule } = window.REVEAL_T;
+const $ = (id) => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (x, a, b) => clamp((x - a) / (b - a));
+const easeOut = (x) => 1 - Math.pow(1 - x, 3);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const PALETTE = ["#F5C95D", "#E88C9C", "#8FB8C9", "#C9A6E8", "#A8D8B0"];
+const hash = (s) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); };
+const tilt = (w) => ((hash(w) % 7) - 3) * 1.2;
+
+const slug = new URLSearchParams(location.search).get("slug") || "2026";
+const CLOUD = window.REVEAL.clouds[slug];
+const WORDS = wordsOf(slug);
+const S = schedule(WORDS);
+const MAX = Math.max(1, ...WORDS.map((x) => x.c));
+const ALL_HITS = WORDS.reduce((s, x) => s + x.c, 0);
+
+// ---- words and numbers that never change during the clip ----
+$("q").innerHTML = `Describe <em>${esc(CLOUD.title)}</em> in three words`;
+// a short topic name never breaks across lines ("2026 so / far"); a long one has to
+if (CLOUD.title.length <= 16) $("q").querySelector("em").style.whiteSpace = "nowrap";
+$("url").textContent = `threewordsapp.com/describe/${slug}`;
+const top3 = WORDS.filter((x) => x.c > 1).slice(0, 3);
+$("most").innerHTML = top3.length ? "Most said: " + top3.map((x) => `<b>${esc(x.w)}</b> (${x.c})`).join(" · ") : "";
+$("asof").textContent = "Real answers, as of " +
+  new Date(window.REVEAL.as_of + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+
+// ---- the cloud: laid out once at every word's final size, in the same shuffled order and
+// colours as the live page, so nothing moves once the clip starts ----
+const box = $("cloud");
+let lastColor = -1;
+box.innerHTML = WORDS.slice().sort((a, b) => mix(a.w) - mix(b.w)).map((x) => {
+  let ci = hash(x.w) % PALETTE.length;
+  if (ci === lastColor) ci = (ci + 1 + (hash(x.w) % (PALETTE.length - 1))) % PALETTE.length;
+  lastColor = ci;
+  const n = x.c > 1 ? `<span class="n"><span class="nr">${x.c}</span><i class="nc"></i></span>` : "";
+  return `<span class="w" data-w="${esc(x.w)}" data-c="${x.c}" style="color:${PALETTE[ci]}">${esc(x.w)}${n}</span>`;
+}).join("");
+let FLOOR = 46, BIGGEST = 138;
+const sizeFor = (k) => FLOOR + (MAX === 1 ? 0.5 : (k - 1) / (MAX - 1)) * (BIGGEST - FLOOR);
+function layout() {
+  for (const el of box.children) {
+    const c = +el.dataset.c, t = MAX === 1 ? 0.5 : (c - 1) / (MAX - 1);
+    el.style.fontSize = `${sizeFor(c)}px`;
+    el.style.fontWeight = t > 0.55 ? 600 : 400;
+  }
+}
+// shrink until every word fits inside the stage
+for (;;) {
+  layout();
+  if ((box.scrollHeight <= box.clientHeight && box.scrollWidth <= box.clientWidth) || FLOOR <= 16) break;
+  FLOOR -= 1; BIGGEST = Math.max(70, Math.min(138, FLOOR * 3));
+}
+
+// a fade with a small rise; never overshoots
+function fade(el, b, start, dur, rise) {
+  const p = easeOut(prog(b, start, start + dur));
+  el.style.opacity = p;
+  el.style.transform = rise ? `translateY(${(1 - p) * rise}px)` : "";
+}
+
+function render(t) {
+  const b = t / T.BEAT;   // beats since the start
+  fade($("mark"), b, T.mark, 1.0, 10);
+  fade($("label"), b, T.label, 1.0, 14);
+  fade($("q"), b, T.question, 1.2, 18);
+  fade($("countline"), b, T.stage, 1.0, 0);
+  fade($("stage"), b, T.stage, 1.0, 0);
+  fade($("most"), b, T.most, 1.2, 12);
+  fade($("cta"), b, T.cta, 1.2, 12);
+
+  let landed = 0;
+  for (const el of box.children) {
+    const w = el.dataset.w, hs = S.hits[w], fs = sizeFor(+el.dataset.c);
+    const c = hs.filter((h) => h <= b).length;
+    landed += c;
+    // each answer grows its word smoothly over 0.6 beat, so sizes never step
+    let k = 0;
+    for (const h of hs) k += easeOut(prog(b, h, h + 0.6));
+    const appear = easeOut(prog(b, hs[0], hs[0] + 0.6));
+    el.style.opacity = appear;
+    el.style.transform = `rotate(${tilt(w)}deg) scale(${(sizeFor(Math.max(1, k)) / fs) * (0.85 + 0.15 * appear)})`;
+    const nc = el.querySelector(".nc");
+    if (nc) nc.textContent = c > 1 ? c : "";
+  }
+  const people = Math.round(CLOUD.total * landed / ALL_HITS);
+  $("count").textContent = people;
+  $("countlabel").textContent = people === 1 ? "person answered" : "people answered";
+}
+window.render = render;
+render(Number(new URLSearchParams(location.search).get("t") ?? 0));
+</script>
+</body>
+</html>
