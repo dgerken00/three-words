@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>three·words — Product Hunt gallery</title>
+<!--
+  The Product Hunt gallery images, 1270x760 each (Product Hunt's recommended size): ?n=1 … 5.
+  make.sh screenshots each one into store-assets/producthunt/. Screens come from
+  store-assets/screenshots (the app) and a phone-sized capture of the live site.
+  Nothing here shows a real person's cloud: the "about you" cloud is an example and says so.
+-->
+<style>
+  :root { --bg:#16141F; --stage:#110F17; --line:#322E44; --ink:#F2EEE8; --soft:#A9A3B8; --mute:#8B8698; --gold:#F5C95D; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1270px; height:760px; overflow:hidden; background:var(--bg); color:var(--ink);
+    font-family:-apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing:antialiased; }
+  .slide { position:absolute; inset:0; display:none; }
+  .text { position:absolute; left:90px; top:0; bottom:0; width:600px; display:flex; flex-direction:column; justify-content:center; gap:22px; }
+  .label { font-size:20px; letter-spacing:5px; text-transform:uppercase; color:var(--gold); font-weight:600; }
+  h1 { font-family:Georgia, serif; font-weight:300; font-size:54px; line-height:1.14; letter-spacing:-0.5px; }
+  h1 { text-wrap:balance; }
+  h1 em { color:var(--gold); font-style:italic; white-space:nowrap; }
+  .sub { font-size:26px; line-height:1.45; color:var(--soft); }
+  .mark { position:absolute; left:90px; bottom:42px; font-family:Georgia, serif; font-size:26px; color:var(--mute); }
+  .mark b { color:var(--gold); font-weight:400; }
+  .phone { position:absolute; right:150px; top:30px; height:700px; border-radius:44px; border:2px solid var(--line);
+    box-shadow:0 30px 70px rgba(0,0,0,.45); }
+  /* slide 1: headline over the real 2026 cloud */
+  #s1 h1 { position:absolute; left:0; right:0; top:46px; text-align:center; font-size:48px; }
+  #s1 img { position:absolute; left:105px; top:140px; width:1060px; border-radius:22px; border:2px solid var(--line); }
+  /* slide 5: an example personal cloud */
+  .card { position:absolute; right:90px; top:110px; width:480px; height:540px; background:var(--stage); border:2px solid var(--line);
+    border-radius:34px; display:flex; flex-direction:column; }
+  .card .who { text-align:center; padding:30px 20px 0; font-family:Georgia, serif; font-size:32px; color:var(--ink); }
+  .card .count { text-align:center; font-size:19px; color:var(--mute); margin-top:6px; }
+  .cloud { flex:1; display:flex; flex-wrap:wrap; justify-content:center; align-content:center; align-items:center; gap:6px 20px; padding:10px 30px; font-family:Georgia, serif; }
+  .cloud span { display:inline-block; line-height:1.08; }
+  .cloud sup { font-size:0.32em; color:var(--mute); font-family:-apple-system, sans-serif; margin-left:2px; }
+  .card .ex { text-align:center; font-family:Georgia, serif; font-style:italic; font-size:19px; color:#6B6580; padding-bottom:22px; }
+</style>
+</head>
+<body>
+
+<section class="slide" id="s1">
+  <h1>Ask anyone to describe <em>anything</em> in three words.</h1>
+  <img src="../../docs/describe/2026/og.png" alt="">
+</section>
+
+<section class="slide" id="s2">
+  <div class="text">
+    <div class="label">In the app</div>
+    <h1>Start a cloud about <em>anything.</em></h1>
+    <div class="sub">A trip, a team, a wedding, the year so far. Pick a subject and you get a link to share.</div>
+  </div>
+  <img class="phone" src="../../store-assets/screenshots/threewords-6.5-05-about-anything.png" alt="">
+  <div class="mark">✳ three<b>·</b>words</div>
+</section>
+
+<section class="slide" id="s3">
+  <div class="text">
+    <div class="label">On the web</div>
+    <h1>People answer from <em>a link.</em></h1>
+    <div class="sub">No app and no account needed to answer. Three words each, anonymous.</div>
+  </div>
+  <img class="phone" src="../../store-assets/screenshots/web-answer-year-ahead.png" alt="">
+  <div class="mark">✳ three<b>·</b>words</div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="text">
+    <div class="label">Live</div>
+    <h1>Watch the answers form <em>a cloud.</em></h1>
+    <div class="sub" id="s4sub">The most-said words grow as answers come in.</div>
+  </div>
+  <img class="phone" src="../../store-assets/screenshots/threewords-6.5-04-2026-cloud.png" alt="">
+  <div class="mark">✳ three<b>·</b>words</div>
+</section>
+
+<section class="slide" id="s5">
+  <div class="text">
+    <div class="label">About you</div>
+    <h1>Or turn it on <em>yourself.</em></h1>
+    <div class="sub">Ask the people who know you how they really see you. Named or anonymous, their choice.</div>
+  </div>
+  <div class="card">
+    <div class="who">Sam's cloud</div>
+    <div class="count">7 people have described Sam</div>
+    <div class="cloud" id="example"></div>
+    <div class="ex">an example cloud</div>
+  </div>
+  <div class="mark">✳ three<b>·</b>words</div>
+</section>
+
+<script>
+const n = new URLSearchParams(location.search).get("n") || "1";
+document.getElementById("s" + n).style.display = "block";
+// the example cloud: same words and counts as the example on the landing page
+const EX = [["kind", 4], ["curious", 1], ["funny", 3], ["patient", 1], ["loyal", 2], ["stubborn", 1], ["warm", 2], ["driven", 1], ["witty", 1], ["thoughtful", 1]];
+const COLORS = ["#F5C95D", "#8FB8C9", "#E88C9C", "#A8D8B0", "#C9A6E8"];
+document.getElementById("example").innerHTML = EX.map(([w, c], i) =>
+  `<span style="font-size:${30 + (c - 1) * 13}px;color:${COLORS[i % 5]};font-weight:${c >= 3 ? 600 : 400};transform:rotate(${((i * 37) % 7 - 3) * 1.1}deg)">${w}${c > 1 ? `<sup>${c}</sup>` : ""}</span>`).join("");
+</script>
+</body>
+</html>

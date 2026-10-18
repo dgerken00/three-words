@@ -22,13 +22,14 @@ same thread asking whether they can approve it, or whether a version without lin
 | Date | What | Who |
 |---|---|---|
 | Sat 17 Oct | Run `add-promo-events.sql` (video play counter) | David |
+| Sat 17 Oct | Set up and schedule the Product Hunt launch for Sun 25 Oct (section 3) | David |
 | Sat 17 Oct | Create the three short-video accounts; first post: the vertical promo | David |
 | 18–21 Oct | Record the App Store preview (25 s, script below); Claude cuts it and builds 1.3.3 | David, then Claude |
 | Wed 21 Oct | If the r/SideProject mods haven't replied: one short follow-up in the same thread | David |
-| Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip | David |
-| Thu 29 Oct | **Product Hunt launch** (refresh numbers that morning) | David posts, Claude drafts |
+| Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip; Claude refreshes the numbers in the Product Hunt first comment | David, Claude |
+| Sun 25 Oct | **Product Hunt launch** (goes live by itself at 12:01 a.m. Pacific); reply to comments through the day | David |
+| Thu 29 Oct | Indie Hackers post (with the Product Hunt numbers) | David posts, Claude drafts |
 | Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
-| Thu 5 Nov | Indie Hackers post (with the Product Hunt numbers) | David posts, Claude drafts |
 | Fri 13 Nov | Thanksgiving cloud page + database line ready | Claude |
 | Mon 16 Nov | Thanksgiving cloud opens (David runs the line) | David |
 | Tue 17 Nov | r/SampleSize: Thanksgiving question | David |
@@ -133,10 +134,21 @@ Several takes are fine. AirDrop the recordings to the Mac (they land in Download
 ("Start a cloud about anything", "Share one link", "Watch it grow"), build version 1.3.3, and you
 add the preview and submit, as with 1.3.2.
 
-## 3. Product Hunt — Thursday 29 October
+## 3. Product Hunt — Sunday 25 October
 
-One day of attention from people who try new apps, and a lasting link. You need a Product Hunt
-account (it's the maker's own account). Schedule the launch for 12:01 a.m. Pacific on the 29th.
+One day of attention from people who try new apps, and a lasting link. Use your own Product Hunt
+account, the same one as for Groundbeat (Product Hunt allows one account per person); keep each
+launch's text free of the other product.
+
+**Why Sunday.** Weekdays bring the most visitors but also the most launches, and a product with
+no following (we don't ask anyone to upvote) sinks out of sight quickly. Weekends have fewer
+launches, so a small launch stays visible longer. One week after Groundbeat's Sunday launch,
+so your attention isn't split, and Groundbeat's result on the 18th shows what a Sunday brings;
+if it's very thin, move this to a weekday.
+
+**Set it up now** (producthunt.com → **Launch** → enter `https://threewordsapp.com`), fill in the
+fields below, then **Schedule** for Sunday 25 October, 12:01 a.m. Pacific. Product Hunt days start
+then; the launch goes live by itself.
 
 - **Name:** `three·words`
 - **Tagline** (60 max):
@@ -149,11 +161,15 @@ account (it's the maker's own account). Schedule the launch for 12:01 a.m. Pacif
   ```
 - **Topics:** Social Media, iOS, Android
 - **Links:** `https://threewordsapp.com`, the App Store and Google Play pages
-- **Thumbnail:** `store-assets/play-icon-512.png`
-- **Gallery, in order:** the YouTube video `https://youtu.be/rFaNs5C0DHY`; the 2026 cloud image
-  (`docs/describe/2026/og.png`); `store-assets/screenshots/threewords-6.5-01.png` to `-03.png`
+- **Pricing:** Free
+- **Makers:** you ("I worked on this product")
+- **Thumbnail:** `store-assets/producthunt/thumbnail-240.png`
+- **Gallery, in order:** the YouTube video `https://youtu.be/rFaNs5C0DHY`, then
+  `store-assets/producthunt/gallery-1.png` to `gallery-5.png` (1270×760, Product Hunt's size; made
+  by `tools/producthunt/gallery.html`)
 
-**First comment** (post it as soon as the launch is live; change anything that doesn't sound like you):
+**First comment** (paste it into the launch form's first-comment box; change anything that doesn't
+sound like you; Claude refreshes the numbers on Sat 24 Oct):
 ```
 Hi Product Hunt, I'm David and I made three·words.
 
@@ -168,7 +184,7 @@ I'd love honest feedback, especially: what would you start a cloud about?
 
 On the day: reply to every comment; don't ask anyone to upvote (Product Hunt penalises it).
 
-## 4. Indie Hackers — Thursday 5 November
+## 4. Indie Hackers — Thursday 29 October
 
 A community that rewards honest numbers. Post in the main feed, as yourself.
 
