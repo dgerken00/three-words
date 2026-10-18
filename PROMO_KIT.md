@@ -22,7 +22,7 @@ same thread asking whether they can approve it, or whether a version without lin
 | Date | What | Who |
 |---|---|---|
 | Sat 17 Oct | Run `add-promo-events.sql` (video play counter) | David |
-| Sat 17 Oct | Set up and schedule the Product Hunt launch for Sun 25 Oct (section 3) | David |
+| Mon 19 Oct | Decide on Product Hunt after Groundbeat's launch (section 3); if yes, neutral profile + schedule for Sun 25 Oct | David, Claude |
 | Sat 17 Oct | Create the three short-video accounts; first post: the vertical promo | David |
 | 18–21 Oct | Record the App Store preview (25 s, script below); Claude cuts it and builds 1.3.3 | David, then Claude |
 | Wed 21 Oct | If the r/SideProject mods haven't replied: one short follow-up in the same thread | David |
@@ -136,9 +136,20 @@ add the preview and submit, as with 1.3.2.
 
 ## 3. Product Hunt — Sunday 25 October
 
-One day of attention from people who try new apps, and a lasting link. Use your own Product Hunt
-account, the same one as for Groundbeat (Product Hunt allows one account per person); keep each
-launch's text free of the other product.
+One day of attention from people who try new apps, and a lasting link.
+
+**Decide on Mon 19 Oct, after Groundbeat's launch (Sun 18 Oct).** Two things to weigh:
+- **Accounts.** Product Hunt bans company and brand accounts ("We don't allow company or brand
+  accounts to post products or comment"); launches come from the maker's own account, so this one
+  would come from yours, which is set up for Groundbeat ("Founder, Groundbeat", Groundbeat logo).
+  A second personal account would be a made-up identity: not an option. If you go ahead, switch
+  the profile to a personal photo and a neutral headline ("Maker of small apps") after
+  Groundbeat's day; the launch page then shows just your name, and Groundbeat appears only on
+  your profile page. Keep each launch's text free of the other product.
+- **Featuring.** One maker reports (Indie Hackers, unconfirmed by Product Hunt) that launches from
+  an account that launched something else in the past six months may not be featured. Watch
+  whether Groundbeat gets featured: if it does and brings real traffic, launch three·words; if
+  not, skip Product Hunt for three·words.
 
 **Why Sunday.** Weekdays bring the most visitors but also the most launches, and a product with
 no following (we don't ask anyone to upvote) sinks out of sight quickly. Weekends have fewer
