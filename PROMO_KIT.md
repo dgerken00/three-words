@@ -151,11 +151,11 @@ One day of attention from people who try new apps, and a lasting link.
   whether Groundbeat gets featured: if it does and brings real traffic, launch three·words; if
   not, skip Product Hunt for three·words.
 
-**Why Sunday.** Weekdays bring the most visitors but also the most launches, and a product with
-no following (we don't ask anyone to upvote) sinks out of sight quickly. Weekends have fewer
-launches, so a small launch stays visible longer. One week after Groundbeat's Sunday launch,
-so your attention isn't split, and Groundbeat's result on the 18th shows what a Sunday brings;
-if it's very thin, move this to a weekday.
+**Why a weekend.** Product Hunt's own guide (producthunt.com/launch/preparing-for-launch): larger
+companies launch on weekdays, weekends suit side projects and personal apps, and weekend launches
+get 15% more "Visit" clicks than weekday ones. Launch at 12:01 a.m. Pacific, when Product Hunt's
+day starts. It doesn't favour Saturday or Sunday; Sunday is one week after Groundbeat's Sunday
+launch, so your attention isn't split and Groundbeat's day on the 18th is a real comparison.
 
 **Set it up now** (producthunt.com → **Launch** → enter `https://threewordsapp.com`), fill in the
 fields below, then **Schedule** for Sunday 25 October, 12:01 a.m. Pacific. Product Hunt days start
