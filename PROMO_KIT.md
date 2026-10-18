@@ -24,6 +24,8 @@ same thread asking whether they can approve it, or whether a version without lin
 | Sat 17 Oct | Run `add-promo-events.sql` (video play counter) | David |
 | Mon 19 Oct | Decide on Product Hunt after Groundbeat's launch (section 3); if yes, neutral profile + schedule for Sun 25 Oct | David, Claude |
 | Sat 17 Oct | Create the three short-video accounts; first post: the vertical promo | David |
+| Sun 18 Oct | r/SampleSize: "what you want more of" question, one line under the title (section 5) | David |
+| 24 h after that post | Check its count and call the next r/SampleSize step (section 5) | Claude |
 | 18–21 Oct | Record the App Store preview (25 s, script below); Claude cuts it and builds 1.3.3 | David, then Claude |
 | Wed 21 Oct | If the r/SideProject mods haven't replied: one short follow-up in the same thread | David |
 | Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip; Claude refreshes the numbers in the Product Hunt first comment | David, Claude |
@@ -32,7 +34,7 @@ same thread asking whether they can approve it, or whether a version without lin
 | Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
 | Fri 13 Nov | Thanksgiving cloud page + database line ready | Claude |
 | Mon 16 Nov | Thanksgiving cloud opens (David runs the line) | David |
-| Tue 17 Nov | r/SampleSize: Thanksgiving question | David |
+| Tue 17 Nov | r/SampleSize: Thanksgiving question, if section 5's check says the sub still works | David |
 | Mon 23 Nov | r/SampleSize: Thanksgiving results (before the holiday on Thu 26) | David |
 | Tue 1 Dec | Year-end push: 2026 results on r/SampleSize; pitch to year-in-review writers | David, Claude drafts |
 | Mon 28 Dec | Final "2026 in three words" results | David |
@@ -228,11 +230,30 @@ The live clouds, if you want to add three words: https://threewordsapp.com/descr
 
 ## 5. r/SampleSize rhythm
 
-The best channel so far, but it's tiring: the first question post brought 20 answers in a day and
-the first results post 6,200 views, while the "your job" question (14 Oct) brought none in three
-days. So: rest it until the Thanksgiving question on Tue 17 Nov, then no more than one post a
-fortnight, results posts preferred. Always flaired, always with the "(My own side project.)" line.
-No "your job" results post: there are no answers to report.
+The best channel so far, and it tires: question posts brought 20 answers in the first day, then 8,
+then none ("your job", 14 Oct). Results posts did best (6,200 views). On 18 Oct David chose to
+fail fast rather than rest the sub for a month, so each post is a quick test with a number to beat.
+
+**Now:** "What do you want more of in your life right now?" (`/describe/more-of/`,
+`add-topic-more-of.sql`). One line under the title, to give Reddit's filters as little as possible:
+
+```
+[Casual] What do you want more of in your life right now? Answer in three words (Everyone)
+```
+```
+Anonymous, no sign-up: https://threewordsapp.com/describe/more-of/ (My own side project.)
+```
+
+**24 hours after it goes up, Claude checks the count** (`select get_topic_stats();`) and calls it:
+- 10 or more answers: the sub still works when the question is right. Results post about five
+  days later, then a new question each week.
+- 3 to 9: one more question a few days later ("Describe a good life in three words"), to tell a
+  weak question from a tired sub.
+- Under 3: no more question posts here. The account keeps r/SampleSize for results posts (the
+  2026 one on 1 Dec).
+
+Always flaired, always the disclosure, never more than one link. No "your job" results post:
+there are no answers to report.
 
 ## 6. Seasonal clouds and the year-end push
 
