@@ -169,9 +169,9 @@ then; the launch goes live by itself.
   ```
   Word clouds on you or anything, three words at a time
   ```
-- **Description** (260 max):
+- **Description** (500 max; David's wording, as entered 19 Oct):
   ```
-  Start a cloud about anything — a trip, a team, the year so far — and share one link. People answer with three words from their browser, no app needed, and the cloud grows live. Or ask the people who know you how they really see you. Free, no ads.
+  Start a word cloud about anything — a wedding, a retiree, the year so far — and share one link. People answer with three words from their browser, no app needed, and the cloud grows live. Or ask the people who know you how they really see you. Free, no ads.
   ```
 - **Topics:** Social Media, iOS, Android
 - **Links:** `https://threewordsapp.com`, the App Store and Google Play pages
