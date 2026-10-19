@@ -141,23 +141,25 @@ add the preview and submit, as with 1.3.2.
 One day of attention from people who try new apps, and a lasting link.
 
 **Decided Mon 19 Oct: launch on Sunday 25 October.** What was weighed:
-- **Accounts.** Product Hunt bans company and brand accounts ("We don't allow company or brand
-  accounts to post products or comment"); launches come from the maker's own account, so this one
-  would come from yours, which is set up for Groundbeat ("Founder, Groundbeat", Groundbeat logo).
-  A second personal account would be a made-up identity: not an option. If you go ahead, switch
-  the profile to a personal photo and a neutral headline ("Maker of small apps") after
-  Groundbeat's day; the launch page then shows just your name, and Groundbeat appears only on
-  your profile page. Keep each launch's text free of the other product.
+- **Account.** Only personal accounts can post, comment or vote. Product Hunt's help page
+  ("Personal account vs company account") says a personal account has a full name and a personal
+  profile picture, and that a name matching a website's domain makes it a company account. The
+  launch comes from David's own account, which was first set up for another product; it now has a
+  personal photo and the headline "Side-project Maker". Still to fix if possible: the username,
+  which names that other product (usernames change once every 30 days, in My Details; if the field
+  stays locked, ask hello@producthunt.com), and the name, which should be the full name. A second
+  account would be a made-up identity: not an option. Keep each launch's text free of the other
+  product.
 - **Featuring.** One maker reports (Indie Hackers, unconfirmed by Product Hunt) that launches from
-  an account that launched something else in the past six months may not be featured. Watch
-  whether Groundbeat gets featured: if it does and brings real traffic, launch three·words; if
-  not, skip Product Hunt for three·words.
+  an account that launched something else in the past six months may not be featured. The
+  account's previous launch (Sun 18 Oct) finished #114 with 2 points, so expect little traffic
+  unless Product Hunt features this one. Everything is ready, so it's a cheap test.
 
 **Why a weekend.** Product Hunt's own guide (producthunt.com/launch/preparing-for-launch): larger
 companies launch on weekdays, weekends suit side projects and personal apps, and weekend launches
 get 15% more "Visit" clicks than weekday ones. Launch at 12:01 a.m. Pacific, when Product Hunt's
-day starts. It doesn't favour Saturday or Sunday; Sunday is one week after Groundbeat's Sunday
-launch, so your attention isn't split and Groundbeat's day on the 18th is a real comparison.
+day starts. It doesn't favour Saturday or Sunday; Sunday keeps a week between this launch and the
+account's previous one.
 
 **Set it up now** (producthunt.com → **Launch** → enter `https://threewordsapp.com`), fill in the
 fields below, then **Schedule** for Sunday 25 October, 12:01 a.m. Pacific. Product Hunt days start
