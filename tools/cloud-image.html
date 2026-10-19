@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- Link-preview image for a /describe/ cloud, drawn from the live answers.
-     Render at 1200x630 with headless Chrome; see tools/make-cloud-image.sh. Topic comes from ?t=… -->
+     Render at 1200x630 with headless Chrome; see tools/make-cloud-image.sh. Topic comes from ?t=…
+     &w=…&h=… draw it at another size (1270x760 for the Product Hunt gallery). -->
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -31,7 +32,12 @@
 (async () => {
   const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
   const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
-  const slug = (new URLSearchParams(location.search).get('t') || '2026').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const params = new URLSearchParams(location.search);
+  const slug = (params.get('t') || '2026').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  for (const n of [document.documentElement, document.body]) {
+    n.style.width = (Number(params.get('w')) || 1200) + 'px';
+    n.style.height = (Number(params.get('h')) || 630) + 'px';
+  }
   const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_topic_cloud`, {
     method: 'POST', body: JSON.stringify({ p_slug: slug }),
     headers: { apikey: ANON_KEY, authorization: 'Bearer ' + ANON_KEY, 'content-type': 'application/json' },
@@ -75,9 +81,13 @@
   }
 
   const total = Number(data.total) || 0;
-  document.getElementById('h1').innerHTML = `Describe <em>${esc(data.title || slug)}</em> in three words`;
-  // a long topic phrase gets a smaller heading so it stays on one line
-  if ((data.title || slug).length > 24) document.getElementById('h1').style.fontSize = '29px';
+  const h1 = document.getElementById('h1');
+  h1.innerHTML = `Describe <em>${esc(data.title || slug)}</em> in three words`;
+  // a long topic phrase gets a smaller heading, just small enough to stay on one line beside the name
+  h1.style.whiteSpace = 'nowrap';
+  const room = document.querySelector('.top').clientWidth - 88 - document.querySelector('.brand').offsetWidth - 24;
+  let fs = 40;
+  while (fs > 24 && h1.scrollWidth > room) h1.style.fontSize = `${--fs}px`;
   document.getElementById('count').innerHTML =
     `<b>${total.toLocaleString()}</b> ${total === 1 ? 'answer' : 'answers'} as of ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
   document.getElementById('where').textContent = 'Add yours: threewordsapp.com/describe/' + slug;

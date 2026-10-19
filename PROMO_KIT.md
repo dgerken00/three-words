@@ -22,13 +22,13 @@ same thread asking whether they can approve it, or whether a version without lin
 | Date | What | Who |
 |---|---|---|
 | Sat 17 Oct | Run `add-promo-events.sql` (video play counter) | David |
-| Mon 19 Oct | Decide on Product Hunt after Groundbeat's launch (section 3); if yes, neutral profile + schedule for Sun 25 Oct | David, Claude |
+| Mon 19 Oct | Product Hunt: go. David switches his profile to a personal photo and neutral headline and signs in; Claude fills the launch form; David approves Schedule for Sun 25 Oct (section 3) | David, Claude |
 | Sat 17 Oct | Create the three short-video accounts; first post: the vertical promo | David |
 | Sun 18 Oct | r/SampleSize: "what you want more of" question, one line under the title (section 5) | David |
 | 24 h after that post | Check its count and call the next r/SampleSize step (section 5) | Claude |
 | 18–21 Oct | Record the App Store preview (25 s, script below); Claude cuts it and builds 1.3.3 | David, then Claude |
 | Wed 21 Oct | If the r/SideProject mods haven't replied: one short follow-up in the same thread | David |
-| Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip; Claude refreshes the numbers in the Product Hunt first comment | David, Claude |
+| Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip; Claude refreshes the numbers in the Product Hunt first comment and redraws the three gallery clouds | David, Claude |
 | Sun 25 Oct | **Product Hunt launch** (goes live by itself at 12:01 a.m. Pacific); reply to comments through the day | David |
 | Thu 29 Oct | Indie Hackers post (with the Product Hunt numbers) | David posts, Claude drafts |
 | Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
@@ -140,7 +140,7 @@ add the preview and submit, as with 1.3.2.
 
 One day of attention from people who try new apps, and a lasting link.
 
-**Decide on Mon 19 Oct, after Groundbeat's launch (Sun 18 Oct).** Two things to weigh:
+**Decided Mon 19 Oct: launch on Sunday 25 October.** What was weighed:
 - **Accounts.** Product Hunt bans company and brand accounts ("We don't allow company or brand
   accounts to post products or comment"); launches come from the maker's own account, so this one
   would come from yours, which is set up for Groundbeat ("Founder, Groundbeat", Groundbeat logo).
@@ -177,9 +177,12 @@ then; the launch goes live by itself.
 - **Pricing:** Free
 - **Makers:** you ("I worked on this product")
 - **Thumbnail:** `store-assets/producthunt/thumbnail-240.png`
-- **Gallery, in order:** the YouTube video `https://youtu.be/rFaNs5C0DHY`, then
-  `store-assets/producthunt/gallery-1.png` to `gallery-5.png` (1270×760, Product Hunt's size; made
-  by `tools/producthunt/gallery.html`)
+- **Gallery, in order:** the YouTube video `https://youtu.be/rFaNs5C0DHY`, then three live clouds,
+  `store-assets/producthunt/cloud-2026.png`, `cloud-more-of.png` and `cloud-year-ahead.png`
+  (1270×760, Product Hunt's size; drawn from the live answers with
+  `tools/make-cloud-image.sh <slug> store-assets/producthunt/cloud-<slug>.png 1270 760` and redrawn
+  on Sat 24 Oct), then `gallery-2.png` (the app: start a cloud about anything). "Your job" stays out
+  until its cloud has more variety; `gallery-1`, `3`, `4` and `5` are spares.
 
 **First comment** (paste it into the launch form's first-comment box; change anything that doesn't
 sound like you; Claude refreshes the numbers on Sat 24 Oct):
@@ -188,11 +191,13 @@ Hi Product Hunt, I'm David and I made three·words.
 
 It started with one question: how do the people who know you really see you? You share a link, each person answers with three words, and the words pile up into a cloud. Named or anonymous, their choice.
 
-Then I pointed it at a subject instead of a person: "Describe 2026 so far in three words." 59 people answered, and the top word wasn't political or dramatic. It was "expensive" (18 of them). That's when clouds about anything became the main feature: start one about a trip, a team or a year, share the link, and people answer from their browser without installing anything.
+Then I pointed it at a subject instead of a person: "Describe 2026 so far in three words." 67 people answered, and the top word wasn't political or dramatic. It was "expensive" (19 of them). That's when clouds about anything became the main feature: start one about a trip, a team or a year, share the link, and people answer from their browser without installing anything.
+
+The newest cloud asks what you want more of. Money is winning, with energy and time close behind.
 
 No feed, no followers, no ads. Free on iPhone and Android.
 
-I'd love honest feedback, especially: what would you start a cloud about?
+I'd love honest feedback, especially: what would you start a cloud about? And the clouds in the gallery are all still open, if you'd like to add your three words: threewordsapp.com/describe/
 ```
 
 On the day: reply to every comment; don't ask anyone to upvote (Product Hunt penalises it).
