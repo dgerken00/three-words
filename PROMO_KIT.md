@@ -29,7 +29,7 @@ same thread asking whether they can approve it, or whether a version without lin
 | 18–21 Oct | Record the App Store preview (25 s, script below); Claude cuts it and builds 1.3.3 | David, then Claude |
 | Wed 21 Oct | If the r/SideProject mods haven't replied: one short follow-up in the same thread | David |
 | Sat 24 Oct | Short-video post 2: the 2026 cloud reveal clip; Claude refreshes the numbers in the Product Hunt first comment and redraws the three gallery clouds | David, Claude |
-| Sun 25 Oct | **Product Hunt launch** (goes live by itself at 12:01 a.m. Pacific); reply to comments through the day | David |
+| Sun 25 Oct | **Product Hunt launch** (goes live by itself at 12:01 a.m. Pacific); reply to comments through the day. The site shows the Product Hunt badge all that day by itself (`docs/launch-day.js`, landing page and official cloud pages). Morning: r/SampleSize results post for "what you want more of", so launch day brings visitors to pages with the badge (the post itself doesn't mention Product Hunt) | David |
 | Thu 29 Oct | Indie Hackers post (with the Product Hunt numbers) | David posts, Claude drafts |
 | Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
 | Fri 13 Nov | Thanksgiving cloud page + database line ready | Claude |
@@ -193,15 +193,19 @@ sound like you; Claude refreshes the numbers on Sat 24 Oct):
 ```
 Hi Product Hunt, I'm David and I made three·words.
 
-It started with one question: how do the people who know you really see you? You share a link, each person answers with three words, and the words pile up into a cloud. Named or anonymous, their choice.
+It started with one question: How do the people who know you really see you? Users share a link and each person answers with three words, creating a live word cloud. Contributors can be named or anonymous. It's their choice.
 
-Then I pointed it at a subject instead of a person: "Describe 2026 so far in three words." 67 people answered, and the top word wasn't political or dramatic. It was "expensive" (19 of them). That's when clouds about anything became the main feature: start one about a trip, a team or a year, share the link, and people answer from their browser without installing anything.
+Then I focused it on a subject rather than a person: "Describe 2026 so far in three words." 67 people answered, and it proved to be even more insightful and fun than I thought. That's when clouds about anything became the main feature: start one about a wedding, a retiree, the year ahead. Share the link and people answer from their browser without installing anything.
 
-The newest cloud asks what you want more of. Money is winning, with energy and time close behind.
+The most recent clouds ask about:
+* 2026 so far
+* The year ahead
+* Your job
+* What you want more of
 
 No feed, no followers, no ads. Free on iPhone and Android.
 
-I'd love honest feedback, especially: what would you start a cloud about? And the clouds in the gallery are all still open, if you'd like to add your three words: threewordsapp.com/describe/
+Honest feedback is appreciated. I'd also love to hear what you'd start a cloud about. The clouds in the gallery are all still open, if you'd like to add your three words: threewordsapp.com/describe/
 ```
 
 On the day: reply to every comment; don't ask anyone to upvote (Product Hunt penalises it).
