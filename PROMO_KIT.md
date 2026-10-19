@@ -181,8 +181,11 @@ then; the launch goes live by itself.
   `store-assets/producthunt/cloud-2026.png`, `cloud-more-of.png` and `cloud-year-ahead.png`
   (1270×760, Product Hunt's size; drawn from the live answers with
   `tools/make-cloud-image.sh <slug> store-assets/producthunt/cloud-<slug>.png 1270 760` and redrawn
-  on Sat 24 Oct), then `gallery-2.png` (the app: start a cloud about anything). "Your job" stays out
-  until its cloud has more variety; `gallery-1`, `3`, `4` and `5` are spares.
+  on Sat 24 Oct), then `cloud-example-you.png` (the "about you" use: Sam, a made-up person, marked
+  Example twice; `tools/producthunt/example-cloud.html`), then `gallery-2.png` (the app: start a
+  cloud about anything). "Your job" stays out until its cloud has more variety; `gallery-1`, `3`,
+  `4` and `5` are spares. The example stays a made-up name: a cloud of invented words under David's
+  name, next to his maker profile, would read as real people describing him.
 
 **First comment** (paste it into the launch form's first-comment box; change anything that doesn't
 sound like you; Claude refreshes the numbers on Sat 24 Oct):
