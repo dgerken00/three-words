@@ -145,11 +145,10 @@ One day of attention from people who try new apps, and a lasting link.
   ("Personal account vs company account") says a personal account has a full name and a personal
   profile picture, and that a name matching a website's domain makes it a company account. The
   launch comes from David's own account, which was first set up for another product; it now has a
-  personal photo and the headline "Side-project Maker". Still to fix if possible: the username,
-  which names that other product (usernames change once every 30 days, in My Details; if the field
-  stays locked, ask hello@producthunt.com), and the name, which should be the full name. A second
-  account would be a made-up identity: not an option. Keep each launch's text free of the other
-  product.
+  personal photo and the headline "Side-project Maker". The username still names that other
+  product (it's locked by the once-every-30-days rule); David's call on 19 Oct was to keep it, since
+  it only appears in the profile's web address. A second account would be a made-up identity: not
+  an option. Keep each launch's text free of the other product.
 - **Featuring.** One maker reports (Indie Hackers, unconfirmed by Product Hunt) that launches from
   an account that launched something else in the past six months may not be featured. The
   account's previous launch (Sun 18 Oct) finished #114 with 2 points, so expect little traffic
