@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!-- A results chart for one cloud as small multiples of waffle grids: one grid per top word,
+     one square per person who answered, filled if they gave that word. Shows the share of
+     people behind each word, which a bar of counts doesn't. Every other word is listed below.
+     ?t=<slug>  &q=<the question as asked>  &since=<first day, e.g. Oct 18>  &n=9 (grids)
+     Render: Chrome headless --window-size=1200,1800 --screenshot=<out.png> "file://…/results-waffle.html?t=more-of&…"
+     Grids are 9x9 = 81 squares, so they fit up to 81 people; past that, use results-chart.html. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --surface: #16141F; --ink: #F2EEE8; --ink-2: #C9C4D6; --muted: #8B8698; --rule: #2A2639;
+    --series-1: #C98500;   /* checked against --surface with the dataviz skill's validator */
+    --track: #2E2838;      /* an empty square: one step off the surface */
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; width:1200px; height:1800px; overflow:hidden; background:var(--surface); }
+  body { font-family:system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .viz-root { position:absolute; inset:0; padding:56px 60px 0; display:flex; flex-direction:column; }
+  h1 { font-size:46px; font-weight:600; line-height:1.15; margin:0 0 14px; letter-spacing:-0.5px; }
+  .sub { font-size:22px; line-height:1.45; color:var(--ink-2); margin:0 0 36px; text-wrap:balance; }
+  .panels { display:grid; grid-template-columns:repeat(3, 310px); justify-content:space-between; row-gap:34px; }
+  .head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+  .head b { font-size:26px; font-weight:600; }
+  .head span { font-size:19px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .grid { display:grid; grid-template-columns:repeat(9, 30px); gap:5px; }
+  .grid i { width:30px; height:30px; border-radius:3px; background:var(--track); }
+  .grid i.on { background:var(--series-1); }
+  .rest { margin-top:34px; }
+  .rest p { font-size:18px; line-height:1.5; color:var(--ink-2); margin:0 0 12px; }
+  .rest b { color:var(--muted); font-weight:600; font-size:14px; letter-spacing:2px; text-transform:uppercase; display:block; margin-bottom:3px; }
+  .foot { margin-top:auto; border-top:1px solid var(--rule); padding:16px 0 24px; font-size:16px; line-height:1.5; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="viz-root">
+  <h1 id="q"></h1>
+  <p class="sub" id="sub"></p>
+  <div class="panels" id="panels"></div>
+  <div class="rest" id="rest"></div>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+(async () => {
+  const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
+  const params = new URLSearchParams(location.search);
+  const slug = (params.get('t') || '2026').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const n = Math.min(9, Math.max(3, Number(params.get('n')) || 9));
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_topic_cloud`, {
+    method: 'POST', body: JSON.stringify({ p_slug: slug, p_limit: 1000 }),
+    headers: { apikey: ANON_KEY, authorization: 'Bearer ' + ANON_KEY, 'content-type': 'application/json' },
+  });
+  const data = await r.json();
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const words = (data.words || []).slice().sort((a, b) => b.c - a.c || a.w.localeCompare(b.w));
+  const total = Number(data.total) || 0;
+  const now = new Date();
+  const today = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const since = params.get('since');
+  const month = now.toLocaleDateString('en-US', { month: 'short' });
+  const span = !since ? `as of ${today}`
+    : since.startsWith(month + ' ') ? `${since}–${now.getDate()}, ${now.getFullYear()}` : `${since} to ${today}`;
+
+  document.getElementById('q').textContent = params.get('q') || data.prompt;
+  document.getElementById('sub').textContent =
+    `${total} people answered with three different words each. In every grid, one square is one person; ` +
+    `a filled square means they gave that word. Open online survey, ${span}.`;
+
+  // one 9x9 grid per word; squares fill row by row
+  const cells = Math.min(81, total);
+  const top = words.slice(0, n);
+  document.getElementById('panels').innerHTML = top.map((x) => {
+    const pct = Math.round((x.c / total) * 100);
+    let sq = '';
+    for (let i = 0; i < cells; i++) sq += i < x.c ? '<i class="on"></i>' : '<i></i>';
+    return `<div><div class="head"><b>${esc(x.w)}</b><span>${x.c} of ${total} · ${pct}%</span></div><div class="grid">${sq}</div></div>`;
+  }).join('');
+
+  // every other word, so the chart leaves nothing out
+  const rest = words.slice(n);
+  const groups = [];
+  const three = rest.filter((x) => x.c >= 3);
+  if (three.length) groups.push(`<p><b>Also given by 3 or more people</b>${three.map((x) => `${esc(x.w)} (${x.c})`).join(', ')}</p>`);
+  for (const k of [2, 1]) {
+    const g = rest.filter((x) => x.c === k).map((x) => x.w).sort();
+    if (g.length) groups.push(`<p><b>${k === 1 ? 'Given by one person each' : `Given by ${k} people each`} (${g.length})</b>${g.map(esc).join(', ')}</p>`);
+  }
+  document.getElementById('rest').innerHTML = groups.join('');
+  document.getElementById('foot').innerHTML =
+    `Data: open survey at threewordsapp.com/describe/${esc(slug)}, shared on r/SampleSize. One answer per person; ` +
+    `words lowercased, no grouping (e.g. "friends" and "friendship" count separately). Chart: HTML/CSS, exported with headless Chrome.`;
+  document.title = 'ready';
+})();
+</script>
+</body>
+</html>
