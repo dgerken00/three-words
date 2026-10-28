@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<!-- A results chart for one cloud, for data communities that want a plain chart rather than a
+     word cloud (r/dataisbeautiful): a bar for every word given by at least `min` people, then
+     every other word, listed. 1200x1500, drawn from the live answers.
+     ?t=<slug>  &q=<the question as it was asked>  &since=<first day, e.g. Oct 18>  &min=3
+     Render: Chrome headless --window-size=1200,1500 --screenshot=<out.png> "file://…/results-chart.html?t=more-of&…"
+     One series, so one colour (#C98500, checked against this background with the dataviz
+     skill's validator); values sit at the bar ends; text stays in ink colours. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --surface: #16141F; --ink: #F2EEE8; --ink-2: #C9C4D6; --muted: #8B8698; --rule: #2A2639;
+    --series-1: #C98500;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; width:1200px; height:1500px; overflow:hidden; background:var(--surface); }
+  body { font-family:system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); -webkit-font-smoothing:antialiased; }
+  .viz-root { position:absolute; inset:0; padding:56px 60px 0; display:flex; flex-direction:column; }
+  h1 { font-size:46px; font-weight:600; line-height:1.15; margin:0 0 14px; letter-spacing:-0.5px; }
+  .sub { font-size:22px; line-height:1.45; color:var(--ink-2); margin:0 0 34px; text-wrap:balance; }
+  .label { font-size:15px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin:0 0 14px; }
+  .bars { display:grid; grid-template-columns:200px 1fr; row-gap:0; }
+  .w { font-size:23px; text-align:right; padding-right:16px; line-height:38px; white-space:nowrap; }
+  .track { position:relative; height:38px; border-left:1px solid #383444; }
+  .bar { position:absolute; left:0; top:8px; height:22px; background:var(--series-1); border-radius:0 4px 4px 0; }
+  .v { position:absolute; top:0; line-height:38px; font-size:21px; color:var(--ink-2); font-variant-numeric:tabular-nums; padding-left:10px; }
+  .rest { margin-top:30px; }
+  .rest p { font-size:20px; line-height:1.55; color:var(--ink-2); margin:0 0 18px; }
+  .rest b { color:var(--muted); font-weight:600; font-size:15px; letter-spacing:2px; text-transform:uppercase; display:block; margin-bottom:4px; }
+  .foot { margin-top:auto; border-top:1px solid var(--rule); padding:18px 0 26px; font-size:17px; line-height:1.5; color:var(--muted); }
+</style>
+</head>
+<body>
+<div class="viz-root">
+  <h1 id="q"></h1>
+  <p class="sub" id="sub"></p>
+  <p class="label" id="barlabel"></p>
+  <div class="bars" id="bars"></div>
+  <div class="rest" id="rest"></div>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+(async () => {
+  const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
+  const params = new URLSearchParams(location.search);
+  const slug = (params.get('t') || '2026').toLowerCase().replace(/[^a-z0-9-]/g, '');
+  const min = Math.max(2, Number(params.get('min')) || 3);
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_topic_cloud`, {
+    method: 'POST', body: JSON.stringify({ p_slug: slug, p_limit: 1000 }),
+    headers: { apikey: ANON_KEY, authorization: 'Bearer ' + ANON_KEY, 'content-type': 'application/json' },
+  });
+  const data = await r.json();
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const words = (data.words || []).slice().sort((a, b) => b.c - a.c || a.w.localeCompare(b.w));
+  const total = Number(data.total) || 0;
+  const now = new Date();
+  const today = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  // "Oct 18" + today Oct 28 -> "Oct 18–28, 2026"; across months -> "Sep 28 to Oct 28, 2026"
+  const since = params.get('since');
+  const month = now.toLocaleDateString('en-US', { month: 'short' });
+  const span = !since ? `as of ${today}`
+    : since.startsWith(month + ' ') ? `${since}–${now.getDate()}, ${now.getFullYear()}` : `${since} to ${today}`;
+
+  document.getElementById('q').textContent = params.get('q') || data.prompt;
+  document.getElementById('sub').textContent =
+    `${total} people answered, each with three different words: ${words.length} different words in all. ` +
+    `Open online survey, ${span}.`;
+
+  const top = words.filter((x) => x.c >= min);
+  const max = Math.max(1, ...top.map((x) => x.c));
+  document.getElementById('barlabel').textContent = `People who gave each word (words given by ${min} or more)`;
+  document.getElementById('bars').innerHTML = top.map((x) => {
+    const pct = (x.c / max) * 88;   // leave room after the longest bar for its value
+    return `<div class="w">${esc(x.w)}</div><div class="track"><div class="bar" style="width:${pct}%"></div>` +
+      `<span class="v" style="left:${pct}%">${x.c}</span></div>`;
+  }).join('');
+
+  // every other word, listed by how many people gave it, so the chart leaves nothing out
+  const groups = [];
+  for (let n = min - 1; n >= 1; n--) {
+    const g = words.filter((x) => x.c === n).map((x) => x.w).sort();
+    if (g.length) groups.push(`<p><b>${n === 1 ? 'Given by one person each' : `Given by ${n} people each`} (${g.length})</b>${g.map(esc).join(', ')}</p>`);
+  }
+  document.getElementById('rest').innerHTML = groups.join('');
+  document.getElementById('foot').innerHTML =
+    `Data: open survey at threewordsapp.com/describe/${esc(slug)}, shared on r/SampleSize. One answer per person; ` +
+    `words lowercased, no grouping (e.g. "friends" and "friendship" count separately). Chart: HTML/CSS, exported with headless Chrome.`;
+  document.title = 'ready';
+})();
+</script>
+</body>
+</html>
