@@ -32,6 +32,8 @@ same thread asking whether they can approve it, or whether a version without lin
 | Sun 25 Oct | **Product Hunt launch** (goes live by itself at 12:01 a.m. Pacific); reply to comments through the day. The site shows the Product Hunt badge all that day by itself (`docs/launch-day.js`, landing page and official cloud pages). Morning: r/SampleSize results post for "what you want more of", so launch day brings visitors to pages with the badge (the post itself doesn't mention Product Hunt) | David |
 | Thu 29 Oct | Indie Hackers post (with the Product Hunt numbers) | David posts, Claude drafts |
 | Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
+| Sat 31 Oct | r/SampleSize: "what you want less of" question (section 5) | David |
+| Mon 2 Nov | r/SampleSize: results post, more of and less of side by side (section 5) | David, Claude draws the image |
 | Fri 13 Nov | Thanksgiving cloud page + database line ready | Claude |
 | Mon 16 Nov | Thanksgiving cloud opens (David runs the line) | David |
 | Tue 17 Nov | r/SampleSize: Thanksgiving question, if section 5's check says the sub still works | David |
@@ -264,6 +266,13 @@ Anonymous, no sign-up: https://threewordsapp.com/describe/more-of/ (My own side 
   weak question from a tired sub.
 - Under 3: no more question posts here. The account keeps r/SampleSize for results posts (the
   2026 one on 1 Dec).
+
+**Sat 31 Oct:** "What do you want less of in your life right now?" (`/describe/less-of/`,
+`add-topic-less-of.sql`). Number to beat: about 30 answers in the first 16 hours, as "more of" got.
+It invites answers aimed at groups of people and the filter only stops slurs, so check the words
+daily and hide anything cruel: `update topics set hidden_words = array_append(hidden_words, 'word') where slug = 'less-of';`
+**Mon 2 Nov** (David's call, before the midterms on Tue 3 Nov): one results post with more of and
+less of side by side. Claude draws the image from that morning's numbers.
 
 Always flaired, always the disclosure, never more than one link. No "your job" results post:
 there are no answers to report.
