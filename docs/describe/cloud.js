@@ -296,6 +296,7 @@
     if (!ok) {
       const msg = (body && body.message) || '';
       el.err.textContent =
+        msg.includes('rate_limited_connection') ? 'Several answers have already come from this connection today. Please try again tomorrow.' :
         msg.includes('rate_limited') ? 'This cloud is getting a lot of words right now — try again in a bit.' :
         msg.includes('blocked_word') ? "Let's keep it kind — try different words." :
         msg.includes('topic_closed') ? 'This cloud is closed to new words.' :
