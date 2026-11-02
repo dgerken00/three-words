@@ -274,6 +274,9 @@ daily and hide anything cruel: `update topics set hidden_words = array_append(hi
 **Mon 2 Nov** (David's call, before the midterms on Tue 3 Nov): one results post with more of and
 less of side by side. Claude draws the image from that morning's numbers.
 
+**Before every results post, run `check-repeat-answers.sql`** in the SQL Editor: on 2 Nov it caught one
+IP that had given 10 of less-of's 49 answers and put the wrong words on top.
+
 Always flaired, always the disclosure, never more than one link. No "your job" results post:
 there are no answers to report.
 
