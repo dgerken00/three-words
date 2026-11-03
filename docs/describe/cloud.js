@@ -110,6 +110,7 @@
   let lastData = null;        // kept so the cloud can re-fit when the window is resized
   let topicTitle = '';
   let userCloud = false;      // started by an app user rather than by three·words
+  let editing = false;        // "Change them" was tapped: keep the form up until they save
 
   // Type scale that follows both the stage width and how full the cloud is: a handful of
   // answers render large and confident, hundreds settle into a few giants over a haze.
@@ -183,10 +184,11 @@
   // undo setClosed once the topic is reachable and open (e.g. after a transient error)
   function setOpen() {
     if (el.closed) el.closed.style.display = 'none';
-    const haveMine = !!store.get(mineKey);
-    if (el.mine) el.mine.style.display = haveMine ? 'block' : 'none';
+    // This runs on every poll, so it must not take the form away from someone mid-change.
+    const showAsk = editing || !store.get(mineKey);
+    if (el.mine) el.mine.style.display = showAsk ? 'none' : 'block';
     // '' rather than 'block': the stylesheet decides whether the ask is a card or a one-row grid
-    if (el.ask) el.ask.style.display = haveMine ? 'none' : '';
+    if (el.ask) el.ask.style.display = showAsk ? '' : 'none';
   }
 
   let pollTimer = null, failures = 0;
@@ -277,6 +279,7 @@
   if (mineRaw) { try { const m = JSON.parse(mineRaw); if (Array.isArray(m) && m.length === 3) showMine(m); } catch {} }
 
   if (el.change) el.change.addEventListener('click', () => {
+    editing = true;
     el.mine.style.display = 'none'; el.ask.style.display = '';
     try { const m = JSON.parse(store.get(mineKey)); ['w1', 'w2', 'w3'].forEach((id, i) => { $(id).value = m[i] || ''; }); } catch {}
     $('w1').focus();
@@ -306,6 +309,7 @@
       return;
     }
     store.set(mineKey, JSON.stringify(words));
+    editing = false;
     showMine(words);
     refresh();
   });
