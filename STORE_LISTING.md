@@ -106,6 +106,13 @@ Screenshots, in this order: a topic cloud (sets the frame), the personal cloud, 
 > paused and hidden until we review it. Clouds are unlisted and reachable only by link. Our
 > Terms forbid clouds that target a private person.
 
+**Reviewer notes for the next submission** (the rules changed on 4 Nov 2026; use this instead of the last sentence above)
+> Our Terms allow kind clouds about a person (birthdays, retirements, send-offs), forbid clouds
+> meant to embarrass, harass or hurt, and forbid clouds about anyone under 18 except by a parent
+> or guardian. Clouds can also be started on our website without an account; those close to new
+> words after 30 days and are paused after two reports. Anyone can ask for a cloud about them to
+> be taken down, and we act on reports within 24 hours.
+
 ---
 
 # Public App Store submission — pre-filled answers

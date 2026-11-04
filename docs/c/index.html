@@ -64,7 +64,7 @@
   footer a { color:#8B8698; text-decoration:none; margin:0 8px; white-space:nowrap; }
   footer a:hover { color:#F5C95D; }
 </style>
-<link rel="stylesheet" href="/describe/cloud.css?v=11" />
+<link rel="stylesheet" href="/describe/cloud.css?v=12" />
 </head>
 <body>
 <script>if (!new URLSearchParams(location.search).get("t")) location.replace("/describe/");</script>
@@ -113,14 +113,14 @@
     <h2>What is this?</h2>
     <p>A public experiment by <a href="/">three·words</a>, a small app built around one question: how do the people who
     know you <em>really</em> see you? In the app, you invite your friends and family and each of them sends three words
-    that describe you. People who use the app can also start a cloud about any subject, like this one, and share the link.</p>
+    that describe you. Anyone can start a cloud like this one at <a href="/start/">threewordsapp.com/start</a>, in seconds and with no app.</p>
     <p><strong>How it works.</strong> No account. Your three words are anonymous. One set per person (per browser — you can
     change yours, not add more). A filter blocks slurs before they're saved, and words that are cruel rather than honest
     can be hidden by the person who started the cloud. Beyond your three words, the only things stored are a random token your browser keeps so you can
     edit them and a hashed IP for rate-limiting — see the <a href="/privacy/">privacy policy</a>.</p>
-    <p><strong>Something wrong?</strong> A cloud must not target a private person or be hateful or abusive. Use
-    "Report this cloud" under the cloud, or email <a href="mailto:admin@threewordsapp.com">admin@threewordsapp.com</a>.
-    Reported clouds are paused and reviewed by a person.</p>
+    <p><strong>Something wrong?</strong> A cloud must be kind. If it's about you and you want it gone, use
+    "Report this cloud" under the cloud or email <a href="mailto:admin@threewordsapp.com">admin@threewordsapp.com</a>,
+    and we'll take it down, normally within 24 hours. Reported clouds are paused and reviewed by a person.</p>
   </div>
 
   <footer>
@@ -131,7 +131,8 @@
     <a href="/privacy/">Privacy</a>
   </footer>
 </main>
-<script src="/describe/cloud.js?v=12"></script>
+<script src="/describe/cloud.js?v=13"></script>
+<script src="/c/owner.js?v=1" defer></script>
 <script src="/video/plays.js" defer></script>
 </body>
 </html>

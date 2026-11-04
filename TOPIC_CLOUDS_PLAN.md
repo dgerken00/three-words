@@ -37,11 +37,14 @@ web with no account; this release lets app users start their own.
 | Every cloud page has a **Report this cloud** link | App store rules for user content, and basic safety |
 | A cloud with 3 reports from different visitors is paused until reviewed | Stops a harmful cloud without waiting for a person |
 | Topic names go through the same slur filter as words | |
+| Since 4 Nov 2026: clouds can be started on the website with no account (`add-web-clouds.sql`, /start/) | The growth loop needs new clouds, and installing an app was the step people didn't take. Website clouds close after 30 days, two reports pause them, and an on/off switch can stop new ones |
+| Since 4 Nov 2026: kind clouds about a person are allowed; clouds meant to hurt, and clouds about under-18s (except by a parent or guardian), are not | The one user cloud that took off was a warm cloud about a person. Takedown on request within 24 hours |
 | The page says "Started by a three·words user" | Visitors know it isn't an official cloud |
 | Free limit: 3 open clouds per account (was 1 until 2026-09-30) | Clouds are the growth loop, so the count stays generous and permanent; a paid tier would sell better clouds, not more |
 
-Known gap: nothing can automatically tell that a topic names a private person. The terms will
-forbid clouds that target a private individual, and reports plus the pause rule enforce it.
+Known gap: nothing can automatically tell whether a cloud about a person is kind. The terms forbid
+clouds meant to embarrass, harass or hurt; reports, the pause rule, takedown on request and the
+daily check (`three-words-daily-check`) enforce it.
 
 ## Work
 

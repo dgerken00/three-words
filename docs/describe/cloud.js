@@ -49,6 +49,18 @@
     }
   }
 
+  // The offer leads with starting a cloud on the website (no app, no account); the store
+  // buttons stay as the second choice. Taps are counted as 'start' against this cloud.
+  const offer = document.querySelector('.card.cta');
+  if (offer) {
+    const intro = [...offer.querySelectorAll('p')].find((p) => p.textContent.includes('Want a cloud of your own'));
+    const start = document.createElement('a');
+    start.className = 'btn start'; start.href = '/start/'; start.dataset.track = 'start';
+    start.textContent = 'Start a cloud — no app needed';
+    if (intro) intro.insertAdjacentElement('afterend', start);
+    offer.querySelectorAll('.btn.ios').forEach((b) => { b.classList.remove('ios'); b.classList.add('android'); });
+  }
+
   // The generic /describe/ page carries both layouts; show the one that applies.
   document.querySelectorAll('[data-when]').forEach((n) => { n.hidden = n.dataset.when !== (slug ? 'topic' : 'hub'); });
 
@@ -262,17 +274,11 @@
   }
   // Once someone has answered, offer them a cloud of their own while their words are landing.
   if (el.mine) {
-    const ua = navigator.userAgent || '';
-    const ios = /iPhone|iPad|iPod/.test(ua), android = /Android/.test(ua);
     const nudge = document.createElement('p');
     nudge.className = 'nudge';
-    nudge.innerHTML = 'Want a cloud of your own? Make one for a <em>birthday, a retirement or a send-off</em>, or about you, or about anything. '
-      + (ios ? '<a data-track="ios" href="https://apps.apple.com/app/id6786531783">Get your own cloud →</a>'
-        : android ? '<a data-track="android" href="https://play.google.com/store/apps/details?id=com.davidgerken.threewords">Get your own cloud →</a>'
-        : '<a href="#get" id="nudgejump">Get your own cloud →</a>');
+    nudge.innerHTML = 'Want a cloud of your own? Make one for a <em>birthday, a retirement or a send-off</em>, or about anything. '
+      + 'It takes ten seconds and no app. <a data-track="start" href="/start/">Start a cloud →</a>';
     el.mine.appendChild(nudge);
-    const jump = $('nudgejump'), cta = document.querySelector('.card.cta');
-    if (jump && cta) jump.addEventListener('click', (e) => { e.preventDefault(); cta.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
   }
 
   const mineRaw = store.get(mineKey);
@@ -383,7 +389,7 @@
       const a = document.createElement('button');
       a.type = 'button'; a.className = 'linkish'; a.textContent = 'Report this cloud';
       a.addEventListener('click', async () => {
-        const reason = window.prompt('What is wrong with this cloud? (optional)\n\nReport it if it targets a private person, or is hateful or abusive.');
+        const reason = window.prompt('What is wrong with this cloud? (optional)\n\nReport it if it is meant to hurt someone, is about a child, or is hateful or abusive. If it is about you and you want it taken down, say so here.');
         if (reason === null) return;
         a.disabled = true;
         const { ok } = await rpc('report_topic', { p_slug: slug, p_token: token, p_reason: reason.slice(0, 300) });
