@@ -34,6 +34,7 @@ same thread asking whether they can approve it, or whether a version without lin
 | Sat 31 Oct | Short-video post 3: the year-ahead reveal clip | David |
 | Sat 31 Oct | r/SampleSize: "what you want less of" question (section 5) | David |
 | Mon 2 Nov | r/SampleSize: results post, more of and less of side by side (section 5) | David, Claude draws the image |
+| Thu 5 Nov | r/SampleSize: "how you feel after the midterms" question (section 5) | David |
 | Fri 13 Nov | Thanksgiving cloud page + database line ready | Claude |
 | Mon 16 Nov | Thanksgiving cloud opens (David runs the line) | David |
 | Tue 17 Nov | r/SampleSize: Thanksgiving question, if section 5's check says the sub still works | David |
@@ -273,6 +274,22 @@ It invites answers aimed at groups of people and the filter only stops slurs, so
 daily and hide anything cruel: `update topics set hidden_words = array_append(hidden_words, 'word') where slug = 'less-of';`
 **Mon 2 Nov** (David's call, before the midterms on Tue 3 Nov): one results post with more of and
 less of side by side. Claude draws the image from that morning's numbers.
+
+**Thu 5 Nov** (David's idea): "How are you feeling after the midterms?" (`/describe/midterms/`,
+`add-topic-midterms.sql`), two days after the 3 Nov US midterms:
+
+```
+[Casual] How are you feeling after the midterms? Answer in three words (US residents)
+```
+```
+Anonymous, no sign-up: https://threewordsapp.com/describe/midterms/ (My own side project.)
+```
+
+Number to beat: about 30 answers in the first 16 hours, as "more of" got; also watch "Start a cloud"
+taps from this page (0 everywhere so far). Moderation, the same rule whichever side the words come
+from: keep feelings and opinions, hide insults aimed at people or groups. Hide them at
+threewordsapp.com/admin (public clouds → word to hide). Results post while it's still news,
+around Tue 10 Nov, if it passes 30.
 
 **Before every results post, run `check-repeat-answers.sql`** in the SQL Editor: on 2 Nov it caught one
 IP that had given 10 of less-of's 49 answers and put the wrong words on top.
