@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<title>three·words admin</title>
+<!-- The admin desk. Public page, private data: every call goes through admin_* functions in
+     add-admin.sql, which refuse any account that isn't in the admins table. Sign-in is the
+     same email and password as the app; the session lives in this tab only (sessionStorage). -->
+<style>
+  :root { color-scheme: dark; --bg:#16141F; --card:#211E2E; --line:#322E44; --ink:#F2EEE8; --text:#C9C4D6; --soft:#A9A3B8; --mute:#8B8698; --gold:#F5C95D; --red:#E88C9C; --green:#A8D8B0; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:24px 16px 80px; }
+  header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+  header h1 { font-family:Georgia,serif; font-weight:400; font-size:24px; color:var(--ink); margin:0; }
+  header h1 b { color:var(--gold); font-weight:400; }
+  h2 { font-family:Georgia,serif; font-weight:400; font-size:20px; color:var(--ink); margin:30px 0 10px; }
+  a { color:var(--gold); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin:0 0 10px; }
+  .muted { color:var(--mute); font-size:13px; }
+  button { font:inherit; font-size:13px; border-radius:999px; padding:5px 12px; border:1px solid #3D3852; background:#1B1827; color:var(--ink); cursor:pointer; margin:4px 6px 0 0; }
+  button.primary { background:var(--gold); color:var(--bg); border-color:var(--gold); font-weight:600; }
+  button.danger { color:var(--red); border-color:#5A3340; }
+  button.armed { background:#5A3340; color:#fff; }
+  button:disabled { opacity:.5; }
+  input { font:inherit; background:#1B1827; border:1px solid #3D3852; color:var(--ink); border-radius:10px; padding:9px 12px; }
+  #signin { max-width:360px; margin:60px auto; }
+  #signin input { width:100%; margin:0 0 10px; }
+  #signin button { width:100%; border-radius:10px; padding:11px; font-size:15px; margin:4px 0 0; }
+  .err { color:var(--red); min-height:1.2em; font-size:13px; }
+  .needs { border-color:var(--gold); }
+  .needs ul { margin:6px 0 0; padding-left:20px; }
+  .ok { color:var(--green); }
+  .badge { display:inline-block; font-size:11px; letter-spacing:.5px; text-transform:uppercase; padding:1px 7px; border-radius:999px; border:1px solid #3D3852; color:var(--soft); margin-left:6px; vertical-align:2px; }
+  .badge.warn { color:var(--red); border-color:#5A3340; }
+  .tablewrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--card); }
+  table.daily { border-collapse:separate; border-spacing:0; width:100%; font-variant-numeric:tabular-nums; }
+  table.daily th, table.daily td { padding:6px 8px; text-align:right; white-space:nowrap; border-bottom:1px solid #26222F; }
+  table.daily th:first-child, table.daily td:first-child { position:sticky; left:0; background:var(--card); text-align:left; z-index:1; min-width:200px; }
+  table.daily thead th { color:var(--mute); font-weight:500; font-size:12px; background:var(--card); }
+  table.daily tr.group td { color:var(--gold); font-size:12px; letter-spacing:1px; text-transform:uppercase; background:var(--bg); }
+  table.daily tr.group td:first-child { background:var(--bg); }
+  table.daily td.zero { color:#4E4963; }
+  table.daily .today { background:#2A2639; }
+  table.daily td.total, table.daily th.total { color:var(--ink); font-weight:600; border-left:1px solid var(--line); }
+  .row { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .row .main { min-width:0; flex:1 1 320px; }
+  .title { color:var(--ink); font-weight:600; }
+  .words { font-family:Georgia,serif; color:var(--ink); }
+  .chip { display:inline-block; margin:4px 6px 0 0; padding:2px 9px; border-radius:999px; border:1px solid #3D3852; color:var(--mute); font-size:13px; cursor:pointer; text-decoration:line-through; }
+  .reason { color:var(--soft); font-style:italic; }
+  .log li { margin:2px 0; }
+  #msg { position:sticky; top:0; z-index:5; }
+  #msg div { background:#5A3340; color:#fff; padding:8px 12px; border-radius:10px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+<main>
+  <div id="msg"></div>
+  <div id="signin" class="card" hidden>
+    <h1 style="font-family:Georgia,serif;font-weight:400;color:var(--ink);margin:0 0 6px;">three<b style="color:var(--gold);font-weight:400;">·</b>words admin</h1>
+    <p class="muted">Sign in with your three·words app account.</p>
+    <input id="email" type="email" autocomplete="username" placeholder="Email" />
+    <input id="password" type="password" autocomplete="current-password" placeholder="Password" />
+    <div class="err" id="serr"></div>
+    <button class="primary" id="go">Sign in</button>
+  </div>
+
+  <div id="desk" hidden>
+    <header>
+      <h1>three<b>·</b>words admin</h1>
+      <div><button id="refresh">Refresh</button><button id="signout">Sign out</button></div>
+    </header>
+    <div id="needs"></div>
+    <h2>Last 14 days</h2>
+    <p class="muted">Pacific time, today on the right.</p>
+    <div class="tablewrap"><table class="daily" id="daily"></table></div>
+    <div id="lists"></div>
+  </div>
+</main>
+<script>
+(() => {
+  const SUPABASE_URL = 'https://iyphfzubdebuenbiplzy.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cGhmenViZGVidWVuYmlwbHp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5NDI5NDMsImV4cCI6MjA5ODUxODk0M30.sPUWJJ3-oyjQRTVpGBWBAPnPBG47Ojndu8MC2Ej4FdQ';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const when = (t) => t ? new Date(t).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
+  const say = (m) => { $('msg').innerHTML = m ? `<div>${esc(m)}</div>` : ''; if (m) setTimeout(() => say(''), 6000); };
+
+  // ---------- session (this tab only) ----------
+  const KEY = 'tw_admin_session';
+  let session = null;
+  try { session = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch {}
+  const save = (s) => { session = s; try { s ? sessionStorage.setItem(KEY, JSON.stringify(s)) : sessionStorage.removeItem(KEY); } catch {} };
+
+  async function auth(grant, body) {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=${grant}`, {
+      method: 'POST', headers: { apikey: ANON_KEY, 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const j = await r.json().catch(() => null);
+    if (!r.ok || !j || !j.access_token) return null;
+    return { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: Date.now() + (j.expires_in || 3600) * 1000 };
+  }
+  // the desk makes two calls at once; they share one refresh rather than racing
+  let refreshing = null;
+  const refresh = () => refreshing || (refreshing = (async () => {
+    save(session && await auth('refresh_token', { refresh_token: session.refresh_token }));
+    refreshing = null;
+  })());
+  async function rpc(fn, args, retried) {
+    if (session && session.expires_at - Date.now() < 60000) await refresh();
+    if (!session) throw new Error('signed_out');
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+      method: 'POST', body: JSON.stringify(args || {}),
+      headers: { apikey: ANON_KEY, authorization: 'Bearer ' + session.access_token, 'content-type': 'application/json' } });
+    const t = await r.text();
+    let j = null; try { j = t ? JSON.parse(t) : null; } catch {}
+    if (r.status === 401 && !retried) { await refresh(); return rpc(fn, args, true); }
+    if (!r.ok) throw new Error((j && j.message) || ('error ' + r.status));
+    return j;
+  }
+
+  function showSignIn(msg) { $('desk').hidden = true; $('signin').hidden = false; $('serr').textContent = msg || ''; }
+  $('go').addEventListener('click', async () => {
+    $('go').disabled = true; $('serr').textContent = '';
+    const s = await auth('password', { email: $('email').value.trim(), password: $('password').value });
+    $('go').disabled = false; $('password').value = '';
+    if (!s) { $('serr').textContent = "Email or password didn't match."; return; }
+    save(s); load();
+  });
+  $('password').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('go').click(); });
+  $('signout').addEventListener('click', () => { save(null); showSignIn(''); });
+  $('refresh').addEventListener('click', () => load());
+
+  // ---------- the desk ----------
+  const GROUPS = [
+    ['Growth', [['taps_start', '“Start a cloud” taps'], ['clouds_web', 'Clouds started on the website'],
+                ['clouds_app', 'Clouds started in the app'], ['answers_user', "Answers on people's clouds"],
+                ['taps_keepsake', 'Keepsake taps'], ['signups', 'App signups']]],
+    ['Public clouds', [['answers_public', 'Answers']]],
+    ['Taps on all cloud pages', [['taps_ios', 'App Store'], ['taps_android', 'Google Play'], ['taps_share', 'Share']]],
+    ['App', [['personal_words', 'Words sent to people']]],
+    ['Safety', [['cloud_reports', 'Cloud reports'], ['word_reports', 'Word reports']]],
+    ['Video', [['video_plays', 'Video plays']]],
+  ];
+  const LOG_NAMES = { release: 'Released', pause: 'Paused', close: 'Closed', open: 'Reopened', dismiss_reports: 'Dismissed reports',
+    hide_word: 'Hid word', unhide_word: 'Showed word', delete_cloud: 'Deleted cloud', remove_repeats: 'Removed repeat answers',
+    delete_words: 'Removed reported words', dismiss_word_report: 'Dismissed word report', web_clouds: 'Website clouds' };
+  const cloudLink = (slug, kind) => kind === 'public' ? `/describe/${encodeURIComponent(slug)}/` : `/c/?t=${encodeURIComponent(slug)}`;
+
+  function daily(d) {
+    const days = d.days.map((s) => new Date(s + 'T12:00:00'));
+    const head = '<thead><tr><th></th>' + days.map((x, i) =>
+      `<th class="${i === days.length - 1 ? 'today' : ''}">${x.toLocaleDateString(undefined, { weekday: 'short' })}<br>${x.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</th>`).join('')
+      + '<th class="total">14 days</th></tr></thead>';
+    const body = GROUPS.map(([g, rows]) => `<tr class="group"><td>${g}</td>${'<td></td>'.repeat(days.length + 1)}</tr>` + rows.map(([k, label]) => {
+      const v = d.rows[k] || [];
+      return `<tr><td>${esc(label)}</td>${v.map((n, i) => `<td class="${n ? '' : 'zero'}${i === v.length - 1 ? ' today' : ''}">${n}</td>`).join('')}<td class="total">${v.reduce((a, b) => a + b, 0)}</td></tr>`;
+    }).join('')).join('');
+    $('daily').innerHTML = head + '<tbody>' + body + '</tbody>';
+    // on a narrow screen, start scrolled to today and the totals
+    const wrap = $('daily').parentElement; wrap.scrollLeft = wrap.scrollWidth;
+  }
+
+  function needs(L) {
+    const items = [];
+    const reported = L.cloud_reports.length, openWords = L.word_reports.filter((r) => r.words).length;
+    const paused = L.user_clouds.filter((c) => c.paused).length + L.public_clouds.filter((c) => c.paused).length;
+    // older bursts stay in the list below but stop asking for attention after a week
+    const repeats = L.repeats.filter((r) => r.answers >= 3 && Date.now() - new Date(r.last_at) < 7 * 864e5).length;
+    if (reported) items.push(`<a href="#reports">${reported} reported cloud${reported > 1 ? 's' : ''}</a> (the terms promise a look within 24 hours)`);
+    if (openWords) items.push(`<a href="#wordreports">${openWords} reported set${openWords > 1 ? 's' : ''} of words sent in the app</a>`);
+    if (paused) items.push(`${paused} paused cloud${paused > 1 ? 's' : ''} waiting for a decision`);
+    if (repeats) items.push(`<a href="#repeats">${repeats} connection${repeats > 1 ? 's' : ''} with 3+ answers on one public cloud this week</a>`);
+    if (!L.web_clouds_on) items.push('Website clouds are switched <b>off</b>');
+    $('needs').innerHTML = items.length
+      ? `<div class="card needs"><b style="color:var(--ink)">Needs you</b><ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul></div>`
+      : '<div class="card"><span class="ok">Nothing needs you right now.</span> <span class="muted">No reports, no paused clouds, no repeat answers.</span></div>';
+  }
+
+  // a button that acts; destructive ones need a second tap
+  const btn = (label, action, slug, arg, danger) =>
+    `<button class="${danger ? 'danger' : ''}" data-act="${esc(action)}" data-slug="${esc(slug || '')}" data-arg="${esc(arg || '')}"${danger ? ' data-confirm="1"' : ''}>${esc(label)}</button>`;
+
+  function lists(L) {
+    let h = '';
+    h += `<h2 id="reports">Reported clouds</h2>` + (L.cloud_reports.length ? L.cloud_reports.map((r) => `
+      <div class="card row"><div class="main">
+        <a class="title" href="${cloudLink(r.slug, r.kind)}" target="_blank" rel="noopener">${esc(r.title)}</a>
+        <span class="badge">${r.kind === 'web' ? 'website' : esc(r.kind)}</span>${r.paused ? '<span class="badge warn">paused</span>' : ''}
+        <div class="muted">${r.reporters} reporter${r.reporters > 1 ? 's' : ''} · last ${when(r.last_at)}</div>
+        ${r.reasons.slice(0, 3).map((x) => `<div class="reason">“${esc(x)}”</div>`).join('')}
+      </div><div>
+        ${r.paused ? btn('Release', 'release', r.slug) : btn('Pause', 'pause', r.slug)}
+        ${btn('Dismiss reports', 'dismiss_reports', r.slug)}
+        ${r.kind !== 'public' ? btn('Delete cloud', 'delete_cloud', r.slug, '', true) : ''}
+      </div></div>`).join('') : '<p class="muted">None.</p>');
+
+    h += `<h2 id="wordreports">Reported words sent in the app</h2>` + (L.word_reports.length ? L.word_reports.map((r) => `
+      <div class="card row"><div class="main">
+        <div class="words">${r.words ? esc(r.words.join(' · ')) : '<span class="muted">(words already removed)</span>'}</div>
+        <div class="muted">${when(r.at)}</div>${r.reason ? `<div class="reason">“${esc(r.reason)}”</div>` : ''}
+      </div><div>
+        ${r.words ? btn('Remove these words', 'delete_words', '', r.submission_id, true) : ''}
+        ${btn('Dismiss', 'dismiss_word_report', '', r.id)}
+      </div></div>`).join('') : '<p class="muted">None.</p>');
+
+    const uc = L.user_clouds;
+    h += `<h2>Clouds people started</h2><p class="muted">${uc.length} in total · ${uc.filter((c) => c.kind === 'web').length} on the website · ${uc.filter((c) => c.kind === 'app').length} in the app</p>`
+      + (uc.length ? uc.slice(0, 60).map((c) => {
+        const status = c.paused ? '<span class="badge warn">paused</span>' : c.expired ? '<span class="badge">closed after 30 days</span>' : c.is_open ? '' : '<span class="badge">closed</span>';
+        return `<div class="card row"><div class="main">
+          <a class="title" href="${cloudLink(c.slug, c.kind)}" target="_blank" rel="noopener">${esc(c.title)}</a>
+          <span class="badge">${c.kind === 'web' ? 'website' : 'app'}</span>${status}
+          <div class="muted">started ${when(c.created_at)} · ${c.answers} answer${c.answers === 1 ? '' : 's'} · ${c.start_taps} start taps · ${c.store_taps} store taps${c.hidden ? ` · ${c.hidden} hidden` : ''}${c.reports ? ` · <b style="color:var(--red)">${c.reports} report${c.reports > 1 ? 's' : ''}</b>` : ''}</div>
+        </div><div>
+          ${c.paused ? btn('Release', 'release', c.slug) : btn('Pause', 'pause', c.slug)}
+          ${btn('Delete', 'delete_cloud', c.slug, '', true)}
+        </div></div>`;
+      }).join('') : '<p class="muted">None yet.</p>');
+
+    h += `<h2>Public clouds</h2>` + L.public_clouds.map((c) => `
+      <div class="card row"><div class="main">
+        <a class="title" href="${cloudLink(c.slug, 'public')}" target="_blank" rel="noopener">${esc(c.title)}</a>${c.is_open ? '' : '<span class="badge">closed</span>'}
+        <div class="muted">${c.answers} answers (${c.answers_7d} this week) · ${c.start_taps} start taps · ${c.store_taps} store taps</div>
+        ${(c.hidden_words || []).length ? `<div><span class="muted">Hidden (tap to show again):</span> ${c.hidden_words.map((w) =>
+          `<span class="chip" data-act="unhide_word" data-slug="${esc(c.slug)}" data-arg="${esc(w)}">${esc(w)}</span>`).join('')}</div>` : ''}
+      </div><div>
+        <input placeholder="word to hide" size="12" data-hide-for="${esc(c.slug)}" /> ${btn('Hide', 'hide_word', c.slug, '')}
+        ${c.is_open ? btn('Close', 'close', c.slug) : btn('Reopen', 'open', c.slug)}
+      </div></div>`).join('');
+
+    h += `<h2 id="repeats">Repeat answers on public clouds</h2><p class="muted">More than one answer from one connection. Two can be a household; a burst of several is usually one person.</p>`
+      + (L.repeats.length ? L.repeats.map((r) => `
+      <div class="card row"><div class="main">
+        <a class="title" href="${cloudLink(r.slug, 'public')}" target="_blank" rel="noopener">${esc(r.slug)}</a> <span class="badge${r.answers >= 3 ? ' warn' : ''}">${r.answers} answers</span> <span class="muted">connection ${esc(r.ip)}</span>
+        <div class="muted">${when(r.first_at)} to ${when(r.last_at)}</div>
+        <div class="words" style="font-size:14px;">${esc(r.word_sets)}</div>
+      </div><div>${btn('Remove extras (keep first)', 'remove_repeats', r.slug, r.ip, true)}</div></div>`).join('') : '<p class="muted">None.</p>');
+
+    h += `<h2>Website clouds</h2><div class="card row"><div class="main">Starting a cloud on the website is <b style="color:var(--ink)">${L.web_clouds_on ? 'on' : 'off'}</b>.
+        <div class="muted">Turning it off stops new website clouds at once; existing clouds keep working.</div></div>
+        <div>${L.web_clouds_on ? btn('Turn off', 'web_clouds', '', 'off', true) : btn('Turn on', 'web_clouds', '', 'on')}</div></div>`;
+
+    h += `<h2>App</h2><p class="muted">${L.totals.signups} signups · ${L.totals.personal_words} sets of words sent to people · ${L.totals.push_enabled} with notifications on</p>`;
+
+    // a deleted cloud has no title any more; its name is kept in the detail instead
+    h += `<h2>What you've done</h2>` + (L.log.length ? `<ul class="log">${L.log.map((l) => {
+      const name = l.title || (l.action === 'delete_cloud' ? '' : l.slug);
+      return `<li><span class="muted">${when(l.at)}</span> · ${esc(LOG_NAMES[l.action] || l.action)}${name ? ` · ${esc(name)}` : ''}${l.detail ? ` · ${esc(l.detail)}` : ''}</li>`;
+    }).join('')}</ul>` : '<p class="muted">Nothing yet. Every action here is recorded.</p>');
+    $('lists').innerHTML = h;
+  }
+
+  $('lists').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    if (b.dataset.confirm && !b.classList.contains('armed')) {
+      b.classList.add('armed'); const old = b.textContent; b.textContent = 'Tap again to confirm';
+      setTimeout(() => { if (b.isConnected) { b.classList.remove('armed'); b.textContent = old; } }, 4000);
+      return;
+    }
+    let arg = b.dataset.arg;
+    if (b.dataset.act === 'hide_word') {
+      const i = $('lists').querySelector(`input[data-hide-for="${CSS.escape(b.dataset.slug)}"]`);
+      arg = i ? i.value.trim() : '';
+      if (!arg) { say('Type the word to hide first.'); return; }
+    }
+    b.disabled = true;
+    try { await rpc('admin_act', { p_action: b.dataset.act, p_slug: b.dataset.slug || null, p_arg: arg || null }); await load(); }
+    catch (err) { b.disabled = false; say(err.message === 'public_cloud' ? "Public clouds can't be deleted from here." : "That didn't work: " + err.message); }
+  });
+  // Enter in a "word to hide" box presses its Hide button
+  $('lists').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.dataset.hideFor) e.target.nextElementSibling?.click();
+  });
+
+  async function load() {
+    if (!session) { showSignIn(''); return; }
+    try {
+      const [d, L] = await Promise.all([rpc('admin_daily', { p_days: 14 }), rpc('admin_lists', {})]);
+      $('signin').hidden = true; $('desk').hidden = false;
+      daily(d); needs(L); lists(L);
+    } catch (err) {
+      if (/not_admin/.test(err.message)) { save(null); showSignIn("This account isn't an admin."); }
+      else if (/signed_out|JWT|401/.test(err.message)) { save(null); showSignIn('Please sign in again.'); }
+      else say("Couldn't load: " + err.message);
+    }
+  }
+  load();
+})();
+</script>
+</body>
+</html>
