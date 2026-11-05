@@ -20,21 +20,23 @@
   .wordmark { font-family:Georgia,serif; font-size:24px; color:#F2EEE8; margin:10px 0 42px; }
   .wordmark b { color:#F5C95D; font-weight:400; }
   h1 { font-family:Georgia,serif; font-weight:300; font-size:40px; line-height:1.25;
-       color:#F2EEE8; margin:0 0 14px; }
+       color:#F2EEE8; margin:0 0 14px; text-wrap:balance; }
   h1 em { font-style:italic; color:#F5C95D; }
-  .sub { color:#A9A3B8; max-width:420px; margin:0 auto 40px; }
+  .sub { color:#A9A3B8; max-width:420px; margin:0 auto 40px; text-wrap:balance; }
   .cloud { display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
     gap:6px 14px; max-width:460px; margin:0 auto 8px; padding:28px 12px;
     font-family:Georgia,serif; }
   .cloud span { display:inline-block; }
   .cloud .n { font-size:12px; color:#8B8698; vertical-align:super; margin-left:1px; font-family:-apple-system,sans-serif; }
   .whisper { font-family:Georgia,serif; font-style:italic; color:#4E4963; font-size:15px; margin:0 0 44px; }
-  .kind { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#8B8698; margin:0 0 6px; }
+  .kind { font-size:12px; letter-spacing:2px; text-transform:uppercase; color:#8B8698; margin:0 0 6px; text-wrap:balance; }
   .kind b { color:#F5C95D; font-weight:600; }
+  .kind b, .kind span { display:block; text-wrap:balance; }
   .about-anything { max-width:460px; margin:0 auto 44px; }
-  .about-anything h2 { font-family:Georgia,serif; font-weight:300; font-size:28px; line-height:1.25; color:#F2EEE8; margin:0 0 10px; }
+  .about-anything h2 { font-family:Georgia,serif; font-weight:300; font-size:28px; line-height:1.25; color:#F2EEE8; margin:0 0 10px; text-wrap:balance; }
   .about-anything h2 em { font-style:italic; color:#F5C95D; }
-  .about-anything p { color:#A9A3B8; margin:0 0 18px; }
+  .about-anything h2 span, .about-anything h2 em { white-space:nowrap; }  /* lines break between phrases only */
+  .about-anything p { color:#A9A3B8; margin:0 0 18px; text-wrap:pretty; }
   .livecard { display:block; border:1px solid #322E44; border-radius:16px; overflow:hidden; text-decoration:none;
     background:#110F17; }
   .livecard img { display:block; width:100%; height:auto; }
@@ -61,12 +63,12 @@
   .filmnote { font-size:13px; color:#6B6580; margin:0 0 40px; }
   .beta { font-size:13px; color:#6B6580; margin:14px 0 56px; }
   .how { text-align:left; max-width:420px; margin:0 auto 56px; }
-  .how h2 { font-family:Georgia,serif; font-weight:400; font-size:22px; color:#F2EEE8; text-align:center; margin:0 0 18px; }
+  .how h2 { font-family:Georgia,serif; font-weight:400; font-size:22px; color:#F2EEE8; text-align:center; margin:0 0 18px; text-wrap:balance; }
   .step { display:flex; gap:14px; margin:16px 0; align-items:flex-start; }
   .num { flex:none; width:30px; height:30px; border-radius:50%; background:#211E2E;
     border:1px solid #322E44; color:#F5C95D; font-family:Georgia,serif; font-size:15px;
     display:flex; align-items:center; justify-content:center; margin-top:2px; }
-  .step p { margin:2px 0 0; color:#C9C4D6; }
+  .step p { margin:2px 0 0; color:#C9C4D6; text-wrap:pretty; }
   .step p small { color:#8B8698; display:block; }
   footer { border-top:1px solid #2A2639; padding-top:22px; font-size:14px; color:#6B6580; text-wrap:balance; }
   footer a { color:#8B8698; text-decoration:none; margin:0 10px; white-space:nowrap; }
@@ -89,7 +91,7 @@
   </div>
   <p class="filmnote">33 seconds. The 2026 cloud in it is real.</p>
 
-  <p class="kind"><b>About you</b> · how the people who know you really see you</p>
+  <p class="kind"><b>About you</b> <span>how the people who know you really see you</span></p>
   <div class="cloud" aria-label="Example word cloud">
     <span style="font-size:42px;color:#F5C95D;font-weight:600;">kind<span class="n">4</span></span>
     <span style="font-size:23px;color:#8FB8C9;transform:rotate(-2deg);">curious</span>
@@ -105,8 +107,8 @@
   <p class="whisper">— an example of someone's cloud, after seven people answered honestly</p>
 
   <section class="about-anything">
-    <p class="kind"><b>About anyone or anything</b> · a birthday, a retirement, a send-off, a year</p>
-    <h2>Start a cloud, share the link, <em>watch it grow</em>.</h2>
+    <p class="kind"><b>About anyone or anything</b> <span>a birthday, a retirement, a send-off, a year</span></p>
+    <h2><span>Start a cloud,</span> <span>share the link,</span> <em>watch it grow</em>.</h2>
     <p>Answers are anonymous and come from any browser. Nobody needs the app, not even you:
     start one right here.</p>
     <a class="btn ios" href="/start/">Start a cloud — no app needed</a>
@@ -125,7 +127,7 @@
   <div class="how">
     <h2>How it works</h2>
     <div class="step"><div class="num">1</div>
-      <p>Start a cloud in the app: about you, or about any subject you choose.</p></div>
+      <p>Start a cloud <a href="/start/" style="color:#F5C95D;">right here</a> or in the app: about you, or about any subject you choose.</p></div>
     <div class="step"><div class="num">2</div>
       <p>Share the link. Each person sends three honest words.
       <small>They don't need the app — the link works right in their browser.</small></p></div>
